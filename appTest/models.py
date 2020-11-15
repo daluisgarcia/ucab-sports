@@ -82,9 +82,8 @@ class Permisos(models.Model):
 
 
 
-#Revisar PK 
 class Roles(models.Model):
-  id = models.IntegerField(primary_key=True, on_delete=models.SET_NULL)
+  id = models.IntegerField(primary_key=True)
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   rol_permiso = models.ManyToManyField(Permisos)
 
@@ -100,7 +99,7 @@ class Roles(models.Model):
 class Organizadores(models.Model):
   usuario = models.CharField(max_length=30, verbose_name='Usuario')
   contrasena = models.CharField(max_length=30, verbose_name='Contraseña')
-  id_rol = models.ForeignKey(Roles, on_delete=models.SET_NULL)
+  id_rol = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.usuario
@@ -116,7 +115,7 @@ class Posts(models.Model):
   resumen = models.CharField(max_length=100, verbose_name='Resumen')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
   imagen = models.ImageField(upload_to='posts/%Y/%m/%d', null=True, blank=True)
-  id_organizador = models.ForeignKey(Organizadores, on_delete=models.SET_NULL)
+  id_organizador = models.ForeignKey(Organizadores, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.titulo
@@ -133,7 +132,7 @@ class Torneos(models.Model):
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
   edicion = models.SmallIntegerField(verbose_name='Edición')
-  id_organizador = models.ForeignKey(Organizadores, on_delete=models.SET_NULL)
+  id_organizador = models.ForeignKey(Organizadores, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.nombre
@@ -175,9 +174,56 @@ class Criterios_Ganadores(models.Model):
 class Criterios_Fase(models.Model):
   id_modalidad = models.ForeignKey(Modalidades_Fase, on_delete=models.CASCADE)
   importancia = models.SmallIntegerField(verbose_name='Importancia')
-  id_crit_ganador = models.ForeignKey(Criterios_Ganadores, on_delete=models.CASCADE)
+  id_crit_ganador = models.ForeignKey(Criterios_Ganadores, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.importancia
 
 
+
+class Fases(models.Model):
+  nombre = models.CharField(max_length=30, verbose_name='Nombre')
+  num_partidos = models.SmallIntegerField(verbose_name='Número de partidos')
+  id_mod_fase = models.ForeignKey(Modalidades_Fase, on_delete=models.SET_NULL, null=True, blank=True)
+
+  def __str__(self):
+    return self.nombre
+
+  class Meta:
+    verbose_name = 'Fase'
+    verbose_name_plural = 'Fases'
+
+
+
+class Fase_Torneos(models.Model):
+  id_fase = models.ForeignKey(Fases, on_delete=models.CASCADE)
+  id_torneo = models.ForeignKey(Torneos, on_delete=models.CASCADE)
+
+
+
+class Partidos(models.Model):
+  fecha = models.DateField(verbose_name='Fecha del partido')
+  direccion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Dirección')
+  id_fase_torneo = models.ForeignKey(Fase_Torneos, on_delete=models.SET_NULL, null=True, blank=True)
+
+  def __str__(self):
+    return 'Partido del torneo: {}'.format(self.id_fase_torneo.id_torneo.nombre)
+
+  class Meta:
+    verbose_name = 'Partido'
+    verbose_name_plural = 'Partidos'
+
+
+
+class Participacion(models.Model):
+  id_equipo = models.ForeignKey(Equipos, on_delete=models.CASCADE)
+  id_partido = models.ForeignKey(Partidos, on_delete=models.CASCADE)
+  ganador = models.BooleanField()
+  puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo')
+
+  def __str__(self):
+    return 'Puntaje por equipo {}: {}'.format(self.puntos_equipo).format(self.id_equipo.nombre)
+
+  class Meta:
+    verbose_name = 'Partido'
+    verbose_name_plural = 'Partidos'
