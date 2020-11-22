@@ -131,3 +131,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 ucabSports/db.py
+ucabSports/db.py
