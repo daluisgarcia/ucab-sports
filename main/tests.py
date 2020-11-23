@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ucabSports.settings')
 
 application = get_wsgi_application()
 
-from appTest.models import Posts
+from .models import Posts
 
 
 post = Posts(titulo='Post de prueba', resumen='asdasdasd', cuerpo='más asd')
