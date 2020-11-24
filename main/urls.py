@@ -1,9 +1,10 @@
 # food/urls.py
 from django.conf.urls import url
 from django.urls import path
-from main import views
+from main.views import *
 
 app_name='main'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', index, name='index'),
+    path('posts/', ListaPosts.as_view(), name='posts'),
 ]

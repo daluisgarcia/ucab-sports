@@ -1,0 +1,1 @@
+insert into appTest_posts(titulo,resumen,cuerpo) values('post de prueba', 'asdasdasd', 'más asdasdasd');
