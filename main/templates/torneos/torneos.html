@@ -1,0 +1,14 @@
+{% extends 'head.html '%}
+{% block head %}
+
+  <h1>{{ title }}</h1>
+
+  {% for c in object_list %}
+    <br/>{{ c.nombre }}
+    <br/>{{ c.fecha_inicio }}
+    <br/>{{ c.fecha_fin }}
+    <br/>{{ c.edicion }}
+    <br/>
+  {% endfor %}
+    
+{% endblock %}

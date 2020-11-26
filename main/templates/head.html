@@ -19,17 +19,9 @@
     <script src="{% static 'lib/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
 
   </head>
-
   <body>
-    <!--Para iterar entre los objetos que se traigan desde el view-->
-    
-    <!--
-    {% for c in object_list %}
-      {{ object_list.title }}
-    {% endfor %}
-    -->
-    
-    <h1>{{ title }}</h1>
-    
+
+    {% block head %} {% endblock %}
+
   </body>
 </html>
