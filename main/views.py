@@ -3,11 +3,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 
-from main.models import Posts, Torneos
+from main.models import Posts, Torneos, Fases
 from main.forms import PostCreateForm, TorneoCreateForm
 
 def index(request):
-    return render(request, 'main/index.html', context=None)
+    return render(request, 'index.html', context=None)
 
 
 
@@ -18,7 +18,7 @@ class ListaPosts(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         #Diccionario de datos que se le manda a la plantilla
         context['title'] = 'Lista de posts'
         context['create_url'] = reverse_lazy('crear_post')
@@ -96,3 +96,12 @@ class CrearTorneo(CreateView):
         context['entity'] = 'Torneos'
         return context
 
+class CreateStage(CreateView):
+    Model = Fases
+    template_name = 'stages/create.html'
+
+    def get(self, request):
+        return ''
+
+    def post(self, request):
+        return ''

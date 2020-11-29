@@ -1,8 +1,12 @@
 from django.forms import *
 
-from main.models import Posts, Torneos
+from main.models import Posts, Torneos, Fases
 
-
+#Create a stage
+class CreateStageForm(ModelForm):
+  class Meta:
+    model = Fases
+    fields = ['nombre', 'num_partidos', 'id_mod_fase']
 
 #Crear Post
 class PostCreateForm(ModelForm):
