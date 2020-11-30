@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 
-from main.models import Posts, Torneos, Fases
+from main.models import Posts, Torneos, Fases, Juegos
 from main.forms import PostCreateForm, TorneoCreateForm
 
 def index(request):
@@ -14,7 +14,7 @@ def index(request):
 #Lista de posts
 class ListaPosts(ListView):
     model = Posts
-    template_name = 'posts/posts.html'
+    template_name = 'admin/posts/posts.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,7 +32,7 @@ class ListaPosts(ListView):
 class CrearPost(CreateView):
     model = Posts
     form_class = PostCreateForm
-    template_name = 'posts/create_post.html'
+    template_name = 'admin/posts/create_post.html'
     success_url = reverse_lazy('lista_posts')
 
     def post(self, request, *args, **kwargs):
@@ -58,7 +58,7 @@ class CrearPost(CreateView):
 #Lista de torneos
 class ListaTorneos(ListView):
     model = Torneos
-    template_name = 'torneos/torneos.html'
+    template_name = 'admin/torneos/torneos.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,7 +75,7 @@ class ListaTorneos(ListView):
 class CrearTorneo(CreateView):
     model = Torneos
     form_class = TorneoCreateForm
-    template_name = 'torneos/create_torneo.html'
+    template_name = 'admin/torneos/create_torneo.html'
     success_url = reverse_lazy('lista_torneos')
 
     def post(self, request, *args, **kwargs):
@@ -98,10 +98,23 @@ class CrearTorneo(CreateView):
 
 class CreateStage(CreateView):
     Model = Fases
-    template_name = 'stages/create.html'
+    template_name = 'admin/stages/create.html'
 
     def get(self, request):
         return ''
 
     def post(self, request):
         return ''
+
+class GamesList(ListView):
+    model = Juegos
+    template_name = 'admin/game/game.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context['title'] = 'Lista de Juegos'
+        context['create_url'] = reverse_lazy('create_game')
+        context['list_url'] = reverse_lazy('games_list')
+        context['entity'] = 'Juegos'
+        return context

@@ -10,4 +10,5 @@ urlpatterns = [
     path('post/crear/', CrearPost.as_view(), name='crear_post'),
     path('torneos/', ListaTorneos.as_view(), name='lista_torneos'),
     path('torneo/crear/', CrearTorneo.as_view(), name='crear_torneo'),
+    path('juegos/', GamesList.as_view(), name='games_list'),
 ]
