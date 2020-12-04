@@ -2,11 +2,13 @@ from django.forms import *
 
 from main.models import Posts, Torneos, Fases
 
+"""
 #Create a stage
 class CreateStageForm(ModelForm):
   class Meta:
     model = Fases
     fields = ['nombre', 'num_partidos', 'id_mod_fase']
+"""
 
 #Crear Post
 class PostCreateForm(ModelForm):
@@ -18,17 +20,11 @@ class PostCreateForm(ModelForm):
 
   class Meta:
     model = Posts
-    fields = ['titulo', 'resumen', 'cuerpo', 'imagen']
+    fields = ['titulo', 'cuerpo', 'imagen']
     widgets = {
       'titulo': TextInput(
         attrs = {
           'placeholder': 'Ingrese un título'
-        }
-      ),
-      'resumen': Textarea(
-        attrs = {
-          'placeholder': 'Ingrese una descripción',
-          'rows': 2
         }
       ),
       'cuerpo': Textarea(

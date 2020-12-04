@@ -8,9 +8,6 @@
     <br/>{{ c.resumen }}
     <br/>{{ c.cuerpo }}
     <br/>
-    <a href="{% url 'main:post_detail' c.id %}">ver post</a>
-    <a href="{% url 'main:update_post' c.id %}">update</a>
-    <br/>
   {% endfor %}
     
 {% endblock %}

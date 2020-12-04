@@ -1,11 +1,11 @@
 
 --Posts
-INSERT INTO main_posts(titulo,resumen,cuerpo) VALUES('post de prueba', 'asdasdasd', 'más asdasdasd');
-INSERT INTO main_posts(titulo,resumen,cuerpo) VALUES('otro post', 'asdasdasd', 'más asdasdasd');
+INSERT INTO main_posts(titulo,cuerpo) VALUES('post de prueba', 'más asdasdasd');
+INSERT INTO main_posts(titulo,cuerpo) VALUES('otro post', 'más asdasdasd');
 
 --Fases
-INSERT INTO main_fases(nombre, num_partidos) VALUES('Fase de prueba', 20);
-INSERT INTO main_fases(nombre, num_partidos) VALUES('8vos de final', 4);
+INSERT INTO main_fases(nombre, descripcion, equipos_por_grupo, num_grupos, part_por_equipo, equipos_por_partido) VALUES('Fase de prueba','esta fase es la primera de todas', 4, 8, 10, 2);
+INSERT INTO main_fases(nombre, descripcion, equipos_por_grupo, num_grupos, part_por_equipo, equipos_por_partido) VALUES('8vos de final', 'fase para pasar a 8vos de final', 4, 8, 10, 2);
 
 --Juego
 INSERT INTO main_juegos(nombre) VALUES('Clash Royale');

@@ -9,9 +9,6 @@
     <br/>{{ c.fecha_fin }}
     <br/>{{ c.edicion }}
     <br/>
-    <a href="{% url 'main:torneo_detail' c.id %}">ver torneo</a>
-    <a href="{% url 'main:update_torneo' c.id %}">update</a>
-    <br/>
   {% endfor %}
     
 {% endblock %}

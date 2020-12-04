@@ -32,19 +32,11 @@ class Equipos(models.Model):
 
 
 
-class Registro_Equipos(models.Model):
-  id_persona = models.ForeignKey(Personas, on_delete=models.CASCADE)
-  id_equipo = models.ForeignKey(Equipos, on_delete=models.CASCADE)
-  rol = models.CharField(max_length=2, verbose_name='Rol')
-  aprobado = models.BooleanField(default=False)
-
-  def __str__(self):
-    return self.rol
-
-
-
-class Modalidades(models.Model):
+class Fases(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
+  descripcion = models.CharField(max_length=100, verbose_name='Descripción')
+  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo')
+  num_grupos = models.SmallIntegerField(verbose_name='Número de grupos')
   part_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
   equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
 
@@ -52,14 +44,25 @@ class Modalidades(models.Model):
     return self.nombre
 
   class Meta:
-    verbose_name = 'Modalidad'
-    verbose_name_plural = 'Modalidades'
+    verbose_name = 'Modalidad de Fase'
+    verbose_name_plural = 'Modalidades de Fase'
 
+
+
+class Registro_Equipos(models.Model):
+  id_persona = models.ForeignKey(Personas, on_delete=models.CASCADE)
+  id_equipo = models.ForeignKey(Equipos, on_delete=models.CASCADE)
+  id_fase = models.ForeignKey(Fases, on_delete=models.CASCADE)
+  fecha_registro = models.DateField(verbose_name='Fecha de Registro')
+  rol = models.CharField(max_length=2, verbose_name='Rol')
+  aprobado = models.BooleanField(default=False)
+
+  def __str__(self):
+    return self.rol
 
 
 class Juegos(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  modalidad_juego = models.ManyToManyField(Modalidades)
 
   def __str__(self):
     return self.nombre
@@ -83,7 +86,6 @@ class Permisos(models.Model):
 
 
 class Roles(models.Model):
-  id = models.IntegerField(primary_key=True)
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   rol_permiso = models.ManyToManyField(Permisos)
 
@@ -112,7 +114,6 @@ class Organizadores(models.Model):
 
 class Posts(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
-  resumen = models.CharField(max_length=100, verbose_name='Resumen')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
   imagen = models.ImageField(upload_to='posts/%Y/%m/%d', null=True, blank=True)
   id_organizador = models.ForeignKey(Organizadores, on_delete=models.SET_NULL, null=True, blank=True)
@@ -143,22 +144,6 @@ class Torneos(models.Model):
 
 
 
-#¿Los verbose names de esta clase están bien? :(
-class Modalidades_Fase(models.Model):
-  nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  descripcion = models.CharField(max_length=100, verbose_name='Descripción')
-  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo')
-  num_grupos = models.SmallIntegerField(verbose_name='Número de grupos')
-
-  def __str__(self):
-    return self.nombre
-
-  class Meta:
-    verbose_name = 'Modalidad de Fase'
-    verbose_name_plural = 'Modalidades de Fase'
-
-
-
 class Criterios_Ganadores(models.Model):
   criterio = models.CharField(max_length=30, verbose_name='Criterio')
 
@@ -172,26 +157,12 @@ class Criterios_Ganadores(models.Model):
 
 
 class Criterios_Fase(models.Model):
-  id_modalidad = models.ForeignKey(Modalidades_Fase, on_delete=models.CASCADE)
+  id_fase = models.ForeignKey(Fases, on_delete=models.CASCADE)
   importancia = models.SmallIntegerField(verbose_name='Importancia')
   id_crit_ganador = models.ForeignKey(Criterios_Ganadores, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.importancia
-
-
-
-class Fases(models.Model):
-  nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  num_partidos = models.SmallIntegerField(verbose_name='Número de partidos')
-  id_mod_fase = models.ForeignKey(Modalidades_Fase, on_delete=models.SET_NULL, null=True, blank=True)
-
-  def __str__(self):
-    return self.nombre
-
-  class Meta:
-    verbose_name = 'Fase'
-    verbose_name_plural = 'Fases'
 
 
 
