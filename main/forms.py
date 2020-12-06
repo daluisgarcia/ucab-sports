@@ -63,3 +63,31 @@ class TorneoCreateForm(ModelForm):
       ),
       
     }
+
+class StageCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
+
+  class Meta:
+    model = Fases
+    fields = ['nombre', 'descripcion', 'equipos_por_grupo', 'num_grupos', 'part_por_equipo', 'equipos_por_partido']
+    widgets = {
+      'nombre': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese un título'
+        }
+      ),
+      'descripcion': Textarea(
+        attrs = {
+          'placeholder': 'Ingrese el cuerpo del post',
+          'rows': 5
+        }
+      ),
+      'equipos_por_grupo': NumberInput(),
+      'num_grupos': NumberInput(),
+      'part_por_equipo': NumberInput(),
+      'equipos_por_partido': NumberInput(),
+    }
