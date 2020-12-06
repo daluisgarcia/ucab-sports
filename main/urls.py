@@ -21,7 +21,7 @@ urlpatterns = [
     path('torneo/create/', TournamentViews.CreateTorneo.as_view(), name='create_torneo'),
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTorneo.as_view(), name='update_torneo'),
     #Statges
-    path('fases/', StageViews.CreateStage.as_view(), name='stages_list'),
+    path('fases/', StageViews.StageList.as_view(), name='stage_list'),
     path('fase/create', StageViews.CreateStage.as_view(), name='create_stage'),
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
     #Juegos

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 
-from main.models import Posts, Torneos, Fases, Juegos
+from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm, TorneoCreateForm
 
 
@@ -12,7 +12,7 @@ def index(request):
 
 # Lista de juegos
 class GamesList(ListView):
-    model = Juegos
+    model = Game
     template_name = 'admin/game/game.html'
 
     def get_context_data(self, **kwargs):

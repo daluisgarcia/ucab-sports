@@ -3,12 +3,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 
-from main.models import Posts, Torneos, Fases, Juegos
+from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm, TorneoCreateForm
 
 # Lista de posts
 class PostsList(ListView):
-    model = Posts
+    model = Post
     template_name = 'admin/posts/posts.html'
 
     def get_context_data(self, **kwargs):
@@ -41,7 +41,7 @@ class PostDetail(ListView):
 
 # Crear Post
 class CreatePost(CreateView):
-    model = Posts
+    model = Post
     form_class = PostCreateForm
     template_name = 'admin/posts/create_post.html'
     success_url = reverse_lazy('main:posts_list')
@@ -69,7 +69,7 @@ class CreatePost(CreateView):
 
 # Actualizar Post
 class UpdatePost(UpdateView):
-    model = Posts
+    model = Post
     form_class = PostCreateForm
     template_name = 'admin/posts/create_post.html'
     success_url = reverse_lazy('main:posts_list')

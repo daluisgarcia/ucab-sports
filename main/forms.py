@@ -1,6 +1,6 @@
 from django.forms import *
 
-from main.models import Posts, Torneos, Fases
+from main.models import Post, Tournament, Stage
 
 """
 #Create a stage
@@ -19,7 +19,7 @@ class PostCreateForm(ModelForm):
       form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
-    model = Posts
+    model = Post
     fields = ['titulo', 'cuerpo', 'imagen']
     widgets = {
       'titulo': TextInput(
@@ -47,7 +47,7 @@ class TorneoCreateForm(ModelForm):
       form.field.widget.attrs['required'] = True
 
   class Meta:
-    model = Torneos
+    model = Tournament
     fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion']
     widgets = {
       'nombre': TextInput(
@@ -72,7 +72,7 @@ class StageCreateForm(ModelForm):
       form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
-    model = Fases
+    model = Stage
     fields = ['nombre', 'descripcion', 'equipos_por_grupo', 'num_grupos', 'part_por_equipo', 'equipos_por_partido']
     widgets = {
       'nombre': TextInput(

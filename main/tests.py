@@ -11,10 +11,10 @@ application = get_wsgi_application()
 from ucabSports.wsgi import *
 """
 
-from .models import Posts
+from .models import Post
 
 
-post = Posts(titulo='Post de prueba', resumen='asdasdasd', cuerpo='más asd')
+post = Post(titulo='Post de prueba', resumen='asdasdasd', cuerpo='más asd')
 post.save()
 print('Post guardado')
 

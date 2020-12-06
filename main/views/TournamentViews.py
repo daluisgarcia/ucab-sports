@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 
-from main.models import Posts, Torneos, Fases, Juegos
+from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm, TorneoCreateForm
 
 #Detalle del torneo
@@ -27,7 +27,7 @@ class TorneoDetail(ListView):
 
 #Lista de torneos
 class TorneosList(ListView):
-    model = Torneos
+    model = Tournament
     template_name = 'admin/torneos/torneos.html'
 
     def get_context_data(self, **kwargs):
@@ -42,7 +42,7 @@ class TorneosList(ListView):
 
 #Crear Torneo
 class CreateTorneo(CreateView):
-    model = Torneos
+    model = Tournament
     form_class = TorneoCreateForm
     template_name = 'admin/torneos/create_torneo.html'
     success_url = reverse_lazy('main:torneos_list')
@@ -70,7 +70,7 @@ class CreateTorneo(CreateView):
 
 #Editar Torneo
 class UpdateTorneo(UpdateView):
-    model = Torneos
+    model = Tournament
     form_class = TorneoCreateForm
     template_name = 'admin/torneos/create_torneo.html'
     success_url = reverse_lazy('main:torneos_list')

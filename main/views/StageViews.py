@@ -3,15 +3,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
-from main.models import Posts, Torneos, Fases, Juegos
+from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm, TorneoCreateForm, StageCreateForm
 
 #Crear fase
 class CreateStage(CreateView):
-    Model = Fases
+    model = Stage
     form_class = StageCreateForm
     template_name = 'admin/stages/create_stage.html'
-    success_url = reverse_lazy('main:stages_list')
+    success_url = reverse_lazy('main:stage_list')
 
     def post(self, request, *args, **kwargs):
         # print(request.POST)
@@ -25,11 +25,9 @@ class CreateStage(CreateView):
         return render(request, self.template_name, context)
 
 class StageList(ListView):
-    Model = Fases
-    template_name = 'admin/stages/stages_list.html'
-
-    def get(self, request):
-        return '';
+    model = Stage
+    template_name = 'admin/stages/stage_list.html'
 
 class StageDetail(DetailView):
-    Model = Fases
+    model = Stage
+    template_name = 'amdin/stages/stage_detail.html'
