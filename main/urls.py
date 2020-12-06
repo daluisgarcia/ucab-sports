@@ -24,6 +24,8 @@ urlpatterns = [
     path('fases/', StageViews.StageList.as_view(), name='stage_list'),
     path('fase/create', StageViews.CreateStage.as_view(), name='create_stage'),
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
+    path('fase/edit/<int:pk>', StageViews.UpdateStage.as_view(), name='update_stage'),
+    path('fase/delete/<int:pk>', StageViews.DeleteStage.as_view(), name='delete_stage'),
     #Juegos
     path('juegos/', IndexViews.GamesList.as_view(), name='games_list')
 ]

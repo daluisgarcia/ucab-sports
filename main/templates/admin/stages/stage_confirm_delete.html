@@ -1,0 +1,12 @@
+{% extends 'layouts/head.html ' %}
+{% block head %}
+
+  <h1>Delete Ad</h1>
+  <p>Esta seguro que desea eliminar la fase: {{ stage.nombre }}?</p>
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Si, borrar.">
+  </form>
+
+{% endblock %}

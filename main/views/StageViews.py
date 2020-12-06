@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm, TorneoCreateForm, StageCreateForm
@@ -10,7 +10,7 @@ from main.forms import PostCreateForm, TorneoCreateForm, StageCreateForm
 class CreateStage(CreateView):
     model = Stage
     form_class = StageCreateForm
-    template_name = 'admin/stages/create_stage.html'
+    template_name = 'admin/stages/stage_form.html'
     success_url = reverse_lazy('main:stage_list')
 
     def post(self, request, *args, **kwargs):
@@ -30,4 +30,30 @@ class StageList(ListView):
 
 class StageDetail(DetailView):
     model = Stage
-    template_name = 'amdin/stages/stage_detail.html'
+    template_name = 'admin/stages/stage_detail.html'
+
+class UpdateStage(UpdateView):
+    model = Stage
+    template_name = 'admin/stages/stage_form.html'
+    success_url = reverse_lazy('main:stage_list')
+
+    def get(self, request, pk):
+        make = get_object_or_404(self.model, pk=pk)
+        form = StageCreateForm(instance=make)
+        ctx = {'form': form}
+        return render(request, self.template_name, ctx)
+
+    def post(self, request, pk):
+        make = get_object_or_404(self.model, pk=pk)
+        form = StageCreateForm(request.POST, instance=make)
+        if not form.is_valid():
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+
+        form.save()
+        return redirect(self.success_url)
+
+class DeleteStage(DeleteView):
+    model = Stage
+    success_url = reverse_lazy('main:stage_list')
+    template_name = 'admin/stages/stage_confirm_delete.html'

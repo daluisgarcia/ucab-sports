@@ -4,14 +4,16 @@
   <h1>Lista de fases</h1>
 
   {% for stage in stage_list %}
+    <br/><strong>{{ stage.nombre }}</strong>
     <br/>{{ stage.descripcion }}
     <br/>{{ stage.equipos_por_grupo }}
     <br/>{{ stage.num_grupos }}
     <br/>{{ stage.part_por_equipo }}
     <br/>{{ stage.equipos_por_partido }}
     <br/>
-    <a href="{% url 'main:stage_detail' c.id %}">Ver fase</a>
-{#    <a href="{% url 'main:update_detail' c.id %}">Modificar</a>#}
+    <a href="{% url 'main:stage_detail' stage.id %}">Ver fase</a>
+    <a href="{% url 'main:update_stage' stage.id %}">Modificar</a>
+    <a href="{% url 'main:delete_stage' stage.id %}">Eliminar</a>
     <br/>
   {% endfor %}
 
