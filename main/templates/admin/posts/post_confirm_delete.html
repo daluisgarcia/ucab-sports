@@ -1,8 +1,8 @@
 {% extends 'layouts/head.html ' %}
 {% block head %}
 
-  <h1>Eliminar fase</h1>
-  <p>¿Está seguro que desea eliminar la fase: {{ stage.nombre }}?</p>
+  <h1>Eliminar Post</h1>
+  <p>¿Está seguro que desea eliminar el post: {{ post.titulo }}?</p>
 
   <form action="" method="POST">
     {% csrf_token %}

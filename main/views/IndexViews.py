@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
 
 from main.models import Post, Tournament, Stage, Game
-from main.forms import PostCreateForm, TorneoCreateForm
+from main.forms import PostCreateForm
 
 
 def index(request):

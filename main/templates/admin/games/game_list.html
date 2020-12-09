@@ -1,0 +1,14 @@
+{% extends 'layouts/head.html ' %}
+{% block head %}
+
+  <h1>{{ title }}</h1>
+
+  {% for c in object_list %}
+    <br/>{{ c.nombre }}
+    <br/>
+    <a href="{% url 'main:update_game' c.id %}">update</a>
+    <a href="{% url 'main:delete_game' c.id %}">Eliminar</a>
+    <br/>
+  {% endfor %}
+    
+{% endblock %}

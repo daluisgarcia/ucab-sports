@@ -21,7 +21,7 @@ class Person(models.Model):
 #Revisar luego para cambiar el upload_to
 class Team(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  logo = models.ImageField(upload_to='logos/%Y/%m/%d')
+  logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
 
   def __str__(self):
     return self.nombre
@@ -47,18 +47,6 @@ class Stage(models.Model):
     verbose_name = 'Modalidad de Fase'
     verbose_name_plural = 'Modalidades de Fase'
 
-
-
-class TeamRecord(models.Model):
-  id_persona = models.ForeignKey(Person, on_delete=models.CASCADE)
-  id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
-  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
-  fecha_registro = models.DateField(verbose_name='Fecha de Registro')
-  rol = models.CharField(max_length=2, verbose_name='Rol')
-  aprobado = models.BooleanField(default=False)
-
-  def __str__(self):
-    return self.rol
 
 
 class Game(models.Model):
@@ -128,11 +116,11 @@ class Post(models.Model):
 
 
 class Tournament(models.Model):
-  id_juego = models.ForeignKey(Game, on_delete=models.CASCADE)
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
   edicion = models.SmallIntegerField(verbose_name='Edición')
+  id_juego = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True, blank=True)
   id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
@@ -141,6 +129,19 @@ class Tournament(models.Model):
   class Meta:
     verbose_name = 'Torneo'
     verbose_name_plural = 'Torneos'
+
+
+
+class HistoryParticipation(models.Model):
+  id_persona = models.ForeignKey(Person, on_delete=models.CASCADE)
+  id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
+  id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+  fecha_registro = models.DateField(verbose_name='Fecha de Registro')
+  fecha_fin = models.DateField(verbose_name='Fecha de Registro', null=True, blank=True)
+  rol = models.CharField(max_length=2, verbose_name='Rol')
+
+  def __str__(self):
+    return self.rol
 
 
 
@@ -169,6 +170,7 @@ class StageStandard(models.Model):
 class StageTournament(models.Model):
   id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+  jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
 
 
 
@@ -198,3 +200,48 @@ class Participation(models.Model):
   class Meta:
     verbose_name = 'Partido'
     verbose_name_plural = 'Partidos'
+
+
+
+#Modelos de solicitud de inscripción
+
+class PrePerson(models.Model):
+  cedula = models.IntegerField(primary_key=True)
+  nombre = models.CharField(max_length=50, verbose_name='Nombre')
+  apellido = models.CharField(max_length=50, verbose_name='Apellido')
+  correo = models.EmailField(max_length=100, verbose_name='Email')
+  nickname = models.CharField(max_length=30, blank=True, verbose_name='Nickname')
+  
+  def __str__(self):
+    return self.nombre
+
+  class Meta:
+    verbose_name = 'Usuario'
+    verbose_name_plural = 'Usuarios'
+
+
+
+class PreTeam(models.Model):
+  nombre = models.CharField(max_length=30, verbose_name='Nombre')
+  logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
+
+  def __str__(self):
+    return self.nombre
+
+  class Meta:
+    verbose_name = 'Equipo'
+    verbose_name_plural = 'Equipos'
+
+
+
+class PreTeamRegister(models.Model):
+  id_persona = models.ForeignKey(PrePerson, on_delete=models.CASCADE)
+  id_equipo = models.ForeignKey(PreTeam, on_delete=models.CASCADE)
+  id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+  fecha_registro = models.DateField(verbose_name='Fecha de Registro')
+  rol = models.CharField(max_length=2, verbose_name='Rol')
+  estatus = models.CharField(max_length=2, verbose_name='Rol')
+  comentario = models.CharField(max_length=150, verbose_name='Comentario (opcional)', null=True, blank=True)
+
+  def __str__(self):
+    return self.rol

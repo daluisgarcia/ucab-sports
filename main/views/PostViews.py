@@ -1,50 +1,19 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
 from main.models import Post, Tournament, Stage, Game
-from main.forms import PostCreateForm, TorneoCreateForm
+from main.forms import PostCreateForm
 
-# Lista de posts
-class PostsList(ListView):
-    model = Post
-    template_name = 'admin/posts/posts.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Lista de posts'
-        context['create_url'] = reverse_lazy('main:create_post')
-        context['list_url'] = reverse_lazy('main:posts_list')
-        context['entity'] = 'Posts'
-        return context
-
-
-# REVISAR
-# Detalle del post
-class PostDetail(ListView):
-    template_name = 'admin/posts/post_detalle.html'
-
-    """
-    def __init__(self, *args, **kwargs):
-        id = kwargs.pop('pk')
-        model = Posts.objects.get(id = id)
-    """
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Detalle del post'
-        context['list_url'] = reverse_lazy('main:posts_list')
-        context['entity'] = 'Posts'
-        return context
 
 
 # Crear Post
 class CreatePost(CreateView):
     model = Post
     form_class = PostCreateForm
-    template_name = 'admin/posts/create_post.html'
-    success_url = reverse_lazy('main:posts_list')
+    template_name = 'admin/posts/post_form.html'
+    success_url = reverse_lazy('main:post_list')
 
     def post(self, request, *args, **kwargs):
         # print(request.POST)
@@ -61,26 +30,53 @@ class CreatePost(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación del post'
         context['botton_title'] = 'Crear post'
-        context['list_url'] = reverse_lazy('main:posts_list')
-        context['entity'] = 'Posts'
+        context['entity'] = 'Post'
         context['action'] = 'add'
         return context
+
+
+# Lista de posts
+class PostsList(ListView):
+    model = Post
+    template_name = 'admin/posts/post_list.html'
+
+
+# Detalle del post
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'admin/posts/post_detail.html'
 
 
 # Actualizar Post
 class UpdatePost(UpdateView):
     model = Post
     form_class = PostCreateForm
-    template_name = 'admin/posts/create_post.html'
-    success_url = reverse_lazy('main:posts_list')
+    template_name = 'admin/posts/post_form.html'
+    success_url = reverse_lazy('main:post_list')
+
+    def post(self, request, pk):
+        make = get_object_or_404(self.model, pk=pk)
+        form = PostCreateForm(request.POST, instance=make)
+        if not form.is_valid():
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+        form.save()
+        self.object = None
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
+        return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
-        # Obtener la instancia del objeto
-        # print(self.get_object())
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición del post'
         context['botton_title'] = 'Editar post'
-        context['list_url'] = reverse_lazy('main:posts_list')
-        context['entity'] = 'Posts'
+        context['entity'] = 'Post'
         context['action'] = 'edit'
         return context
+
+
+#Eliminar post
+class DeletePost(DeleteView):
+    model = Post
+    success_url = reverse_lazy('main:post_list')
+    template_name = 'admin/posts/post_confirm_delete.html'

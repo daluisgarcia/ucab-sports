@@ -10,7 +10,7 @@ class CreateStageForm(ModelForm):
     fields = ['nombre', 'num_partidos', 'id_mod_fase']
 """
 
-#Crear Post
+#Formulario de post
 class PostCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -36,9 +36,8 @@ class PostCreateForm(ModelForm):
     }
 
 
-
-#Crear Torneo
-class TorneoCreateForm(ModelForm):
+#Formulario de torneo
+class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
     for form in self.visible_fields():
@@ -55,15 +54,13 @@ class TorneoCreateForm(ModelForm):
           'placeholder': 'Ingrese un nombre'
         }
       ),
-      'fecha_inicio': DateInput(
-        
-      ),
-      'fecha_fin': DateInput(
-        
-      ),
+      'fecha_inicio': DateInput(),
+      'fecha_fin': DateInput(),
       
     }
 
+
+#Formulario de fase
 class StageCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -90,4 +87,25 @@ class StageCreateForm(ModelForm):
       'num_grupos': NumberInput(),
       'part_por_equipo': NumberInput(),
       'equipos_por_partido': NumberInput(),
+    }
+
+
+
+#Formulario de juego
+class GameCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
+
+  class Meta:
+    model = Stage
+    fields = ['nombre']
+    widgets = {
+      'nombre': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el nombre dle juego'
+        }
+      )
     }
