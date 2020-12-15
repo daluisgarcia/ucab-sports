@@ -25,7 +25,7 @@
         {% endfor %} 
       {% endfor %}
     </div>
-    {% endif %} 
+    {% endif %}
     
     {% for field in form.visible_fields %}
     <div class="form-group">
@@ -33,7 +33,17 @@
       {{ field }}
     </div>
     {% endfor %}
+
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Tipo de juego del torneo</label>
+      <select class="form-control" id="exampleFormControlSelect1">
+        {% for game in games %}
+        <option>{{ game.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
   </div>
+
   <div class="card-footer">
     <button type="submit" class="btn btn-primary btn-flat">
       <i class="fas fa-save"></i> {{ botton_title }}

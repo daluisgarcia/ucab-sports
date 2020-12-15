@@ -10,7 +10,7 @@ from main.forms import TournamentCreateForm
 
 #Crear Torneo
 class CreateTournament(CreateView):
-    model = Tournament
+    models = Tournament, Game
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
     success_url = reverse_lazy('main:tournament_list')
@@ -31,6 +31,8 @@ class CreateTournament(CreateView):
         context['title'] = 'Creación del torneo'
         context['botton_title'] = 'Crear torneo'
         context['entity'] = 'Tournament'
+        #Lista de juegos
+        context['games'] = Game.objects.order_by('nombre')
         context['action'] = 'add'
         return context
 
@@ -71,6 +73,8 @@ class UpdateTournament(UpdateView):
         context['title'] = 'Edición del torneo'
         context['botton_title'] = 'Editar torneo'
         context['entity'] = 'Tournament'
+        #Lista de juegos
+        context['games'] = Game.objects.order_by('nombre')
         return context
 
 
