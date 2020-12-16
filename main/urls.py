@@ -2,7 +2,7 @@
 from django.conf.urls import url
 from django.urls import path
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews
 
 
 app_name='main'
@@ -38,6 +38,11 @@ urlpatterns = [
     path('juegos/', GameViews.GamesList.as_view(), name='game_list'),
     path('juego/edit/<int:pk>/', GameViews.UpdateGame.as_view(), name='update_game'),
     path('juego/delete/<int:pk>/', GameViews.DeleteGame.as_view(), name='delete_game'),
+
+    #Roles
+    path('rol/create/', RoleViews.CreateRole.as_view(), name='create_role'),
+    path('roles/', RoleViews.RolesList.as_view(), name='role_list'),
+    path('rol/edit/<int:pk>/', RoleViews.UpdateRole.as_view(), name='update_role'),
     
 
 ]
