@@ -1,0 +1,15 @@
+{% extends 'layouts/head.html ' %}
+{% block head %}
+
+  <h1>{{ title }}</h1>
+
+  {% for c in object_list %}
+    <br/>{{ c.id_torneo.nombre }}
+    <br/>{{ c.id_equipo.nombre }}
+    <br/>{{ c.id_persona.nombre }}
+    <br/>{{ c.fecha_registro }}
+    <br/>{{ c.comentario }}
+    <br/>
+  {% endfor %}
+    
+{% endblock %}

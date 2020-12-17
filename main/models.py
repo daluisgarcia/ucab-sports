@@ -120,7 +120,7 @@ class Tournament(models.Model):
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
   edicion = models.SmallIntegerField(verbose_name='Edición')
-  id_juego = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True, blank=True)
+  id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
   id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):

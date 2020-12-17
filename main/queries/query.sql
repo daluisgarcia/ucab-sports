@@ -16,3 +16,6 @@ INSERT INTO main_organizer(usuario, contrasena) VALUES('Organizador 2', '12345')
 
 --Torneo
 INSERT INTO main_tournament(id_juego_id, nombre, fecha_inicio, fecha_fin, edicion) VALUES (1, 'Un torneo', '13-01-2020', '27-09-2020', 4);
+
+--Preinscripcion
+--INSERT INTO main_preteamregister(fecha_registro,rol,estatus,id_persona,id_equipo,id_torneo) VALUES ('2020-01-01','j','p',1,1,1);

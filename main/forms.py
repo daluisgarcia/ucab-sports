@@ -1,6 +1,6 @@
 from django.forms import *
 
-from main.models import Post, Tournament, Stage, Role
+from main.models import Post, Tournament, Stage, Role, PreTeamRegister
 
 """
 #Create a stage
@@ -47,7 +47,7 @@ class TournamentCreateForm(ModelForm):
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -56,7 +56,8 @@ class TournamentCreateForm(ModelForm):
       ),
       'fecha_inicio': DateInput(),
       'fecha_fin': DateInput(),
-      
+      'edicion': NumberInput(),
+      'id_juego': Select()
     }
 
 
@@ -125,6 +126,27 @@ class RoleCreateForm(ModelForm):
       'nombre': TextInput(
         attrs = {
           'placeholder': 'Ingrese el nombre del Rol'
+        }
+      )
+    }
+
+
+
+#Formulario preinscripción
+class TeamRegisterCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+
+  class Meta:
+    model = PreTeamRegister
+    fields = ['comentario']
+    widgets = {
+      'comentario': Textarea(
+        attrs = {
+          'placeholder': 'Ingrese comentario (opcional)',
+          'rows': 5
         }
       )
     }

@@ -2,15 +2,22 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.core.exceptions import ValidationError
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import TournamentCreateForm
 
 
+#REVISAR
+#Función para validar fechas de inicio y fin del torneo
+def validar_fechas(fecha_inicio,fecha_fin):
+    if(fecha_fin < fecha_inicio):
+        raise ValidationError(_('La fecha de fin tiene que ser posterior a la fecha de inicio'))
+
 
 #Crear Torneo
 class CreateTournament(CreateView):
-    models = Tournament, Game
+    model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
     success_url = reverse_lazy('main:tournament_list')
@@ -18,6 +25,17 @@ class CreateTournament(CreateView):
     def post(self, request, *args, **kwargs):
         #print(request.POST)
         form = TournamentCreateForm(request.POST)
+        
+        for key, value in request.POST.items():
+            print("%s %s" % (key, value))
+            if key == 'fecha_inicio':
+                aux_fecha_inicio = value
+            if key == 'fecha_fin':
+                aux_fecha_fin = value
+        
+        #Se validan las fechas
+        validar_fechas(aux_fecha_inicio,aux_fecha_fin)
+
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(self.success_url)
@@ -31,8 +49,6 @@ class CreateTournament(CreateView):
         context['title'] = 'Creación del torneo'
         context['botton_title'] = 'Crear torneo'
         context['entity'] = 'Tournament'
-        #Lista de juegos
-        context['games'] = Game.objects.order_by('nombre')
         context['action'] = 'add'
         return context
 
@@ -43,8 +59,6 @@ class TournamentList(ListView):
     template_name = 'admin/tournaments/tournament_list.html'
 
 
-#REVISAR
-#No se logran ver los detalles de los torneos :(
 #Detalle del torneo
 class TournamentDetail(DetailView):
     model = Tournament
@@ -73,8 +87,6 @@ class UpdateTournament(UpdateView):
         context['title'] = 'Edición del torneo'
         context['botton_title'] = 'Editar torneo'
         context['entity'] = 'Tournament'
-        #Lista de juegos
-        context['games'] = Game.objects.order_by('nombre')
         return context
 
 
