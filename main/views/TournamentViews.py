@@ -62,7 +62,9 @@ class CreateTournament(CreateView):
 #Asociar las fases al torneo
 class CreateStageTournament(CreateView):
     model = StageTournament
+    #Si no se pone este campo de fields, da error
     fields = '__all__'
+    #El problema es que hay conflicto si se llaman más de dos clases es una misma Vista Basada en Clases
     #form_classes = StageTournamentCreateForm, BaseStageFormSet
     StageFormSet = formset_factory(StageTournamentCreateForm, formset=BaseStageFormSet)
     template_name = 'admin/tournaments/stage_tour_form.html'
@@ -87,10 +89,12 @@ class CreateStageTournament(CreateView):
 
             #bulk_create inserta el array en la tabla de las fases de los torneos
             StageTournament.objects.bulk_create(fases_tor)
-            
-        context = stage_formset
+        
+        self.object = None
+        context = self.get_context_data(**kwargs)    
+        context['stage_formset'] = stage_formset
+        return render(request, self.template_name, context)
 
-        return render(request, 'admin/tournaments/tournament_list.html', context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
