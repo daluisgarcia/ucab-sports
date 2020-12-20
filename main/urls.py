@@ -19,6 +19,8 @@ urlpatterns = [
     
     #Tournaments
     path('torneo/create/', TournamentViews.CreateTournament.as_view(), name='create_tournament'),
+    #Asociar fases al torneo
+    path('torneo/<int:pk>/create/', TournamentViews.CreateStageTournament.as_view(), name='create_stage_tournament'),
     path('torneos/', TournamentViews.TournamentList.as_view(), name='tournament_list'),
     path('torneo/<int:pk>/', TournamentViews.TournamentDetail.as_view(), name='tournament_detail'),
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
