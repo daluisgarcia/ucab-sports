@@ -19,10 +19,8 @@
         ×
       </button>
       <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {% for field in form %} 
-        {% for error in field.errors %}
+      {% for error in form.non_field_errors %} 
           <li>{{ error }}</li>
-        {% endfor %} 
       {% endfor %}
     </div>
     {% endif %}

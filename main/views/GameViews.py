@@ -30,7 +30,6 @@ class CreateGame(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación del juego'
         context['botton_title'] = 'Crear juego'
-        context['entity'] = 'Game'
         context['action'] = 'add'
         return context
 
@@ -52,7 +51,7 @@ class UpdateGame(UpdateView):
         make = get_object_or_404(self.model, pk=pk)
         form = GameCreateForm(request.POST, instance=make)
         if not form.is_valid():
-            ctx = {'form': form}
+            ctx = {'form': form, 'title': 'Edición del juego', 'botton_title': 'Editar juego'}
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None
@@ -62,7 +61,6 @@ class UpdateGame(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición del juego'
         context['botton_title'] = 'Editar juego'
-        context['entity'] = 'Game'
         context['action'] = 'edit'
         return context
 

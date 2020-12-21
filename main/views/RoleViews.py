@@ -31,7 +31,6 @@ class CreateRole(CreateView):
         context['title'] = 'Roles'
         context['botton_submit_title'] = 'Agregar'
         context['botton_cancel_title'] = 'Cancelar'
-        context['entity'] = 'Rol'
         context['action'] = 'add'
         return context
 
@@ -63,7 +62,6 @@ class UpdateRole(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición de rol'
         context['botton_title'] = 'Editar rol'
-        context['entity'] = 'Role'
         context['action'] = 'edit'
         return context
 

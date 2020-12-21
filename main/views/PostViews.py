@@ -20,6 +20,7 @@ class CreatePost(CreateView):
         form = PostCreateForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'El post ha sido creado satisfactoriamente')
             return HttpResponseRedirect(self.success_url)
         self.object = None
         context = self.get_context_data(**kwargs)
@@ -30,7 +31,6 @@ class CreatePost(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación del post'
         context['botton_title'] = 'Crear post'
-        context['entity'] = 'Post'
         context['action'] = 'add'
         return context
 
@@ -58,7 +58,7 @@ class UpdatePost(UpdateView):
         make = get_object_or_404(self.model, pk=pk)
         form = PostCreateForm(request.POST, instance=make)
         if not form.is_valid():
-            ctx = {'form': form}
+            ctx = {'form': form, 'title': 'Edición del post', 'botton_title': 'Editar post'}
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None

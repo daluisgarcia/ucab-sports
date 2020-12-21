@@ -2,7 +2,7 @@
 from django.conf.urls import url
 from django.urls import path
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews
 
 
 app_name='main'
@@ -20,7 +20,7 @@ urlpatterns = [
     #Tournaments
     path('torneo/create/', TournamentViews.CreateTournament.as_view(), name='create_tournament'),
     #Asociar fases al torneo
-    path('torneo/<int:pk>/create/', TournamentViews.CreateStageTournament.as_view(), name='create_stage_tournament'),
+    path('torneo/<int:pk>/create/', TournamentViews.createStageTournament, name='create_stage_tournament'),
     path('torneos/', TournamentViews.TournamentList.as_view(), name='tournament_list'),
     path('torneo/<int:pk>/', TournamentViews.TournamentDetail.as_view(), name='tournament_detail'),
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
@@ -35,7 +35,7 @@ urlpatterns = [
     
     #Games
     path('index/juegos/', IndexViews.GamesList.as_view(), name='games_list'),
-    
+
     path('juego/create/', GameViews.CreateGame.as_view(), name='create_game'),
     path('juegos/', GameViews.GamesList.as_view(), name='game_list'),
     path('juego/edit/<int:pk>/', GameViews.UpdateGame.as_view(), name='update_game'),
@@ -46,5 +46,8 @@ urlpatterns = [
     path('roles/', RoleViews.RolesList.as_view(), name='role_list'),
     path('rol/edit/<int:pk>/', RoleViews.UpdateRole.as_view(), name='update_role'),
     
-
+    #Preinscription
+    path('inscripcion/<int:pk_torneo>/equipo/create/', InscriptionViews.CreatePreteam.as_view(), name='create_preteam'),
+    path('inscripcion/<int:pk_torneo>/equipo/<int:pk_preteam>/personas/create/', InscriptionViews.createPreperson, name='create_preperson'),
+    path('inscripciones/', InscriptionViews.PreinscriptionList.as_view(), name='inscription_list'),
 ]

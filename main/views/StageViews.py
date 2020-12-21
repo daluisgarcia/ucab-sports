@@ -29,7 +29,6 @@ class CreateStage(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación de la fase'
         context['botton_title'] = 'Crear fase'
-        context['entity'] = 'Stage'
         return context
 
 
@@ -55,7 +54,7 @@ class UpdateStage(UpdateView):
         make = get_object_or_404(self.model, pk=pk)
         form = StageCreateForm(request.POST, instance=make)
         if not form.is_valid():
-            ctx = {'form': form}
+            ctx = {'form': form, 'title': 'Edición de la fase', 'botton_title': 'Editar fase'}
             return render(request, self.template_name, ctx)
         form.save()
         return redirect(self.success_url)
@@ -64,7 +63,6 @@ class UpdateStage(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición de la fase'
         context['botton_title'] = 'Editar fase'
-        context['entity'] = 'Stage'
         context['action'] = 'edit'
         return context
 

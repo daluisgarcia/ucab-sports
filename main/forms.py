@@ -1,7 +1,7 @@
 from django.forms import *
 from django.core.exceptions import ValidationError
 
-from main.models import Post, Tournament, Stage, StageTournament, Role, PreTeamRegister
+from main.models import Post, Tournament, Stage, StageTournament, Role, PreTeamRegister, PreTeam
 
 """
 #Create a stage
@@ -45,6 +45,8 @@ class PostCreateForm(ModelForm):
     }
 
 
+
+
 #Formulario de torneo
 class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
@@ -69,6 +71,20 @@ class TournamentCreateForm(ModelForm):
       'id_juego': Select()
     }
 
+  #Función para validar fechas de inicio y fin del torneo
+  def clean(self):
+    cleaned_data = super().clean()
+    fecha_inicio = cleaned_data.get('fecha_inicio')
+    fecha_fin = cleaned_data.get('fecha_fin')
+    #print(fecha_inicio)
+    #print(fecha_fin)
+
+    #Se validan las fechas
+    if fecha_fin and fecha_inicio:
+      if(fecha_fin < fecha_inicio):
+          raise forms.ValidationError('La fecha de fin tiene que ser posterior a la fecha de inicio')
+
+
 
 #Formulario de fase de torneo
 class StageTournamentCreateForm(forms.Form):
@@ -88,49 +104,6 @@ class StageTournamentCreateForm(forms.Form):
         }
       )
     }
-
-
-#Formsset de las fases del torneo
-class BaseStageFormSet(formsets.BaseFormSet):
-    def clean(self):
-        """
-        Adds validation to check that no two links have the same anchor or URL
-        and that all links have both an anchor and URL.
-        """
-        if any(self.errors):
-            return
-
-        jerarquias = []
-        fases = []
-        duplicates = False
-
-        for form in self.forms:
-            if form.cleaned_data:
-                jerarquia = form.cleaned_data['jerarquia']
-                fase = form.cleaned_data['id_fase']
-
-                # Verificar repetidos
-                if jerarquia and fase:
-                    if jerarquia in jerarquias:
-                        duplicates = True
-                    jerarquias.append(jer)
-
-                    if fase in fases:
-                        duplicates = True
-                    fases.append(fase)
-
-                if duplicates:
-                    raise forms.ValidationError(
-                        'Las fases no pueden tener jerarquías repetidas',
-                        code='duplicate_links'
-                    )
-
-                # Verificar que los campos estén llenos
-                if (fase and not jerarquia) or (jerarquia and not fase):
-                    raise forms.ValidationError(
-                        'Todas las fases deben tener jerarquía.',
-                        code='missing_stage'
-                    )
 
 
 #Formulario de fase
@@ -200,6 +173,29 @@ class RoleCreateForm(ModelForm):
           'placeholder': 'Ingrese el nombre del Rol'
         }
       )
+    }
+
+
+
+#Formularios para la solicitud de inscripción a los torneos
+
+#Equipo preinscripción
+class PreteamCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
+
+  class Meta:
+    model = PreTeam
+    fields = ['nombre','logo']
+    widgets = {
+      'nombre': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el nombre del equipo'
+        }
+      ),
     }
 
 
