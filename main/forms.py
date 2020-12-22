@@ -1,7 +1,7 @@
 from django.forms import *
 from django.core.exceptions import ValidationError
 
-from main.models import Post, Tournament, Stage, StageTournament, Role, PreTeamRegister, PreTeam
+from main.models import *
 
 """
 #Create a stage
@@ -175,7 +175,24 @@ class RoleCreateForm(ModelForm):
       )
     }
 
+#Formulario de permiso
+class PermissionCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
 
+  class Meta:
+    model = Permission
+    fields = ['nombre']
+    widgets = {
+      'nombre': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el nombre del permiso'
+        }
+      )
+    }
 
 #Formularios para la solicitud de inscripción a los torneos
 

@@ -2,7 +2,7 @@
 from django.conf.urls import url
 from django.urls import path
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews, PermissionViews
 
 
 app_name='main'
@@ -45,6 +45,11 @@ urlpatterns = [
     path('rol/create/', RoleViews.CreateRole.as_view(), name='create_role'),
     path('roles/', RoleViews.RolesList.as_view(), name='role_list'),
     path('rol/edit/<int:pk>/', RoleViews.UpdateRole.as_view(), name='update_role'),
+
+    #Permission
+    path('permiso/create/', PermissionViews.CreatePermission.as_view(), name='create_permission'),
+    path('permisos/', PermissionViews.PermissionList.as_view(), name='permission_list'),
+    path('permiso/edit/<int:pk>/', PermissionViews.UpdatePermission.as_view(), name='update_permission'),
     
     #Preinscription
     path('inscripcion/<int:pk_torneo>/equipo/create/', InscriptionViews.CreatePreteam.as_view(), name='create_preteam'),

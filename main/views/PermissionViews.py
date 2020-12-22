@@ -3,21 +3,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from main.models import Role
-from main.forms import RoleCreateForm
-
-
+from main.models import Permission
+from main.forms import PermissionCreateForm
 
 # Crear juego
-class CreateRole(CreateView):
-    model = Role
-    form_class = RoleCreateForm
-    template_name = 'admin/roles/role_form.html'
-    success_url = reverse_lazy('main:role_list')
+class CreatePermission(CreateView):
+    model = Permission
+    form_class = PermissionCreateForm
+    template_name = 'admin/permission/permission_form.html'
+    success_url = reverse_lazy('main:permission_list')
 
     def post(self, request, *args, **kwargs):
         # print(request.POST)
-        form = RoleCreateForm(request.POST)
+        form = PermissionCreateForm(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(self.success_url)
@@ -28,7 +26,7 @@ class CreateRole(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Roles'
+        context['title'] = 'Permisos'
         context['botton_submit_title'] = 'Agregar'
         context['botton_cancel_title'] = 'Cancelar'
         context['action'] = 'add'
@@ -36,26 +34,26 @@ class CreateRole(CreateView):
 
 
 # Lista de roles
-class RolesList(ListView):
-    model = Role
-    template_name = 'admin/roles/role_list.html'
+class PermissionList(ListView):
+    model = Permission
+    template_name = 'admin/permission/permission_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Roles'
+        context['title'] = 'Permisos'
         return context
 
 
 # Actualizar rol
-class UpdateRole(UpdateView):
-    model = Role
-    form_class = RoleCreateForm
-    template_name = 'admin/roles/role_form.html'
-    success_url = reverse_lazy('main:role_list')
+class UpdatePermission(UpdateView):
+    model = Permission
+    form_class = PermissionCreateForm
+    template_name = 'admin/permission/permission_form.html'
+    success_url = reverse_lazy('main:permission_list')
 
     def post(self, request, pk):
         make = get_object_or_404(self.model, pk=pk)
-        form = RoleCreateForm(request.POST, instance=make)
+        form = PermissionCreateForm(request.POST, instance=make)
         if not form.is_valid():
             ctx = {'form': form}
             return render(request, self.template_name, ctx)
@@ -65,8 +63,8 @@ class UpdateRole(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición de rol'
-        context['botton_title'] = 'Editar rol'
+        context['title'] = 'Edición de permisos'
+        context['botton_title'] = 'Editar permiso'
         context['action'] = 'edit'
         return context
 

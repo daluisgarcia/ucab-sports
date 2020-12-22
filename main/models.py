@@ -61,7 +61,7 @@ class Game(models.Model):
 
 
 
-class Permition(models.Model):
+class Permission(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
 
   def __str__(self):
@@ -75,7 +75,7 @@ class Permition(models.Model):
 
 class Role(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  rol_permiso = models.ManyToManyField(Permition)
+  rol_permiso = models.ManyToManyField(Permission)
 
   def __str__(self):
     return self.nombre
