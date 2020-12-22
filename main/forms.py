@@ -1,6 +1,7 @@
 from django.forms import *
 from django.core.exceptions import ValidationError
 
+
 from main.models import *
 
 """
@@ -194,9 +195,10 @@ class PermissionCreateForm(ModelForm):
       )
     }
 
+
 #Formularios para la solicitud de inscripción a los torneos
 
-#Equipo preinscripción
+#Inscripción del Equipo
 class PreteamCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -206,15 +208,97 @@ class PreteamCreateForm(ModelForm):
 
   class Meta:
     model = PreTeam
-    fields = ['nombre','logo']
+    fields = ['nombre','logo', 'comentario']
     widgets = {
       'nombre': TextInput(
         attrs = {
           'placeholder': 'Ingrese el nombre del equipo'
         }
       ),
+      'comentario': Textarea(
+        attrs = {
+          'placeholder': '¿Tiene algún comentario que hacer sobre la inscripción? (opcional)',
+          'rows': 5
+        }
+      )
     }
 
+
+#inscripción de los participantes
+class PrePersonCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+
+  class Meta:
+    model = PrePerson
+    fields = ['cedula','nombre','apellido','correo','nickname']
+    widgets = {
+      'cedula': NumberInput(
+        attrs = {
+          'placeholder': 'Ingrese la cédula'
+        }
+      ),
+      'nombre': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el nombre del participante'
+        }
+      ),
+      'apellido': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el apellido del participante'
+        }
+      ),
+      'correo': EmailInput(
+        attrs = {
+          'placeholder': 'Ingrese el correo del participante',
+        }
+      ),
+      'nickname': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese el nickname del participante (opcional)'
+        }
+      ),
+    }
+
+#Formset de las personas
+class PersonsFormSet(formsets.BaseFormSet):
+    def clean(self):
+        """
+        Adds validation to check that no two links have the same anchor or URL
+        and that all links have both an anchor and URL.
+        """
+        if any(self.errors):
+            return
+
+        cedulas = []
+        nombres = []
+        apellidos = []
+        correos = []
+        nicknames = []
+        duplicates = False
+
+        for form in self.forms:
+            if form.cleaned_data:
+                cedula = form.cleaned_data['cedula']
+                nombre = form.cleaned_data['nombre']
+                apellido = form.cleaned_data['apellido']
+                correo = form.cleaned_data['correo']
+                nickname = form.cleaned_data['nickname']
+
+                # Verificar que no haya cédulas ni correos repetidos
+                if cedula and nombre and apellido and correo:
+                    if cedula in cedulas:
+                        duplicates = True
+                    cedulas.append(cedula)
+
+                    if correo in correos:
+                        duplicates = True
+                    correos.append(correo)
+
+                if duplicates:
+                    raise forms.ValidationError('Las cédulas y los correos deben ser distintos en todos los campos.')
 
 
 #Formulario preinscripción
@@ -226,12 +310,13 @@ class TeamRegisterCreateForm(ModelForm):
 
   class Meta:
     model = PreTeamRegister
-    fields = ['comentario']
+    fields = ['rol']
     widgets = {
-      'comentario': Textarea(
+      #ARREGLAR
+      #Hay que ponerlo para que sea un select de los participantes
+      'nickname': TextInput(
         attrs = {
-          'placeholder': 'Ingrese comentario (opcional)',
-          'rows': 5
+          'placeholder': 'Ingrese el rol del participante'
         }
       )
     }

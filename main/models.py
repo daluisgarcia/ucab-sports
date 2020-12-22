@@ -224,7 +224,7 @@ class PrePerson(models.Model):
 class PreTeam(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
-
+  comentario = models.CharField(max_length=150, verbose_name='Comentario (opcional)', null=True, blank=True)
   def __str__(self):
     return self.nombre
 
@@ -241,7 +241,6 @@ class PreTeamRegister(models.Model):
   fecha_registro = models.DateField(verbose_name='Fecha de Registro')
   rol = models.CharField(max_length=2, verbose_name='Rol')
   estatus = models.CharField(max_length=2, verbose_name='Rol')
-  comentario = models.CharField(max_length=150, verbose_name='Comentario (opcional)', null=True, blank=True)
 
   def __str__(self):
     return self.rol
