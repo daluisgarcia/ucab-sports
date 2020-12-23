@@ -1,8 +1,8 @@
 # food/urls.py
 from django.conf.urls import url
 from django.urls import path
-from django.conf import settings
 from django.conf.urls.static import static
+from django.conf import settings
 from main.views import *
 from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews, PermissionViews
 

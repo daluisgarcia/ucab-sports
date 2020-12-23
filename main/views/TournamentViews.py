@@ -45,9 +45,11 @@ class CreateTournament(CreateView):
 def createStageTournament(request, pk):
     #Se define formset de la fase
     StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','jerarquia'), extra=7)
-    #Obtenemos el torneo
+
+    #Obtenemos el torneo y se instancia el formset al torneo
     tournament = Tournament.objects.get(id=pk)
     formset = StageFormSet(queryset=StageTournament.objects.none(), instance=tournament)
+
     if request.method == 'POST':
         formset = StageFormSet(request.POST, instance=tournament)
         if formset.is_valid():
@@ -55,6 +57,7 @@ def createStageTournament(request, pk):
             messages.success(request, 'El torneo ha sido creado satisfactoriamente')
             return redirect('/torneos/')
         messages.error(request, 'Cada fase debe llevar su correspondiente jerarquía')
+        
     #Daniel, no me pegues por hacer este context así c:
     context = {'stage_formset': formset, 'title': 'Asociar fases al torneo', 'botton_title': 'Asociar fases'}
     return render(request, 'admin/tournaments/stage_tour_form.html', context)

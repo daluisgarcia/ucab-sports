@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class Person(models.Model):
-  cedula = models.IntegerField(primary_key=True)
+  cedula = models.CharField(max_length=10, verbose_name='Cédula')
   nombre = models.CharField(max_length=50, verbose_name='Nombre')
   apellido = models.CharField(max_length=50, verbose_name='Apellido')
   correo = models.EmailField(max_length=100, verbose_name='Email')
@@ -21,7 +21,7 @@ class Person(models.Model):
 #Revisar luego para cambiar el upload_to
 class Team(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
+  logo = models.ImageField(upload_to='team_logos', null=True, blank=True)
 
   def __str__(self):
     return self.nombre
@@ -103,7 +103,7 @@ class Organizer(models.Model):
 class Post(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
-  imagen = models.ImageField(upload_to='images/', null=True, blank=True)
+  imagen = models.ImageField(upload_to='static/images/post_images', null=True, blank=True)
   id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
@@ -206,7 +206,7 @@ class Participation(models.Model):
 #Modelos de solicitud de inscripción
 
 class PrePerson(models.Model):
-  cedula = models.IntegerField(primary_key=True)
+  cedula = models.CharField(max_length=10, verbose_name='Cédula')
   nombre = models.CharField(max_length=50, verbose_name='Nombre')
   apellido = models.CharField(max_length=50, verbose_name='Apellido')
   correo = models.EmailField(max_length=100, verbose_name='Email')
@@ -238,9 +238,9 @@ class PreTeamRegister(models.Model):
   id_persona = models.ForeignKey(PrePerson, on_delete=models.CASCADE)
   id_equipo = models.ForeignKey(PreTeam, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-  fecha_registro = models.DateField(verbose_name='Fecha de Registro')
+  fecha_registro = models.DateField(auto_now_add=True, verbose_name='Fecha de Registro')
   rol = models.CharField(max_length=2, verbose_name='Rol')
-  estatus = models.CharField(max_length=2, verbose_name='Rol')
+  estatus = models.CharField(max_length=1, verbose_name='Estatus')
 
   def __str__(self):
     return self.rol

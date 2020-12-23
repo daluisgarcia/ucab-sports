@@ -5,12 +5,7 @@ from django.core.exceptions import ValidationError
 from main.models import *
 
 """
-#Create a stage
-class CreateStageForm(ModelForm):
-  class Meta:
-    model = Fases
-    fields = ['nombre', 'num_partidos', 'id_mod_fase']
-
+#Se deja comentado por si llega a ser necesario
 class DateInput(forms.DateInput):
     input_type = "date"
 
@@ -265,10 +260,7 @@ class PrePersonCreateForm(ModelForm):
 #Formset de las personas
 class PersonsFormSet(formsets.BaseFormSet):
     def clean(self):
-        """
-        Adds validation to check that no two links have the same anchor or URL
-        and that all links have both an anchor and URL.
-        """
+        #Validaciones para eviat que hayan correos y cédulas repetidas
         if any(self.errors):
             return
 
@@ -280,6 +272,7 @@ class PersonsFormSet(formsets.BaseFormSet):
         duplicates = False
 
         for form in self.forms:
+          
             if form.cleaned_data:
                 cedula = form.cleaned_data['cedula']
                 nombre = form.cleaned_data['nombre']
@@ -296,12 +289,13 @@ class PersonsFormSet(formsets.BaseFormSet):
                     if correo in correos:
                         duplicates = True
                     correos.append(correo)
-
+                else:
+                    raise forms.ValidationError('Debe llenar los campos de los datos de los participantes.')
                 if duplicates:
                     raise forms.ValidationError('Las cédulas y los correos deben ser distintos en todos los campos.')
 
 
-#Formulario preinscripción
+#Formulario inscripción
 class TeamRegisterCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -314,9 +308,42 @@ class TeamRegisterCreateForm(ModelForm):
     widgets = {
       #ARREGLAR
       #Hay que ponerlo para que sea un select de los participantes
-      'nickname': TextInput(
+      'rol': TextInput(
         attrs = {
           'placeholder': 'Ingrese el rol del participante'
         }
       )
     }
+
+  def clean(self):
+    cleaned_data = super().clean()
+    rol = cleaned_data.get('rol')
+
+
+
+#Formset de los roles de la inscripción
+class TeamsRegisterFormSet(formsets.BaseFormSet):
+    def clean(self):
+        #Validaciones para verificar que haya solamente un delegado
+        if any(self.errors):
+            return
+
+        roles = []
+        duplicates = False
+
+        for form in self.forms:
+            
+            if form.cleaned_data:
+                role = form.cleaned_data['rol']
+                print('Validator: ', role)
+                # Verificar que no hayan delegados repetidos
+                if (role == 'd') or (role=='jd'):
+                    print('delegado')
+                    if role in roles:
+                        duplicates = True
+                    roles.append(role)
+                
+                if not role:
+                    raise forms.ValidationError('Debe llenar todos los campos de los roles')
+                if duplicates:
+                    raise forms.ValidationError('Sólo puede existir un delegado por equipo.')

@@ -8,7 +8,7 @@
     
     <!--Validación de errores-->
     {% csrf_token %} 
-    {% if person_formset.non_form_errors %}
+    {% if person_formset.errors or team_register_formset.errors %}
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -19,20 +19,25 @@
         ×
       </button>
       <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {% for error in person_formset.non_form_errors %}
-        <li>{{ error|escape }}</li>
+      {% for field in person_formset %} 
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %} 
+      {% endfor %}
+      
+      {% for field in team_register_formset %} 
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %} 
       {% endfor %}
     </div>
     {% endif %}
-    
+
     <label>Nombre del equipo</label>
     {{ team_form.nombre }}
 
     <label>Logo</label>
     {{ team_form.logo }}
-
-    <label>Comentario (opcional)</label>
-    {{ team_form.comentario }}
 
     {{ person_formset.management_form }}
     <h4>Ingrese los campos</h4>
@@ -45,6 +50,15 @@
             {{ person_form.nickname }}
         </div>
     {% endfor %}
+    <h4>Roles de los usuarios</h4>
+    {% for team_form in team_register_formset %}
+        <div>
+            {{ team_form.rol }}
+        </div>
+    {% endfor %}
+
+    <label>Comentario (opcional)</label>
+    {{ team_form.comentario }}
   </div>
 
   <div class="card-footer">
