@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.contrib import messages
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
@@ -39,6 +40,11 @@ class CreatePost(CreateView):
 class PostsList(ListView):
     model = Post
     template_name = 'admin/posts/post_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Posts'
+        return context
 
 
 # Detalle del post

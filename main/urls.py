@@ -1,6 +1,8 @@
 # food/urls.py
 from django.conf.urls import url
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from main.views import *
 from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews, PermissionViews
 
@@ -55,3 +57,5 @@ urlpatterns = [
     path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createPersons, name='create_inscription'),
     path('inscripciones/', InscriptionViews.PreinscriptionList.as_view(), name='inscription_list'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
