@@ -29,24 +29,26 @@
         <button class="btn btn-success btn-sm">Agregar</button>
       </div>
       <br>
-      <div class="row">
+      <div class="row ">
         <div class="col-2 text-center">
             <a class="label label-default">Imagen</a>
         </div>
         <div class="col-3 text-center">
           <a class="label label-default">Titulo</a>
         </div>
-        <div class="col-4 text-center">
+        <div class="col-3 text-center">
           <a class="label label-default">Cuerpo</a>
         </div>
       </div>
     {% for c in object_list %}
-      <ul class="list-group" style="margin-bottom: 5px;">
+      <ul class="list-group admin_list_group">
         <li class="list-group-item">
           <div class="row">
             <div class="col-2 text-center">
               <td>
-                {{ c.imagen }}
+                {% if c.imagen %}
+                <img class="post_images" src={{ c.imagen.url }}>
+                {% endif %}
               </td>
             </div>
             <div class="col-3 text-center">
@@ -54,34 +56,27 @@
                 {{ c.titulo }}
               </td>
             </div>
-            <div class="col-4 text-left">
+            <div class="col-3 text-left">
               <td class="label">
-                {{ c.cuerpo }}
+                <script>
+                  getPostSummary("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+                </script>
+                hola pue
               </td>
             </div>
-            <div class="col-3 align-middle">
-              <button class="btn btn-danger btn-flat float-right btn-sm" style="margin-right: 5pt;">
+            <div class="col-4 align-middle">
+              <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons" href="{% url 'main:delete_post' c.id %}">
                 Eliminar
-              </button>
-              <button class="btn btn-warning btn-flat float-right btn-sm" style="margin-right: 5pt;">
+              </a>
+              <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_post' c.id %}">
                 Modificar
-              </button>
+              </a>
+              <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:post_detail' c.id %}">
+                Detalle
+              </a>
             </div>
           </div>
         </li>
       </ul>
     {% endfor %}
-
-<!--
-  {% for c in object_list %}
-    <br/>{{ c.titulo }}
-    <br/>{{ c.resumen }}
-    <br/>{{ c.cuerpo }}
-    <br/>
-    <a href="{% url 'main:post_detail' c.id %}">ver post</a>
-    <a href="{% url 'main:update_post' c.id %}">update</a>
-    <a href="{% url 'main:delete_post' c.id %}">Eliminar</a>
-    <br/>
-  {% endfor %}
-    -->
 {% endblock %}

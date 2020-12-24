@@ -1,0 +1,27 @@
+.form_title {
+    font-size: 25pt;
+    font-weight: bold;
+    margin-right: 14pt;
+}
+
+.admin_buttons {
+    margin-right: 5pt;
+    color: white;
+}
+
+.post_images {
+    height: 100px;
+}
+
+.admin_list_group {
+    margin-bottom: 5px;
+}
+
+.admin_footer {
+    background-color: white; 
+    border-top: white;
+}
+
+.select_element {
+    margin-right: 14pt;
+}

@@ -28,15 +28,15 @@
           {% endif %} 
           
           <div>
-            <a style="font-size: 20pt; font-weight: bold; margin-right: 14pt;">Nombre</a>
+            <a class="form_title">Nombre</a>
             <input type="text">
           </div>
           <br>
           <div>
-            <a style="font-size: 20pt; font-weight: bold; margin-right: 14pt;">
+            <a class="form_title">
               Permisos
             </a>
-            <select name="permisos_select" id="permiso_select_id" style="margin-right: 14pt;">
+            <select class="select_element" name="permisos_select" id="permiso_select_id">
               <option value="dummy">Seleccionar</option>
             </select>
             <button class="btn btn-primary btn-sm">Agregar permiso</button>
@@ -48,7 +48,7 @@
             </ul>
           </div>
         </div>
-        <div class="card-footer" style="background-color: white; border-top: white;">
+        <div class="card-footer admin_footer">
           <button type="submit" class="btn btn-primary btn-flat float-right">
             <i class="fas fa-save"></i> {{ botton_submit_title }}
           </button>

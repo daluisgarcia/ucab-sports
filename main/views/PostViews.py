@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib import messages
+from django.conf import settings
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
@@ -18,7 +19,7 @@ class CreatePost(CreateView):
 
     def post(self, request, *args, **kwargs):
         # print(request.POST)
-        form = PostCreateForm(request.POST)
+        form = PostCreateForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'El post ha sido creado satisfactoriamente')
@@ -45,6 +46,7 @@ class PostsList(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Posts'
         return context
+
 
 
 # Detalle del post

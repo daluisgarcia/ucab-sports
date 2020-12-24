@@ -103,7 +103,7 @@ class Organizer(models.Model):
 class Post(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
-  imagen = models.ImageField(upload_to='static/images/post_images', null=True, blank=True)
+  imagen = models.ImageField(null=True, blank=True)
   id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
