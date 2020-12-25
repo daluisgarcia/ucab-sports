@@ -133,12 +133,17 @@ class Tournament(models.Model):
 
 
 class HistoryParticipation(models.Model):
+  ROLES = (
+    ('j','jugador'),
+    ('d','delegado'),
+    ('jd','delegado y jugador')
+  )
   id_persona = models.ForeignKey(Person, on_delete=models.CASCADE)
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   fecha_registro = models.DateField(verbose_name='Fecha de Registro')
   fecha_fin = models.DateField(verbose_name='Fecha de Registro', null=True, blank=True)
-  rol = models.CharField(max_length=2, verbose_name='Rol')
+  rol = models.CharField(max_length=2, choices=ROLES, verbose_name='Rol')
 
   def __str__(self):
     return self.rol
@@ -180,7 +185,7 @@ class Match(models.Model):
   id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
-    return 'Partido del torneo: {}'.format(self.id_fase_torneo.id_torneo.nombre)
+    return 'Partido del torneo: %s' % (self.id_fase_torneo.id_torneo.nombre)
 
   class Meta:
     verbose_name = 'Partido'
@@ -195,7 +200,7 @@ class Participation(models.Model):
   puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo')
 
   def __str__(self):
-    return 'Puntaje por equipo {}: {}'.format(self.puntos_equipo).format(self.id_equipo.nombre)
+    return 'Puntaje del equipo %s: %s' % (self.id_equipo.nombre,self.puntos_equipo)
 
   class Meta:
     verbose_name = 'Partido'
@@ -225,6 +230,7 @@ class PreTeam(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
   comentario = models.CharField(max_length=150, verbose_name='Comentario (opcional)', null=True, blank=True)
+  
   def __str__(self):
     return self.nombre
 
@@ -235,12 +241,17 @@ class PreTeam(models.Model):
 
 
 class PreTeamRegister(models.Model):
+  ROLES = (
+    ('j','jugador'),
+    ('d','delegado'),
+    ('jd','delegado y jugador')
+  )
   id_persona = models.ForeignKey(PrePerson, on_delete=models.CASCADE)
   id_equipo = models.ForeignKey(PreTeam, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   fecha_registro = models.DateField(auto_now_add=True, verbose_name='Fecha de Registro')
-  rol = models.CharField(max_length=2, verbose_name='Rol')
+  rol = models.CharField(max_length=2, choices=ROLES, verbose_name='Rol')
   estatus = models.CharField(max_length=1, verbose_name='Estatus')
 
   def __str__(self):
-    return self.rol
+    return 'Persona: %s, con rol %s en el equipo %s' % (self.id_persona.nombre,self.rol,self.id_equipo.nombre)

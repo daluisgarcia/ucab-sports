@@ -56,7 +56,9 @@ urlpatterns = [
     
     #Preinscription
     path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createPersons, name='create_inscription'),
-    path('inscripciones/', InscriptionViews.PreinscriptionList.as_view(), name='inscription_list'),
+    path('inscripciones/pendientes/', InscriptionViews.PreinscriptionList.as_view(), name='inscription_list'),
+    #Aprobar inscripción
+    path('inscripciones/equipo/<int:pk_team>/torneo/<int:pk_tour>', InscriptionViews.approveInscription, name='approve_inscription'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

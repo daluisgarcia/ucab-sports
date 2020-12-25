@@ -41,6 +41,7 @@ class CreatePost(CreateView):
 class PostsList(ListView):
     model = Post
     template_name = 'admin/posts/post_list.html'
+    print(model.cuerpo)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

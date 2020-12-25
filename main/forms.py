@@ -257,6 +257,8 @@ class PrePersonCreateForm(ModelForm):
       ),
     }
 
+
+
 #Formset de las personas
 class PersonsFormSet(formsets.BaseFormSet):
     def clean(self):
@@ -304,20 +306,10 @@ class TeamRegisterCreateForm(ModelForm):
 
   class Meta:
     model = PreTeamRegister
-    fields = ['rol']
+    fields = ('rol',)
     widgets = {
-      #ARREGLAR
-      #Hay que ponerlo para que sea un select de los participantes
-      'rol': TextInput(
-        attrs = {
-          'placeholder': 'Ingrese el rol del participante'
-        }
-      )
+      'rol': Select()
     }
-
-  def clean(self):
-    cleaned_data = super().clean()
-    rol = cleaned_data.get('rol')
 
 
 
