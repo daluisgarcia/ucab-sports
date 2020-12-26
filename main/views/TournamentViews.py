@@ -16,7 +16,7 @@ class CreateTournament(CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
-
+ 
     def post(self, request, *args, **kwargs):
         #print(request.POST)
         form = TournamentCreateForm(request.POST)
@@ -68,6 +68,10 @@ class TournamentList(ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Torneos'
+        return context
 
 #Detalle del torneo
 class TournamentDetail(DetailView):

@@ -25,3 +25,9 @@
 .select_element {
     margin-right: 14pt;
 }
+
+.admin_menu_button {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
