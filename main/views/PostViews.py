@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib import messages
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
@@ -11,7 +12,7 @@ from main.forms import PostCreateForm
 
 
 # Crear Post
-class CreatePost(CreateView):
+class CreatePost(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostCreateForm
     template_name = 'admin/posts/post_form.html'
@@ -57,7 +58,7 @@ class PostDetail(DetailView):
 
 
 # Actualizar Post
-class UpdatePost(UpdateView):
+class UpdatePost(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostCreateForm
     template_name = 'admin/posts/post_form.html'
@@ -85,7 +86,7 @@ class UpdatePost(UpdateView):
 
 
 #Eliminar post
-class DeletePost(DeleteView):
+class DeletePost(LoginRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('main:post_list')
     template_name = 'admin/posts/post_confirm_delete.html'

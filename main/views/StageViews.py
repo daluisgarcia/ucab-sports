@@ -2,13 +2,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import StageCreateForm
 
 
 #Crear fase
-class CreateStage(CreateView):
+class CreateStage(LoginRequiredMixin, CreateView):
     model = Stage
     form_class = StageCreateForm
     template_name = 'admin/stages/stage_form.html'
@@ -33,32 +34,29 @@ class CreateStage(CreateView):
 
 
 #Lista de fases
-class StageList(ListView):
+class StageList(LoginRequiredMixin, ListView):
     model = Stage
     template_name = 'admin/stages/stage_list.html'
 
 
 #Detalle de fase
-class StageDetail(DetailView):
+class StageDetail(LoginRequiredMixin, DetailView):
     model = Stage
     template_name = 'admin/stages/stage_detail.html'
 
 
 #Actualizar fase
-class UpdateStage(UpdateView):
+class UpdateStage(LoginRequiredMixin, UpdateView):
     model = Stage
     template_name = 'admin/stages/stage_form.html'
     success_url = reverse_lazy('main:stage_list')
 
-<<<<<<< Updated upstream
-=======
     def get(self, request, pk):
         stage = get_object_or_404(self.model, pk=pk)
         form = StageCreateForm(instance=stage)
         ctx = {'form': form}
         return render(request, self.template_name, ctx)
 
->>>>>>> Stashed changes
     def post(self, request, pk):
         stage = get_object_or_404(self.model, pk=pk)
         form = StageCreateForm(request.POST, instance=stage)
@@ -77,7 +75,7 @@ class UpdateStage(UpdateView):
 
 
 #Eliminar fase
-class DeleteStage(DeleteView):
+class DeleteStage(LoginRequiredMixin, DeleteView):
     model = Stage
     success_url = reverse_lazy('main:stage_list')
     template_name = 'admin/stages/stage_confirm_delete.html'

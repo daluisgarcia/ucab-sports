@@ -4,15 +4,14 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.forms import inlineformset_factory
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Post, Tournament, Stage, Game, StageTournament
 from main.forms import TournamentCreateForm, StageTournamentCreateForm
 
 
-
-
 #Crear Torneo
-class CreateTournament(CreateView):
+class CreateTournament(LoginRequiredMixin, CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
