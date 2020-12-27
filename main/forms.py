@@ -54,7 +54,7 @@ class TournamentCreateForm(ModelForm):
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'juego']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -64,7 +64,7 @@ class TournamentCreateForm(ModelForm):
       'fecha_inicio': DateInput(),
       'fecha_fin': DateInput(),
       'edicion': NumberInput(),
-      'juego': Select()
+      'id_juego': Select()
     }
 
   #Función para validar fechas de inicio y fin del torneo

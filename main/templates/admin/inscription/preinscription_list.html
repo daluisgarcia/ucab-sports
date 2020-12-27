@@ -1,0 +1,21 @@
+{% extends 'admin/adminMain.html' %}
+{% block head %}
+
+  <h1>Solicitudes de inscripción</h1>
+
+  {% for team in teams %}
+    <br/>{{ team.nombre }}
+    {% for reg in register %}
+      {% if team.id == reg.id_equipo.id %}
+        {{ reg.id_torneo.nombre }}
+        {{ reg.estatus }}
+        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo.id reg.id_torneo.id %}">Aprobar</a>
+        <br/>
+        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id %}">Ver detalle</a>
+      {% endif %}
+      {% break %}
+    {% endfor %}
+    <br/>
+  {% endfor %}
+    
+{% endblock %}

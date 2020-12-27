@@ -55,8 +55,9 @@ urlpatterns = [
     path('permiso/edit/<int:pk>/', PermissionViews.UpdatePermission.as_view(), name='update_permission'),
     
     #Preinscription
-    path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createPersons, name='create_inscription'),
-    path('inscripciones/pendientes/', InscriptionViews.PreinscriptionList.as_view(), name='inscription_list'),
+    path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createRegisterTeam, name='create_inscription'),
+    path('inscripciones/pendientes/', InscriptionViews.preinscriptionList, name='inscription_list'),
+    path('inscripcion/<int:pk>/', InscriptionViews.preinscriptionDetail, name='inscription_detail'),
     #Aprobar inscripción
     path('inscripciones/equipo/<int:pk_team>/torneo/<int:pk_tour>', InscriptionViews.approveInscription, name='approve_inscription'),
 ]

@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.views.generic import DetailView
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -14,7 +15,7 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 #Cuando no se llenan todos los roles, igual pasa el is_valid() (es decir, no debería pasar ese formulario)
 
 #Inscribir a los participantes del torneo
-def createPersons(request, pk_torneo):
+def createRegisterTeam(request, pk_torneo):
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
     person_number = StageTournament.objects.get(jerarquia=1, id_torneo=pk_torneo).id_fase.part_por_equipo
 
@@ -119,24 +120,18 @@ def createPersons(request, pk_torneo):
 
 
 
-#Lista de inscripciones
-class PreinscriptionList(ListView):
-    model = PreTeamRegister
-    template_name = 'admin/inscription/tournament_request_list.html'
-
-
-
 #Aprobar inscripción
 def approveInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister
     preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
-    print(preteamregister)
+    #print(preteamregister)
 
     #Arrays donde se ingresarán los datos
     new_persons = []
     register_team = []
     ci = []
     #Creamos los registros de los participantes
+    
     for person in preteamregister:
         print(person.id)
         
@@ -148,28 +143,31 @@ def approveInscription(request, pk_team, pk_tour):
 
         if anterior_registro:
             print('Sí he participado antes, soy: ', anterior_registro)
+            print(anterior_registro.correo)
 
             #Opciones:
             #Se actualizan los correos y se mandan a ambos correos (en caso de haber uno nuevo y uno viejo) la aprobación de inscripción
             #No se procesa la solicitud porque hay cédulas iguales con nombres distintos. Se le notifica al organizador
-            anterior_registro.correo = person.correo
+            anterior_registro.correo = person.id_persona.correo
             anterior_registro.save()
 
         #Sino, se forma nuevo registro
         else:
-            ci.append(person.id_persona.cedula)
             new_persons.append(Person(cedula=person.id_persona.cedula, nombre=person.id_persona.nombre, apellido=person.id_persona.apellido, correo=person.id_persona.correo, nickname=person.id_persona.nickname))
-    
+        ci.append(person.id_persona.cedula)
+
     Person.objects.bulk_create(new_persons)
-    
+    print(ci)
+
     #Creación del equipo 
     for reg in preteamregister:    
         #Busquemos si este equipo ha participado antes en un torneo de este mismo tipo de juego
-        #juego = Game.objects.get(nombre=reg.id_torneo.id_juego.nombre)
+        #Nombre del torneo tal del juego tal
+        torneo = Tournament.objects.filter(id_juego__nombre=reg.id_torneo.id_juego.nombre)
         #torneo = Tournament.objects.get(id_juego=Game.objects.get(nombre=nombre))
         try:
             #Revisar query súper yuca
-            ant_registro = Team.objects.get(nombre=reg.id_equipo.nombre, id_torneo=Tournament.objects.get(id_juego=Game.objects.get(nombre=nombre)))
+            ant_registro = HistoryParticipation.objects.filter(id_equipo__nombre=reg.id_equipo.nombre, id_torneo__in=torneo)
         except Team.DoesNotExist:
             ant_registro = None
 
@@ -178,25 +176,55 @@ def approveInscription(request, pk_team, pk_tour):
             nuevo_registro_equipo = Team(nombre=reg.id_equipo.nombre, logo=reg.id_equipo.logo)
             nuevo_registro_equipo.save()
         else:
-            nuevo_registro_equipo = ant_registro
+        #Si existe, lo buscamos
+            nuevo_registro_equipo = Team.objects.get(id=ant_registro[0].id_equipo.id)
         break
-
+    
+    print(nuevo_registro_equipo)
+    
     #Creamos los registros de los participantes en el torneo
     i=0
-    for reg in preteamregister:    
+    for reg in preteamregister:
         pk_persona = Person.objects.get(cedula=ci[i])
 
         register_team.append(HistoryParticipation(id_persona=pk_persona, id_equipo=nuevo_registro_equipo, id_torneo=reg.id_torneo, fecha_registro=reg.fecha_registro, rol=reg.rol))
-        
+        print(register_team)
         i=i+1
 
-    HistoryParticipation.bulk_create(register_team)
+    HistoryParticipation.objects.bulk_create(register_team)
 
     #Se borran los registros de las tablas PrePerson y a su vez de PreTeamRegister
+    i=0
     for reg in preteamregister:    
-        person_delete = PrePerson.objects.get(id=reg.id_persona)
+        person_delete = PrePerson.objects.get(cedula=ci[i])
         person_delete.delete()
+        i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()
-    
+
     return redirect('/inscripciones/pendientes/')
+
+
+#Lista de inscripciones
+def preinscriptionList(request):
+    teams = PreTeam.objects.all()
+    register = PreTeamRegister.objects.all()
+
+    context = {
+        'teams': teams,
+        'register': register
+    }
+
+    return render(request, 'admin/inscription/preinscription_list.html', context)
+
+
+#Detalle de inscripciones
+def preinscriptionDetail(request, pk):
+    register = PreTeamRegister.objects.get(id=pk)
+    
+    context = {
+        'register': register
+    }
+
+    return render(request, 'layouts/inscription/preinscription_detail.html', context)
+

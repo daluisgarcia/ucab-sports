@@ -1,7 +1,7 @@
 {% extends 'admin/adminMain.html' %}
 {% block content %}
   <br>
-  <h2 class="text-center">{{ title }}</h2>
+  <h2 class="text-center">{{ Lista de torneos }}</h2>
 
   <div class="card-body">
     <!--Validación de errores-->
@@ -59,7 +59,7 @@
           {{ c.nombre }}
         </div>
         <div class="col-2 text-center">
-          {{ c.juego }}
+          {{ c.id_juego }}
         </div>
         <div class="col-1 text-center">
           {{ c.edicion }}

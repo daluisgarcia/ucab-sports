@@ -58,7 +58,6 @@ def createStageTournament(request, pk):
             return redirect('/torneos/')
         messages.error(request, 'Cada fase debe llevar su correspondiente jerarquía')
         
-    #Daniel, no me pegues por hacer este context así c:
     context = {'stage_formset': formset, 'title': 'Asociar fases al torneo', 'botton_title': 'Asociar fases'}
     return render(request, 'admin/tournaments/stage_tour_form.html', context)
 
@@ -68,10 +67,6 @@ class TournamentList(ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Torneos'
-        return context
 
 #Detalle del torneo
 class TournamentDetail(DetailView):
