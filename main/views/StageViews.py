@@ -50,9 +50,18 @@ class UpdateStage(UpdateView):
     template_name = 'admin/stages/stage_form.html'
     success_url = reverse_lazy('main:stage_list')
 
+<<<<<<< Updated upstream
+=======
+    def get(self, request, pk):
+        stage = get_object_or_404(self.model, pk=pk)
+        form = StageCreateForm(instance=stage)
+        ctx = {'form': form}
+        return render(request, self.template_name, ctx)
+
+>>>>>>> Stashed changes
     def post(self, request, pk):
-        make = get_object_or_404(self.model, pk=pk)
-        form = StageCreateForm(request.POST, instance=make)
+        stage = get_object_or_404(self.model, pk=pk)
+        form = StageCreateForm(request.POST, instance=stage)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición de la fase', 'botton_title': 'Editar fase'}
             return render(request, self.template_name, ctx)
