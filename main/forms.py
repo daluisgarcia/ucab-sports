@@ -142,7 +142,7 @@ class GameCreateForm(ModelForm):
       form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
-    model = Stage
+    model = Game
     fields = ['nombre']
     widgets = {
       'nombre': TextInput(

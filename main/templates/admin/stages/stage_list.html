@@ -1,8 +1,115 @@
-{% extends 'layouts/head.html ' %}
-{% block head %}
+{% extends 'admin/adminMain.html' %}
+{% block content %}
 
-  <h1>Lista de fases</h1>
+<br>
+<h2 class="text-center">{{ title }}</h2>
 
+  <div class="card-body">
+    <!--Validación de errores-->
+    {% csrf_token %} 
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-hidden="true"
+      >
+        ×
+      </button>
+      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+      {% for field in form %} 
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %} 
+      {% endfor %}
+    </div>
+    {% endif %} 
+
+    <div>
+      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_stage' %}">
+        Agregar
+      </a>
+    </div>
+    <br>
+    <div class="row ml-2">
+      <div class="col-2 text-center">
+          <a class="label label-default">Nombre</a>
+      </div>
+      <div class="col-3 text-center">
+        <a class="label label-default">Descripcion</a>
+      </div>
+      <div class="col-1 text-center">
+        <a class="label label-default">Equipos por grupo</a>
+      </div>
+      <div class="col-1 text-center">
+        <a class="label label-default">Numero de grupos</a>
+      </div>
+      <div class="col-1 text-center">
+        <a class="label label-default">Partidos por equipo</a>
+      </div>
+      <div class="col-1 text-center">
+        <a class="label label-default">Equipos por partido</a>
+      </div>
+      <div class="col-3 text-center"></div>
+    </div>
+
+    {% for stage in stage_list %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-2 text-center">
+            {{ stage.nombre }}
+          </div>
+          <div class="col-3 text-center">
+            {{ stage.descripcion }}
+          </div>
+          <div class="col-1 text-center">
+            {{ stage.equipos_por_grupo }}
+          </div>
+          <div class="col-1 text-center">
+            {{ stage.num_grupos }}
+          </div>
+          <div class="col-1 text-center">
+            {{ stage.part_por_equipo }}
+          </div>
+          <div class="col-1 text-center">
+            {{ stage.equipos_por_partido }}
+          </div>
+          <div class="col-3 text-center">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_stage">
+              Eliminar
+            </button>
+            <div class="modal fade" id="delete_modal_stage" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar esta fase?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Esto eliminará el registro de manera permanente.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Si</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_stage' stage.id %}">
+              Modificar
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+  </div>
+
+  <!-- 
   {% for stage in stage_list %}
     <br/><strong>{{ stage.nombre }}</strong>
     <br/>{{ stage.descripcion }}
@@ -16,5 +123,5 @@
     <a href="{% url 'main:delete_stage' stage.id %}">Eliminar</a>
     <br/>
   {% endfor %}
-
+    -->
 {% endblock %}

@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib import messages
 
 from main.models import Game
 from main.forms import GameCreateForm
@@ -20,6 +21,7 @@ class CreateGame(CreateView):
         form = GameCreateForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'El juego ha sido creado satisfactoriamente')
             return HttpResponseRedirect(self.success_url)
         self.object = None
         context = self.get_context_data(**kwargs)
@@ -38,6 +40,11 @@ class CreateGame(CreateView):
 class GamesList(ListView):
     model = Game
     template_name = 'admin/games/game_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Juegos'
+        return context
 
 
 # Actualizar Post

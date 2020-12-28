@@ -1,7 +1,7 @@
 {% extends 'admin/adminMain.html' %}
 {% block content %}
   <br>
-  <h2 class="text-center">{{ Lista de torneos }}</h2>
+  <h2 class="text-center">{{ title }}</h2>
 
   <div class="card-body">
     <!--Validación de errores-->
@@ -71,13 +71,28 @@
           {{ c.fecha_fin }}
         </div>
         <div class="col-4 text-center">
-          <button class="btn btn-danger btn-flat float-right btn-sm admin_buttons" onclick="if (confirm('Estas seguro que quieres borrar este torneo?')) {
-            // se elimina
-            
-          } else {
-            // no se hace nada
-           
-          }">Eliminar</button>
+          <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_tournament">
+            Eliminar
+          </button>
+          <div class="modal fade" id="delete_modal_tournament" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este torneo?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Esto eliminará el registro de manera permanente.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-primary">Si</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_tournament' c.id %}">
             Modificar
           </a>
@@ -90,17 +105,4 @@
   </ul>
   {% endfor %}
 </div>
-<!-- 
-  {% for c in object_list %}
-    <br/>{{ c.nombre }}
-    <br/>{{ c.fecha_inicio }}
-    <br/>{{ c.fecha_fin }}
-    <br/>{{ c.edicion }}
-    <br/>
-    <a href="{% url 'main:tournament_detail' c.id %}">ver torneo</a>
-    <a href="{% url 'main:update_tournament' c.id %}">update</a>
-    <a href="{% url 'main:delete_tournament' c.id %}">Eliminar</a>
-    <br/>
-  {% endfor %}
--->
 {% endblock %}

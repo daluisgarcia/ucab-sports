@@ -1,6 +1,7 @@
-{% extends 'layouts/head.html' %}
-{% block head %}
-<h1>{{ title }}</h1>
+{% extends 'admin/adminMain.html' %}
+{% block content %}
+  <br>
+  <h2 class="text-center"> Fases </h2>
 
 <form method="POST" action="">
 
@@ -35,9 +36,12 @@
     {% endfor %}
   </div>
   <div class="card-footer">
-    <button type="submit" class="btn btn-primary btn-flat">
-      <i class="fas fa-save"></i> {{ botton_title }}
+    <button type="submit" class="btn btn-primary btn-flat float-right">
+      <i class="fas fa-save"></i> Procesar
     </button>
+    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
+      Cancelar
+    </a>
   </div>
 
 </form>

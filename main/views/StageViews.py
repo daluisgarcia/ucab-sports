@@ -38,6 +38,11 @@ class StageList(LoginRequiredMixin, ListView):
     model = Stage
     template_name = 'admin/stages/stage_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fases'
+        return context
+
 
 #Detalle de fase
 class StageDetail(LoginRequiredMixin, DetailView):
@@ -68,7 +73,7 @@ class UpdateStage(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición de la fase'
+        context['title'] = 'Fases'
         context['botton_title'] = 'Editar fase'
         context['action'] = 'edit'
         return context
