@@ -258,7 +258,8 @@ class PrePersonCreateForm(ModelForm):
     }
 
 
-
+#REVISAR
+#La validacion s eetsa haciendo pero no muestra el error en el template :(
 #Formset de las personas
 class PersonsFormSet(formsets.BaseFormSet):
     def clean(self):
@@ -286,13 +287,14 @@ class PersonsFormSet(formsets.BaseFormSet):
                 if cedula and nombre and apellido and correo:
                     if cedula in cedulas:
                         duplicates = True
+                        print('CEDULAS REPETIDAS')
                     cedulas.append(cedula)
 
                     if correo in correos:
                         duplicates = True
+                        print('CORREOS REPETIDOS')
                     correos.append(correo)
-                else:
-                    raise forms.ValidationError('Debe llenar los campos de los datos de los participantes.')
+                
                 if duplicates:
                     raise forms.ValidationError('Las cédulas y los correos deben ser distintos en todos los campos.')
 
@@ -327,7 +329,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
             
             if form.cleaned_data:
                 role = form.cleaned_data['rol']
-                print('Validator: ', role)
+                print('Rol validator: ', role)
                 # Verificar que no hayan delegados repetidos
                 if (role == 'd') or (role=='jd'):
                     print('delegado')

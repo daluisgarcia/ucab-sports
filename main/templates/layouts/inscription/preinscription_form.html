@@ -8,7 +8,7 @@
     
     <!--Validación de errores-->
     {% csrf_token %} 
-    {% if person_formset.errors or team_register_formset.non_field_errors %}
+    {% if person_formset.errors or team_register_formset.errors %}
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -19,9 +19,8 @@
         ×
       </button>
       <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {% for error in team_register_formset.non_field_errors %} 
-          <li>{{ error }}</li>
-      {% endfor %}
+      {{ team_register_formset.errors.as_ul }} 
+      {{ person_formset.errors.as_ul }} 
     </div>
     {% endif %}
 

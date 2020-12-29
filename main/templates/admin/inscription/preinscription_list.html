@@ -3,19 +3,23 @@
 
   <h1>Solicitudes de inscripción</h1>
 
-  {% for team in teams %}
-    <br/>{{ team.nombre }}
+  {% if cant_pendientes > 0 %}
+    <h3>Solicitudes pendientes</h3>
     {% for reg in register %}
-      {% if team.id == reg.id_equipo.id %}
-        {{ reg.id_torneo.nombre }}
-        {{ reg.estatus }}
-        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo.id reg.id_torneo.id %}">Aprobar</a>
+      {% if reg.estatus == 'p' %}
+      <h4>paso</h4>
+        {{ reg.id_equipo__nombre }}
+        {{ reg.id_torneo__nombre }}
+        {% if reg.id_equipo__comentario %}
+          {{ reg.id_equipo__comentario }}
+        {% endif %}
+        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
+        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
         <br/>
-        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id %}">Ver detalle</a>
       {% endif %}
-      {% break %}
     {% endfor %}
-    <br/>
-  {% endfor %}
+  {% endif %}
+  <br/>
+
     
 {% endblock %}

@@ -67,7 +67,7 @@ def createRegisterTeam(request, pk_torneo):
             
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
-                print('Form: ', role)
+                print('Role Form: ', role)
 
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
@@ -92,6 +92,7 @@ def createRegisterTeam(request, pk_torneo):
 
                 if (not cedula) or (not nombre) or (not apellido) or (not correo):
                     messages.error(request, 'Debe llenar los campos de los datos de los participantes')
+                    break
             """
             for role_form in team_register_formset:
                 role = role_form.cleaned_data.get('rol')
@@ -202,17 +203,22 @@ def approveInscription(request, pk_team, pk_tour):
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()
 
+    messages.success(request, 'Se ha registrado al equipo en el torneo exitosamente')
     return redirect('/inscripciones/pendientes/')
 
 
 #Lista de inscripciones
 def preinscriptionList(request):
-    teams = PreTeam.objects.all()
-    register = PreTeamRegister.objects.all()
-
+    register = PreTeamRegister.objects.values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','estatus','id_equipo__comentario').distinct('id_equipo')
+    cant_pendientes = PreTeamRegister.objects.filter(estatus='p').count()
+    cant_aprobadas = PreTeamRegister.objects.filter(estatus='a').count()
+    print(register)
+    print(cant_pendientes)
+    print(cant_aprobadas)
     context = {
-        'teams': teams,
-        'register': register
+        'register': register,
+        'cant_pendientes': cant_pendientes,
+        'cant_aprobadas': cant_aprobadas
     }
 
     return render(request, 'admin/inscription/preinscription_list.html', context)
@@ -220,11 +226,11 @@ def preinscriptionList(request):
 
 #Detalle de inscripciones
 def preinscriptionDetail(request, pk):
-    register = PreTeamRegister.objects.get(id=pk)
+    persons = PreTeamRegister.objects.filter(id_equipo=pk)
     
     context = {
-        'register': register
+        'persons': persons
     }
 
-    return render(request, 'layouts/inscription/preinscription_detail.html', context)
+    return render(request, 'admin/inscription/preinscription_detail.html', context)
 

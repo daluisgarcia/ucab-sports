@@ -1,7 +1,16 @@
 {% extends 'admin/adminMain.html' %}
 {% block head %}
 
-<h1>Detalle de inscripción</h1>
+    <h1>Detalle de inscripción</h1>
 
-
+    {% for person in persons %}
+        {{ person.id_persona.cedula }}
+        {{ person.id_persona.nombre }}
+        {{ person.id_persona.apellido }}
+        {{ person.id_persona.nickname }}
+        <br/>
+    {% endfor %}
+    <br/>
+    <a href="{% url 'main:inscription_list' %}">Volver</a>
+    
 {% endblock %}
