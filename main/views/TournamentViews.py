@@ -6,7 +6,7 @@ from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Post, Tournament, Stage, Game, StageTournament
+from main.models import Post, Tournament, Stage, Game, StageTournament, StageStandard
 from main.forms import TournamentCreateForm, StageTournamentCreateForm
 
 
@@ -76,6 +76,10 @@ class TournamentDetail(DetailView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_detail.html'
 
+def tournamentInfo(request, pk):
+    tournament = Tournament.objects.get(id=pk)
+    tourStage = StageTournament.objects.filter(id_torneo=pk)
+    return render(request, 'admin/tournaments/tournament_detail.html', {'tournament': tournament, 'tourStage': tourStage})
 
 #Editar Torneo
 class UpdateTournament(UpdateView):
