@@ -60,6 +60,12 @@ urlpatterns = [
     path('inscripcion/<int:pk>/', InscriptionViews.preinscriptionDetail, name='inscription_detail'),
     #Aprobar inscripción
     path('inscripciones/equipo/<int:pk_team>/torneo/<int:pk_tour>', InscriptionViews.approveInscription, name='approve_inscription'),
+    #Anular inscripción
+    path('inscripciones/anular/equipo/<int:pk_team>/torneo/<int:pk_tour>', InscriptionViews.failInscription, name='fail_inscription'),
+
+    #Histórico de equipos por torneo
+    path('equipos/', InscriptionViews.inscriptionList, name='team_list'),
+    path('equipo/<int:pk>/', InscriptionViews.inscriptionDetail, name='team_detail'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -25,7 +25,7 @@ class PostCreateForm(ModelForm):
 
   class Meta:
     model = Post
-    fields = ['titulo', 'cuerpo', 'imagen']
+    fields = ['titulo', 'cuerpo', 'imagen', 'id_torneo']
     widgets = {
       'titulo': TextInput(
         attrs = {
@@ -37,7 +37,8 @@ class PostCreateForm(ModelForm):
           'placeholder': 'Ingrese el cuerpo del post',
           'rows': 5
         }
-      )
+      ),
+      'id_torneo': Select()
     }
 
 

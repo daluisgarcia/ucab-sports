@@ -1,25 +1,23 @@
 {% extends 'admin/adminMain.html' %}
 {% block head %}
 
-  <h1>Solicitudes de inscripción</h1>
+  <h1>Solicitudes pendientes</h1>
 
   {% if cant_pendientes > 0 %}
-    <h3>Solicitudes pendientes</h3>
+    <h3></h3>
     {% for reg in register %}
-      {% if reg.estatus == 'p' %}
-      <h4>paso</h4>
-        {{ reg.id_equipo__nombre }}
-        {{ reg.id_torneo__nombre }}
-        {% if reg.id_equipo__comentario %}
-          {{ reg.id_equipo__comentario }}
-        {% endif %}
-        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
-        <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
-        <br/>
+      {{ reg.id_equipo__nombre }}
+      {{ reg.id_torneo__nombre }}
+      {% if reg.id_equipo__comentario %}
+        {{ reg.id_equipo__comentario }}
       {% endif %}
+      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
+      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>
+      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
+      <br/>
     {% endfor %}
+  {% else %}
+    <h4>¡No tienes Solicitudes pendientes por aprobar!</h4>
   {% endif %}
-  <br/>
-
     
 {% endblock %}

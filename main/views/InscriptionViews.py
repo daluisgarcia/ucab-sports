@@ -58,7 +58,9 @@ def createRegisterTeam(request, pk_torneo):
                 ci.append(cedula)
                 
                 if cedula and nombre and apellido and correo:
-                    new_persons.append(PrePerson(cedula=cedula, nombre=nombre, apellido=apellido, correo=correo, nickname=nickname))
+                    #Si este usuario no ha solicitado inscripción en otro torneo, entonces lo mete en el array
+                    if (PrePerson.objects.filter(cedula=cedula).count() == 0):
+                        new_persons.append(PrePerson(cedula=cedula, nombre=nombre, apellido=apellido, correo=correo, nickname=nickname))
 
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
@@ -72,7 +74,7 @@ def createRegisterTeam(request, pk_torneo):
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
                 if role:
-                    new_team_register.append(PreTeamRegister(rol=role, estatus='p', id_equipo=pk_team, id_persona=pk_persona,  id_torneo=pk_tournament))
+                    new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=pk_tournament))
                 i=i+1
             
             PreTeamRegister.objects.bulk_create(new_team_register)
@@ -142,7 +144,7 @@ def approveInscription(request, pk_team, pk_tour):
         except Person.DoesNotExist:
             anterior_registro = None
 
-        if anterior_registro:
+        if anterior_registro is not None:
             print('Sí he participado antes, soy: ', anterior_registro)
             print(anterior_registro.correo)
 
@@ -194,10 +196,12 @@ def approveInscription(request, pk_team, pk_tour):
 
     HistoryParticipation.objects.bulk_create(register_team)
 
-    #Se borran los registros de las tablas PrePerson y a su vez de PreTeamRegister
+    #Se verifica si la persona ha solicitado inscripcion en otro torneo, si no es asi Se borran los registros de las tablas PrePerson. Siempre se borran los datos de PreTeamRegister
     i=0
     for reg in preteamregister:    
         person_delete = PrePerson.objects.get(cedula=ci[i])
+        if (PreTeamRegister.objects.filter(id_persona=person_delete).count()):
+            print('paso')
         person_delete.delete()
         i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
@@ -207,24 +211,42 @@ def approveInscription(request, pk_team, pk_tour):
     return redirect('/inscripciones/pendientes/')
 
 
-#Lista de inscripciones
+
+
+#Anular inscripción
+def failInscription(request, pk_team, pk_tour):
+    #Buscamos los registros de PreTeamRegister
+    preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
+
+    #Se borran los registros de las tablas PrePerson y a su vez de PreTeamRegister
+    for reg in preteamregister:
+        person = PrePerson.objects.get(id=reg.id_persona.id)
+        #Se borra a la persona unicamente si aparece una sola vez en las solicitudes de inscripcion
+        if (PreTeamRegister.objects.filter(id_persona=person).count() == 1):
+            person.delete()
+
+    team_delete = PreTeam.objects.get(id=pk_team)
+    team_delete.delete()
+
+    messages.success(request, 'Se ha anulado la solicitud de inscripción')
+    return redirect('/inscripciones/pendientes/')
+
+
+#Lista de solicitudes de inscripciones
 def preinscriptionList(request):
-    register = PreTeamRegister.objects.values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','estatus','id_equipo__comentario').distinct('id_equipo')
-    cant_pendientes = PreTeamRegister.objects.filter(estatus='p').count()
-    cant_aprobadas = PreTeamRegister.objects.filter(estatus='a').count()
+    register = PreTeamRegister.objects.values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').distinct('id_equipo')
+    cant_pendientes = PreTeamRegister.objects.filter().count()
     print(register)
     print(cant_pendientes)
-    print(cant_aprobadas)
     context = {
         'register': register,
-        'cant_pendientes': cant_pendientes,
-        'cant_aprobadas': cant_aprobadas
+        'cant_pendientes': cant_pendientes
     }
 
     return render(request, 'admin/inscription/preinscription_list.html', context)
 
 
-#Detalle de inscripciones
+#Detalle de solicitud de inscripcion
 def preinscriptionDetail(request, pk):
     persons = PreTeamRegister.objects.filter(id_equipo=pk)
     
@@ -234,3 +256,27 @@ def preinscriptionDetail(request, pk):
 
     return render(request, 'admin/inscription/preinscription_detail.html', context)
 
+
+#Lista de inscripciones (Lista de equipos)
+def inscriptionList(request):
+    register = HistoryParticipation.objects.values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo__nombre','fecha_registro','fecha_fin').distinct('id_equipo')
+    cant_pendientes = HistoryParticipation.objects.filter().count()
+    print(register)
+    print(cant_pendientes)
+    context = {
+        'register': register,
+        'cant_pendientes': cant_pendientes
+    }
+
+    return render(request, 'admin/inscription/inscription_list.html', context)
+
+
+#Detalle de inscripcion (detalle de equipo)
+def inscriptionDetail(request, pk):
+    persons = HistoryParticipation.objects.filter(id_equipo=pk)
+    
+    context = {
+        'persons': persons
+    }
+
+    return render(request, 'admin/inscription/inscription_detail.html', context)

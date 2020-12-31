@@ -1,0 +1,19 @@
+{% extends 'admin/adminMain.html' %}
+{% block head %}
+
+  <h1>Históricos de Equipos</h1>
+
+  {% if cant_pendientes > 0 %}
+    {% for reg in register %}
+      {{ reg.id_equipo__nombre }}
+      {{ reg.id_torneo__nombre }}
+      {{ reg.fecha_registro }}
+      {{ reg.fecha_fin }}
+      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:team_detail' reg.id_equipo %}">Ver integrantes</a>
+      <br/>
+    {% endfor %}
+  {% else %}
+    <h4>¡No tienes Solicitudes pendientes por aprobar!</h4>
+  {% endif %}
+    
+{% endblock %}

@@ -100,21 +100,6 @@ class Organizer(models.Model):
 
 
 
-class Post(models.Model):
-  titulo = models.CharField(max_length=50, verbose_name='Título')
-  cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
-  imagen = models.ImageField(null=True, blank=True)
-  id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
-
-  def __str__(self):
-    return self.titulo
-
-  class Meta:
-    verbose_name = 'Post'
-    verbose_name_plural = 'Posts'
-
-
-
 class Tournament(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
@@ -129,6 +114,22 @@ class Tournament(models.Model):
   class Meta:
     verbose_name = 'Torneo'
     verbose_name_plural = 'Torneos'
+
+
+
+class Post(models.Model):
+  titulo = models.CharField(max_length=50, verbose_name='Título')
+  cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
+  imagen = models.ImageField(null=True, blank=True)
+  id_torneo = models.ForeignKey(Tournament, verbose_name='Torneo del post', on_delete=models.SET_NULL, null=True, blank=True)
+  id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
+
+  def __str__(self):
+    return self.titulo
+
+  class Meta:
+    verbose_name = 'Post'
+    verbose_name_plural = 'Posts'
 
 
 
@@ -251,7 +252,6 @@ class PreTeamRegister(models.Model):
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   fecha_registro = models.DateField(auto_now_add=True, verbose_name='Fecha de Registro')
   rol = models.CharField(max_length=2, choices=ROLES, verbose_name='Rol')
-  estatus = models.CharField(max_length=1, verbose_name='Estatus')
 
   def __str__(self):
     return 'Persona: %s, con rol %s en el equipo %s' % (self.id_persona.nombre,self.rol,self.id_equipo.nombre)
