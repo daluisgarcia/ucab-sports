@@ -28,7 +28,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="#">Torneos</a>
           </li>
@@ -38,6 +38,23 @@
           <li class="nav-item active">
             <a class="nav-link" href="#">Copa UCAB</a>
           </li>
+        </ul>
+
+        <ul class="nav ml-auto mr-1">
+          {% if user.is_authenticated %}
+            <li class="dropdown p-1" style="width: 5rem;">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <div>{{ user.username }}</div>
+              </a>
+              <ul class="dropdown-menu p-1">
+                <li class="p-1"><a href="{% url 'logout' %}?next={% url 'main:post_list' %}">Cerrar sesión</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li>
+            <a href="{% url 'login' %}?next={% url 'main:admin_index' %}">Iniciar sesión</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </nav>

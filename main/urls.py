@@ -10,12 +10,12 @@ from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews,
 
 app_name='main'
 urlpatterns = [
-    
-    path('', IndexViews.index, name='index'),
-    
+
+    path('index/', IndexViews.adminIndex, name='admin_index'),
+
     #Posts
-    path('post/create/', PostViews.CreatePost.as_view(), name='create_post'),
     path('posts/', PostViews.PostsList.as_view(), name='post_list'),
+    path('post/create/', PostViews.CreatePost.as_view(), name='create_post'),
     path('post/<int:pk>/', PostViews.PostDetail.as_view(), name='post_detail'),
     path('post/edit/<int:pk>/', PostViews.UpdatePost.as_view(), name='update_post'),
     path('post/delete/<int:pk>/', PostViews.DeletePost.as_view(), name='delete_post'),

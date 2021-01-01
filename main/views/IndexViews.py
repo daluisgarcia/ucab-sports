@@ -7,8 +7,8 @@ from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
 
 
-def index(request):
-    return render(request, 'index.html', context=None)
+def adminIndex(request):
+    return render(request, 'admin/adminMain.html', context=None)
 
 # Lista de juegos
 class GamesList(ListView):
