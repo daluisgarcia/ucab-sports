@@ -1,0 +1,48 @@
+{% extends 'admin/adminMain.html' %}
+{% block content %}
+  <br>
+  <h2 class="text-center"> Fases </h2>
+
+<form method="POST" action="">
+
+  <div class="card-body">
+
+    <!--Validación de errores-->
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-hidden="true"
+      >
+        ×
+      </button>
+      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for field in form.visible_fields %}
+    <div class="form-group">
+      <label>{{ field.label }}</label>
+      {{ field }}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="card-footer">
+    <button type="submit" class="btn btn-primary btn-flat float-right">
+      <i class="fas fa-save"></i> Procesar
+    </button>
+    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
+      Cancelar
+    </a>
+  </div>
+
+</form>
+{% endblock %}
