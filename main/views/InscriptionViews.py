@@ -61,6 +61,12 @@ def createRegisterTeam(request, pk_torneo):
                     #Si este usuario no ha solicitado inscripción en otro torneo, entonces lo mete en el array
                     if (PrePerson.objects.filter(cedula=cedula).count() == 0):
                         new_persons.append(PrePerson(cedula=cedula, nombre=nombre, apellido=apellido, correo=correo, nickname=nickname))
+                
+                    #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
+                    if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
+                        messages.error(request, 'El usuario '+ nombre +' '+ apellido +'ya se inscribió con anterioridad al torneo.')
+                        return redirect('/torneos/')
+
 
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
@@ -157,6 +163,8 @@ def approveInscription(request, pk_team, pk_tour):
         #Sino, se forma nuevo registro
         else:
             new_persons.append(Person(cedula=person.id_persona.cedula, nombre=person.id_persona.nombre, apellido=person.id_persona.apellido, correo=person.id_persona.correo, nickname=person.id_persona.nickname))
+        
+        #De una u otra forma se agrega la cédula en el array
         ci.append(person.id_persona.cedula)
 
     Person.objects.bulk_create(new_persons)
@@ -200,9 +208,10 @@ def approveInscription(request, pk_team, pk_tour):
     i=0
     for reg in preteamregister:    
         person_delete = PrePerson.objects.get(cedula=ci[i])
-        if (PreTeamRegister.objects.filter(id_persona=person_delete).count()):
+        #Si tiene solamente una solicitud de inscripcion pendiente, se borra
+        if (PreTeamRegister.objects.filter(id_persona=person_delete).count() == 1):
             print('paso')
-        person_delete.delete()
+            person_delete.delete()
         i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()

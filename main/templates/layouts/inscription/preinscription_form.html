@@ -21,6 +21,11 @@
       <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
       {{ team_register_formset.errors.as_ul }} 
       {{ person_formset.errors.as_ul }} 
+      {% if person_formset.cedula.errors %}
+        {% for error in link_form.cedula.errors %}
+          {{ error|escape }}
+        {% endfor %}
+      {% endif %}
     </div>
     {% endif %}
 

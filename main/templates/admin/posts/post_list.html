@@ -32,13 +32,13 @@
       </div>
       <br>
       <div class="row ">
-        <div class="col-2 text-center">
+        <div class="col-4 text-center">
             <a class="label label-default">Imagen</a>
         </div>
         <div class="col-3 text-center">
           <a class="label label-default">Titulo</a>
         </div>
-        <div class="col-3 text-center">
+        <div class="col-5 text-center">
           <a class="label label-default">Cuerpo</a>
         </div>
       </div>
@@ -58,13 +58,6 @@
                 {{ c.titulo }}
               </td>
             </div>
-            <!--Cesar hay que arreglar esto, no me pegues :)
-            <div class="col-3 text-center">
-              <td>
-                {{ c.id_torneo }}
-              </td>
-            </div>
-            -->
             <div class="col-3 text-left">
               <td class="label">
                 {% if c.cuerpo|length > 100 %}

@@ -25,7 +25,7 @@ class PostCreateForm(ModelForm):
 
   class Meta:
     model = Post
-    fields = ['titulo', 'cuerpo', 'imagen', 'id_torneo']
+    fields = ['titulo', 'cuerpo', 'imagen']
     widgets = {
       'titulo': TextInput(
         attrs = {
@@ -37,8 +37,7 @@ class PostCreateForm(ModelForm):
           'placeholder': 'Ingrese el cuerpo del post',
           'rows': 5
         }
-      ),
-      'id_torneo': Select()
+      )
     }
 
 
@@ -314,6 +313,7 @@ class PersonsFormSet(formsets.BaseFormSet):
                 
                 if duplicates:
                     raise forms.ValidationError('Las cédulas y los correos deben ser distintos en todos los campos.')
+                  
 
 
 #Formulario inscripción
