@@ -1,6 +1,6 @@
 {% extends 'layouts/head.html' %}
 {% block head %}
-<h1>{{ title }}</h1> 
+<h2 class="text-center">{{ title }}</h2>
 
 <form method="POST" action="">
 
@@ -29,13 +29,79 @@
     </div>
     {% endif %}
 
-    <!--
-    <div class="row">
-      <div class="col-2">
+    <br>
 
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="col-6 text-center">
+        <div class="text-center">
+          <div class="row mb-3">
+            <div class="col-2">
+              <label class="label label-default font-weight-bold align-middle">Cedula</label>
+            </div>
+            <div class="col-10">
+              <input type="number" class="form-control" id="input_cedula" placeholder="Ingrese cedula">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2">
+              <label class="label label-default font-weight-bold align-middle">Nombre</label>
+            </div>
+            <div class="col-10">
+              <input type="text" class="form-control" id="input_nombre" placeholder="Ingrese primer nombre">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2">
+              <label class="label label-default font-weight-bold align-middle">Apellido</label>
+            </div>
+            <div class="col-10">
+              <input type="text" class="form-control" id="input_apellido" placeholder="Ingrese primer apellido">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2">
+              <label class="label label-default font-weight-bold align-middle">Correo</label>
+            </div>
+            <div class="col-10">
+              <input type="email" class="form-control" id="input_correo" placeholder="Ingrese correo">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2">
+              <label class="label label-default font-weight-bold align-middle">Username</label>
+            </div>
+            <div class="col-10">
+              <input type="email" class="form-control" id="input_username" placeholder="Ingrese username">
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-8">
-        <table class="table">
+      <div class="col-3"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-8"></div>
+      <div class="col-2">
+        <div class="text-right">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-10">
+              <button type="button" class="btn btn-primary btn-flat float-right" onclick="saveToTable()">Ingresar Datos</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10">
+        <table class="table" id="tabla_usuarios">
           <thead>
             <tr>
               <th scope="col">Cedula</th>
@@ -43,35 +109,101 @@
               <th scope="col">Apellido</th>
               <th scope="col">Correo</th>
               <th scope="col">Username</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Modificar</th>
+              <th scope="col">Eliminar</th>
             </tr>
           </thead>
+
           <tbody>
             <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Larry</td>
-              <td>the Bird</td>
-              <td>@twitter</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="col-2"> 
+      <div class="col-1"> 
       </div>
     </div>
-  -->
-  
+
+    <script>
+      function saveToTable() {
+        var table = document.getElementById("tabla_usuarios");
+        var allRows = document.getElementById('tabla_usuarios').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        var row = table.insertRow(allRows.length);
+        row.id = allRows.length-2;
+        var cedulaCell = row.insertCell(0);
+        var nombreCell = row.insertCell(1);
+        var apellidoCell = row.insertCell(2);
+        var correoCell = row.insertCell(3);
+        var usernameCell = row.insertCell(4);
+        var rolCell = row.insertCell(5);
+        var modificarCell = row.insertCell(6);
+        var eliminarCell = row.insertCell(7);
+
+        cedulaCell.innerHTML = document.getElementById("input_cedula").value;
+        cedulaCell.id = "cedula_cell_row_"+(allRows.length-2).toString();
+        document.getElementById("input_cedula").value = "";
+        nombreCell.innerHTML = document.getElementById("input_nombre").value;
+        nombreCell.id = "nombre_cell_row_"+(allRows.length-2).toString();
+        document.getElementById("input_nombre").value = "";
+        apellidoCell.innerHTML = document.getElementById("input_apellido").value;
+        apellidoCell.id = "apellido_cell_row_"+(allRows.length-2).toString();
+        document.getElementById("input_apellido").value = "";
+        correoCell.innerHTML = document.getElementById("input_correo").value;
+        correoCell.id = "correo_cell_row_"+(allRows.length-2).toString();
+        document.getElementById("input_correo").value = "";
+        usernameCell.innerHTML = document.getElementById("input_username").value;
+        usernameCell.id = "username_cell_row_"+(allRows.length-2).toString();
+        document.getElementById("input_username").value = "";
+
+        var editImageIcon = document.createElement("IMG");
+        editImageIcon.src = "/static/icons/clipboard.svg";
+        editImageIcon.width = 30;
+        editImageIcon.classList.add("nav-icon");
+
+        var editBtn = document.createElement("BUTTON");
+        editBtn.appendChild(editImageIcon);
+        editBtn.id = allRows.length-2;
+        editBtn.classList.add("btn");
+        editBtn.type = "button"
+        editBtn.onclick = editRow;
+
+        var deleteImageIcon = document.createElement("IMG");
+        deleteImageIcon.src = "/static/icons/role.svg";
+        deleteImageIcon.width = 30;
+        deleteImageIcon.classList.add("nav-icon");
+
+        var deleteBtn = document.createElement("BUTTON");
+        deleteBtn.appendChild(deleteImageIcon);
+        deleteBtn.id = allRows.length-2;
+        deleteBtn.classList.add("btn");
+        deleteBtn.type = "button"
+        deleteBtn.onclick = deleteRow;
+
+        rolCell.innerHTML = "rol"//document.getElementById("input_cedula").innerHTML;
+        modificarCell.appendChild(editBtn);
+        eliminarCell.appendChild(deleteBtn);
+      }
+
+      function editRow() {
+        var id = parseInt(this.id) + parseInt(1);
+        console.log("id del boton "+ id);
+
+        document.getElementById("input_cedula").value = document.getElementById(("cedula_cell_row_"+ this.id)).innerHTML;
+        document.getElementById("input_nombre").value = document.getElementById(("nombre_cell_row_"+ this.id)).innerHTML;
+        document.getElementById("input_apellido").value = document.getElementById(("apellido_cell_row_"+ this.id)).innerHTML;
+        document.getElementById("input_correo").value = document.getElementById(("correo_cell_row_"+ this.id)).innerHTML;
+        document.getElementById("input_username").value = document.getElementById(("username_cell_row_"+ this.id)).innerHTML;
+
+        document.getElementById("tabla_usuarios").deleteRow(id);
+      }
+
+      function deleteRow() {
+        var id = parseInt(this.id) + parseInt(1);
+        document.getElementById("tabla_usuarios").deleteRow(id);
+      }
+    </script>
+  <!--
     <label>Nombre del equipo</label>
     {{ team_form.nombre }}
 
@@ -105,6 +237,7 @@
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
   </div>
-
+-->
 </form>
+
 {% endblock %}
