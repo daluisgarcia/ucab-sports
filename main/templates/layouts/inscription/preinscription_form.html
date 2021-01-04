@@ -123,6 +123,22 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-8"></div>
+      <div class="col-2">
+        <div class="text-right">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-10">
+              <button type="button" class="btn btn-primary btn-flat float-right" onclick="startProcess()">Procesar solicitud</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
     <script>
       function saveToTable() {
         var tableBody = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0];
@@ -240,8 +256,34 @@
           }
         }
       }
+
+      function startProcess() {
+        var formFields = ['cedula', 'nombre', 'apellido', 'correo', 'username', 'rol']
+        var finalData = [];
+        var totalRows = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows.length;
+        console.log("rows to iterate"+totalRows);
+        for (var i = 0; i<totalRows; i++) {
+          var row = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows[i];
+          var rowNum = i+1;
+          row.id = "row_"+(parseInt(rowNum));
+          var cells = row.cells;
+
+          var userData = new Object();
+          for (var j=0; j<cells.length - 2; j++) {
+            console.log(cells[j].id);
+            var valueOfCell = document.getElementById(cells[j].id).innerHTML
+            console.log(valueOfCell);
+            userData[formFields[j]] = valueOfCell;
+          }
+          finalData.push(userData);
+        }
+        console.log("--------------------------");
+        console.log(finalData);
+        console.log("--------------------------");
+      }
+
     </script>
-  <!--
+
     <label>Nombre del equipo</label>
     {{ team_form.nombre }}
 
@@ -275,7 +317,7 @@
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
   </div>
--->
+
 </form>
 
 {% endblock %}
