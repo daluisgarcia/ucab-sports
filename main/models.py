@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.conf import settings
 
 
 class Person(models.Model):
@@ -106,6 +107,8 @@ class Tournament(models.Model):
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
   edicion = models.SmallIntegerField(verbose_name='Edición')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
+  owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
+  #ESTA ↓ PROPIEDAD YA NO VA
   id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):

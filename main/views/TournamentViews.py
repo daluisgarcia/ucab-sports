@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -9,9 +9,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from main.models import Post, Tournament, Stage, Game, StageTournament, StageStandard
 from main.forms import TournamentCreateForm, StageTournamentCreateForm
 
+from ..owner import *
 
 #Crear Torneo
-class CreateTournament(LoginRequiredMixin, CreateView):
+class CreateTournament(OwnerCreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
@@ -19,15 +20,16 @@ class CreateTournament(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         #print(request.POST)
         form = TournamentCreateForm(request.POST)
-        
+
         if form.is_valid():
-            form.save()
-            #Obtenemos el id último registro del torneo (el que se acaba de insertar)
+            object = form.save(commit=False)
+            object.owner = self.request.user
+            object.save()
+            # Obtenemos el id último registro del torneo (el que se acaba de insertar)
             c = Tournament.objects.order_by('-id')[0].id
             print(c)
             return redirect('main:create_stage_tournament', pk=c)
-            
-        self.object = None
+
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return render(request, self.template_name, context)
@@ -62,7 +64,7 @@ def createStageTournament(request, pk):
 
 
 #Lista de torneos
-class TournamentList(ListView):
+class TournamentList(OwnerListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
 
@@ -72,7 +74,7 @@ class TournamentList(ListView):
         return context
 
 #Detalle del torneo
-class TournamentDetail(DetailView):
+class TournamentDetail(OwnerDetailView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_detail.html'
 
@@ -82,7 +84,7 @@ def tournamentInfo(request, pk):
     return render(request, 'admin/tournaments/tournament_detail.html', {'tournament': tournament, 'tourStage': tourStage})
 
 #Editar Torneo
-class UpdateTournament(UpdateView):
+class UpdateTournament(OwnerUpdateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
@@ -106,7 +108,7 @@ class UpdateTournament(UpdateView):
 
 
 #Eliminar torneo
-class DeleteTournament(DeleteView):
+class DeleteTournament(OwnerDeleteView):
     model = Tournament
     success_url = reverse_lazy('main:tournament_list')
     template_name = 'admin/tournaments/tournament_confirm_delete.html'
