@@ -12,7 +12,7 @@ from main.forms import TournamentCreateForm, StageTournamentCreateForm
 from ..owner import *
 
 #Crear Torneo
-class CreateTournament(OwnerCreateView):
+class CreateTournament(LoginRequiredMixin, CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
@@ -20,7 +20,7 @@ class CreateTournament(OwnerCreateView):
     def post(self, request, *args, **kwargs):
         #print(request.POST)
         form = TournamentCreateForm(request.POST)
-
+        self.object = None
         if form.is_valid():
             object = form.save(commit=False)
             object.owner = self.request.user
@@ -30,12 +30,12 @@ class CreateTournament(OwnerCreateView):
             print(c)
             return redirect('main:create_stage_tournament', pk=c)
 
-        context = self.get_context_data(**kwargs)
+        context = self.get_context_data()
         context['form'] = form
         return render(request, self.template_name, context)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_context_data(self):
+        context = super().get_context_data()
         context['title'] = 'Creación del torneo'
         context['botton_title'] = 'Crear torneo'
         context['action'] = 'add'
@@ -64,7 +64,7 @@ def createStageTournament(request, pk):
 
 
 #Lista de torneos
-class TournamentList(OwnerListView):
+class TournamentList(LoginRequiredMixin, ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
 
@@ -74,7 +74,7 @@ class TournamentList(OwnerListView):
         return context
 
 #Detalle del torneo
-class TournamentDetail(OwnerDetailView):
+class TournamentDetail(LoginRequiredMixin, DetailView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_detail.html'
 
@@ -84,15 +84,21 @@ def tournamentInfo(request, pk):
     return render(request, 'admin/tournaments/tournament_detail.html', {'tournament': tournament, 'tourStage': tourStage})
 
 #Editar Torneo
-class UpdateTournament(OwnerUpdateView):
+class UpdateTournament(LoginRequiredMixin, UpdateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
     success_url = reverse_lazy('main:tournament_list')
 
+    def get(self, request, pk):
+        tournament = get_object_or_404(self.model, pk=pk)
+        form = TournamentCreateForm(instance=tournament)
+        ctx = {'form': form}
+        return render(request, self.template_name, ctx)
+
     def post(self, request, pk):
-        make = get_object_or_404(self.model, pk=pk)
-        form = TournamentCreateForm(request.POST, instance=make)
+        tournament = get_object_or_404(self.model, pk=pk)
+        form = TournamentCreateForm(request.POST, instance=tournament)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del torneo', 'botton_title': 'Editar torneo'}
             return render(request, self.template_name, ctx)
@@ -108,7 +114,7 @@ class UpdateTournament(OwnerUpdateView):
 
 
 #Eliminar torneo
-class DeleteTournament(OwnerDeleteView):
+class DeleteTournament(LoginRequiredMixin, DeleteView):
     model = Tournament
     success_url = reverse_lazy('main:tournament_list')
     template_name = 'admin/tournaments/tournament_confirm_delete.html'

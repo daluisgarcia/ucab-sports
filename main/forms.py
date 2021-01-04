@@ -61,8 +61,8 @@ class TournamentCreateForm(ModelForm):
           'placeholder': 'Ingrese un nombre'
         }
       ),
-      'fecha_inicio': DateInput(),
-      'fecha_fin': DateInput(),
+      'fecha_inicio': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'fecha_fin': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
       'edicion': NumberInput(),
       'id_juego': Select()
     }
