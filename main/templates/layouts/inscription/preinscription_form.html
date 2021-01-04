@@ -116,8 +116,6 @@
           </thead>
 
           <tbody>
-            <tr>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -127,10 +125,10 @@
 
     <script>
       function saveToTable() {
-        var table = document.getElementById("tabla_usuarios");
-        var allRows = document.getElementById('tabla_usuarios').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-        var row = table.insertRow(allRows.length);
-        row.id = allRows.length-2;
+        var tableBody = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0];
+        var allRows = tableBody.getElementsByTagName('tr');
+        var row = tableBody.insertRow(allRows.length);
+        row.id = "row_"+(allRows.length).toString();
         var cedulaCell = row.insertCell(0);
         var nombreCell = row.insertCell(1);
         var apellidoCell = row.insertCell(2);
@@ -141,19 +139,19 @@
         var eliminarCell = row.insertCell(7);
 
         cedulaCell.innerHTML = document.getElementById("input_cedula").value;
-        cedulaCell.id = "cedula_cell_row_"+(allRows.length-2).toString();
+        cedulaCell.id = "cedula_cell_row_"+(allRows.length).toString();
         document.getElementById("input_cedula").value = "";
         nombreCell.innerHTML = document.getElementById("input_nombre").value;
-        nombreCell.id = "nombre_cell_row_"+(allRows.length-2).toString();
+        nombreCell.id = "nombre_cell_row_"+(allRows.length).toString();
         document.getElementById("input_nombre").value = "";
         apellidoCell.innerHTML = document.getElementById("input_apellido").value;
-        apellidoCell.id = "apellido_cell_row_"+(allRows.length-2).toString();
+        apellidoCell.id = "apellido_cell_row_"+(allRows.length).toString();
         document.getElementById("input_apellido").value = "";
         correoCell.innerHTML = document.getElementById("input_correo").value;
-        correoCell.id = "correo_cell_row_"+(allRows.length-2).toString();
+        correoCell.id = "correo_cell_row_"+(allRows.length).toString();
         document.getElementById("input_correo").value = "";
         usernameCell.innerHTML = document.getElementById("input_username").value;
-        usernameCell.id = "username_cell_row_"+(allRows.length-2).toString();
+        usernameCell.id = "username_cell_row_"+(allRows.length).toString();
         document.getElementById("input_username").value = "";
 
         var editImageIcon = document.createElement("IMG");
@@ -163,7 +161,7 @@
 
         var editBtn = document.createElement("BUTTON");
         editBtn.appendChild(editImageIcon);
-        editBtn.id = allRows.length-2;
+        editBtn.id = "edit_btn_row_"+(allRows.length).toString();
         editBtn.classList.add("btn");
         editBtn.type = "button"
         editBtn.onclick = editRow;
@@ -175,32 +173,72 @@
 
         var deleteBtn = document.createElement("BUTTON");
         deleteBtn.appendChild(deleteImageIcon);
-        deleteBtn.id = allRows.length-2;
+        deleteBtn.id = "delete_btn_row_"+(allRows.length).toString();
         deleteBtn.classList.add("btn");
         deleteBtn.type = "button"
         deleteBtn.onclick = deleteRow;
 
         rolCell.innerHTML = "rol"//document.getElementById("input_cedula").innerHTML;
+        rolCell.id = "role_cell_row_"+(allRows.length).toString();
         modificarCell.appendChild(editBtn);
+        modificarCell.id = "modificar_cell_row_"+(allRows.length).toString();
         eliminarCell.appendChild(deleteBtn);
+        eliminarCell.id = "eliminar_cell_row_"+(allRows.length).toString();
+        updateRowIds();
       }
 
       function editRow() {
-        var id = parseInt(this.id) + parseInt(1);
+        var id = parseInt(this.id.slice(this.id.length-1, this.id.length));
         console.log("id del boton "+ id);
 
-        document.getElementById("input_cedula").value = document.getElementById(("cedula_cell_row_"+ this.id)).innerHTML;
-        document.getElementById("input_nombre").value = document.getElementById(("nombre_cell_row_"+ this.id)).innerHTML;
-        document.getElementById("input_apellido").value = document.getElementById(("apellido_cell_row_"+ this.id)).innerHTML;
-        document.getElementById("input_correo").value = document.getElementById(("correo_cell_row_"+ this.id)).innerHTML;
-        document.getElementById("input_username").value = document.getElementById(("username_cell_row_"+ this.id)).innerHTML;
+        document.getElementById("input_cedula").value = document.getElementById(("cedula_cell_row_"+ id)).innerHTML;
+        document.getElementById("input_nombre").value = document.getElementById(("nombre_cell_row_"+ id)).innerHTML;
+        document.getElementById("input_apellido").value = document.getElementById(("apellido_cell_row_"+ id)).innerHTML;
+        document.getElementById("input_correo").value = document.getElementById(("correo_cell_row_"+ id)).innerHTML;
+        document.getElementById("input_username").value = document.getElementById(("username_cell_row_"+ id)).innerHTML;
 
         document.getElementById("tabla_usuarios").deleteRow(id);
+        updateRowIds();
       }
 
       function deleteRow() {
-        var id = parseInt(this.id) + parseInt(1);
+        var id = parseInt(this.id.slice(this.id.length-1, this.id.length));
+        console.log("id del boton "+ id);
         document.getElementById("tabla_usuarios").deleteRow(id);
+        updateRowIds();
+      }
+
+      function updateRowIds() {
+        var totalRows = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows.length;
+        console.log("rows to iterate"+totalRows);
+        for (var i = 0; i<totalRows; i++) {
+          console.log("VALUE OF I IN ROW FOR"+i);
+          var row = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows[i];
+          console.log("row id before change "+row.id);
+          var rowNum = i+1;
+          console.log("VALUE OF I after assign rownum"+i);
+          row.id = "row_"+(parseInt(rowNum));
+          var cells = row.cells;
+          console.log("number of row "+rowNum)
+
+          for (var j=0; j<cells.length; j++) {
+            console.log(cells[j].id);
+            var row_element_id = cells[j].id.slice((cells[j].id.length - 1), cells[j].id.length);
+            cells[j].id = cells[j].id.slice(0, (cells[j].id.length - 1)) + rowNum;
+
+            if (j == cells.length - 1) {
+              console.log("element row ="+row_element_id);
+
+              var editButton = document.getElementById("edit_btn_row_"+ row_element_id);
+              console.log("edit id "+editButton.id);
+              editButton.id = "edit_btn_row_"+rowNum;
+
+              var deleteButton = document.getElementById(("delete_btn_row_"+ row_element_id));
+              console.log("edit id "+deleteButton.id);
+              deleteButton.id = "delete_btn_row_"+rowNum;
+            }
+          }
+        }
       }
     </script>
   <!--
