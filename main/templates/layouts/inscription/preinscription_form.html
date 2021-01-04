@@ -28,7 +28,7 @@
       {% endif %}
     </div>
     {% endif %}
-
+    <!--
     <br>
 
     <div class="row">
@@ -97,10 +97,40 @@
     </div>
 
     <br>
+    -->
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-3">
+        <label>Nombre del equipo</label>
+        {{ team_form.nombre }}
+      </div>
+      <div class="col-8"></div>
+    </div>
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-3">
+        <label>Logo</label>
+        {{ team_form.logo }}
+      </div>
+      <div class="col-9"></div>
+    </div>
+
+    <br>
 
     <div class="row">
       <div class="col-1"></div>
-      <div class="col-10">
+      <div class="col-3">
+        <h4>Ingrese los campos</h4>
+      </div>
+      <div class="col-9"></div>
+    </div>
+
+    <br>
+
+    {{ person_formset.management_form }}
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-9">
         <table class="table" id="tabla_usuarios">
           <thead>
             <tr>
@@ -109,37 +139,67 @@
               <th scope="col">Apellido</th>
               <th scope="col">Correo</th>
               <th scope="col">Username</th>
-              <th scope="col">Rol</th>
-              <th scope="col">Modificar</th>
-              <th scope="col">Eliminar</th>
             </tr>
           </thead>
-
           <tbody>
+            {% for person_form in person_formset %}
+              <tr>
+                <td>{{ person_form.cedula }}</td>
+                <td>{{ person_form.nombre }}</td>
+                <td>{{ person_form.apellido }}</td>
+                <td>{{ person_form.correo }}</td>
+                <td>{{ person_form.nickname }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
-      <div class="col-1"> 
+      <div class="col-1">
+        <table class="table" id="tabla_roles">
+          <thead>
+            <tr>
+              <th scope="col">Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for team_form in team_register_formset %}
+              <td>{{ team_form.rol }}</td>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
+      <div class="col-1"></div>
     </div>
-
-    <div class="row">
-      <div class="col-8"></div>
-      <div class="col-2">
-        <div class="text-right">
-          <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-10">
-              <button type="button" class="btn btn-primary btn-flat float-right" onclick="startProcess()">Procesar solicitud</button>
-            </div>
-          </div>
+    
+     <!--
+    {% for person_form in person_formset %}
+        <div>
+            {{ person_form.cedula }}
+            {{ person_form.nombre }}
+            {{ person_form.apellido }}
+            {{ person_form.correo }}
+            {{ person_form.nickname }}
         </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
+    {% endfor %}
+    
+    <h4>Roles de los usuarios</h4>
+    {% for team_form in team_register_formset %}
+        <div>
+            {{ team_form.rol }}
+        </div>
+    {% endfor %}
+    -->
+    <label>Comentario (opcional)</label>
+    {{ team_form.comentario }}
+  </div>
 
-    <script>
+  <div class="card-footer">
+    <button type="submit" class="btn btn-primary btn-flat float-right">
+      <i class="fas fa-save"></i> {{ botton_title }}
+    </button>
+  </div>
+    
+    <!--<script>
       function saveToTable() {
         var tableBody = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0];
         var allRows = tableBody.getElementsByTagName('tr');
@@ -282,41 +342,7 @@
         console.log("--------------------------");
       }
 
-    </script>
-
-    <label>Nombre del equipo</label>
-    {{ team_form.nombre }}
-
-    <label>Logo</label>
-    {{ team_form.logo }}
-
-    {{ person_formset.management_form }}
-    <h4>Ingrese los campos</h4>
-    {% for person_form in person_formset %}
-        <div>
-            {{ person_form.cedula }}
-            {{ person_form.nombre }}
-            {{ person_form.apellido }}
-            {{ person_form.correo }}
-            {{ person_form.nickname }}
-        </div>
-    {% endfor %}
-    <h4>Roles de los usuarios</h4>
-    {% for team_form in team_register_formset %}
-        <div>
-            {{ team_form.rol }}
-        </div>
-    {% endfor %}
-
-    <label>Comentario (opcional)</label>
-    {{ team_form.comentario }}
-  </div>
-
-  <div class="card-footer">
-    <button type="submit" class="btn btn-primary btn-flat">
-      <i class="fas fa-save"></i> {{ botton_title }}
-    </button>
-  </div>
+    </script>-->
 
 </form>
 
