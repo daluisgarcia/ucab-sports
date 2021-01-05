@@ -59,7 +59,11 @@ def createStageTournament(request, pk):
             return redirect('/torneos/')
         messages.error(request, 'Cada fase debe llevar su correspondiente jerarquía')
         
-    context = {'stage_formset': formset, 'title': 'Asociar fases al torneo', 'botton_title': 'Asociar fases'}
+    context = {
+        'stage_formset': formset, 
+        'title': 'Asociar fases al torneo', 
+        'botton_title': 'Asociar fases'
+    }
     return render(request, 'admin/tournaments/stage_tour_form.html', context)
 
 

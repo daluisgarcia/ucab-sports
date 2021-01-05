@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from main.models import Permission
 from main.forms import PermissionCreateForm
 
-# Crear juego
+# Crear permiso
 class CreatePermission(CreateView):
     model = Permission
     form_class = PermissionCreateForm

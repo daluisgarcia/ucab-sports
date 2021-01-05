@@ -358,3 +358,27 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     raise forms.ValidationError('Debe llenar todos los campos de los roles')
                 if duplicates:
                     raise forms.ValidationError('Sólo puede existir un delegado por equipo.')
+
+
+
+
+#Formulario de partido
+class MatchCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
+      form.field.widget.attrs['required'] = True
+
+  class Meta:
+    model = Match
+    fields = ['fecha', 'direccion']
+    widgets = {
+      'fecha': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'direccion': TextInput(
+        attrs = {
+          'placeholder': 'Ingrese la dirección del partido (opcional)'
+        }
+      ),
+    }

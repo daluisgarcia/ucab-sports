@@ -130,7 +130,7 @@
     {{ person_formset.management_form }}
     <div class="row">
       <div class="col-1"></div>
-      <div class="col-9">
+      <div class="col-8">
         <table class="table" id="tabla_usuarios">
           <thead>
             <tr>
@@ -154,7 +154,7 @@
           </tbody>
         </table>
       </div>
-      <div class="col-1">
+      <div class="col-2">
         <table class="table" id="tabla_roles">
           <thead>
             <tr>
@@ -163,7 +163,9 @@
           </thead>
           <tbody>
             {% for team_form in team_register_formset %}
+            <tr>
               <td>{{ team_form.rol }}</td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
