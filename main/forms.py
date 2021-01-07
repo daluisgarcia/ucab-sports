@@ -112,7 +112,7 @@ class StageCreateForm(ModelForm):
 
   class Meta:
     model = Stage
-    fields = ['nombre', 'descripcion', 'equipos_por_grupo', 'num_grupos', 'part_por_equipo', 'equipos_por_partido']
+    fields = ['nombre', 'descripcion', 'part_por_equipo', 'equipos_por_partido']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -125,8 +125,6 @@ class StageCreateForm(ModelForm):
           'rows': 5
         }
       ),
-      'equipos_por_grupo': NumberInput(),
-      'num_grupos': NumberInput(),
       'part_por_equipo': NumberInput(),
       'equipos_por_partido': NumberInput(),
     }
@@ -369,7 +367,6 @@ class MatchCreateForm(ModelForm):
     for form in self.visible_fields():
       form.field.widget.attrs['class'] = 'form-control'
       form.field.widget.attrs['autocomplete'] = 'off'
-      form.field.widget.attrs['required'] = True
 
   class Meta:
     model = Match
@@ -382,3 +379,23 @@ class MatchCreateForm(ModelForm):
         }
       ),
     }
+
+
+#Fases y torneo para mostrar en el formulario del partido
+class StageTourForMatchForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['autocomplete'] = 'off'
+
+  class Meta:
+    model = StageTournament
+    fields = ['id_fase', 'id_torneo']
+    widgets = {
+      'id_fase': Select(),
+      'id_torneo': Select(),
+    }
+
+
+

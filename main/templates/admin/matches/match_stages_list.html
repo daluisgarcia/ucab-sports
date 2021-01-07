@@ -33,20 +33,21 @@
     </div>
     {% endfor %}
 
-
-    {% for stage in stages %}
-      {{ stage.id_torneo }}
-      {{ stage.id_fase }}
-      <a class="btn btn-outline-info btn-sm admin_buttons" href="{% url 'main:teams_match' stage.id_torneo.id stage.id_fase.id %}">Seleccionar</a>
-      <br/>
-    {% endfor %}
+    <h4>Seleccione el torneo y la fase en la que quiere crear el partido</h4>
+    {{ stages.id_torneo }}
+    {{ stages.id_fase }}
 
     <div class="card-footer">
       <button type="submit" class="btn btn-primary btn-flat float-right">
-        <i class="fas fa-save"></i> Seleccionar fases
+        <i class="fas fa-save"></i> Siguiente
       </button>
     </div>
     
+
+
+    <script>
+
+    </script>
 
   </form>
 {% endblock %}

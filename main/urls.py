@@ -71,7 +71,7 @@ urlpatterns = [
     #Primero mostramos la lista de torneos y la lista de fases de cada torneo
     path('partido/fases/', Matchviews.createMatch, name='create_match'),
     #Form del partido
-    path('partido/torneo/<str:pk_torneo>/fase/<str:pk_fase>/', Matchviews.createTeams, name='teams_match'),
+    path('partido/<str:pk_partido>/torneo/<str:pk_torneo>/fase/<str:pk_fase>/', Matchviews.createTeams, name='teams_match'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

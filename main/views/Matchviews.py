@@ -7,31 +7,40 @@ from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Tournament, Match, StageTournament
-from main.forms import MatchCreateForm
+from main.models import Tournament, Match, StageTournament, Stage
+from main.forms import MatchCreateForm, StageTourForMatchForm
 
 from ..owner import *
 
 #Falta filtrar los torneos de acuerdo al id del organizador
 def createMatch(request):
-    stages = StageTournament.objects.filter(id_torneo__owner_id=1)
-    print(stages)
 
     if request.method == 'POST':
+        stages = StageTourForMatchForm(request.POST)
         match_form = MatchCreateForm(request.POST)
-        self.object = None
-        if match_form.is_valid():
-            object = match_form.save(commit=False)
-            object.owner = self.request.user
-            object.save()
-            # Obtenemos el id último registro del partido (el que se acaba de insertar)
-            c = Match.objects.order_by('-id')[0].id
-            print(c)
-            return redirect('main:create_match', pk=c)
+
+        if match_form.is_valid() and stages.is_valid():    
+            stage=stages['id_fase'].value()
+            torneo=stages['id_torneo'].value()
+            print('stage:'+ stage +' torneo:'+ torneo)
+
+            #Verificar que la fase y el torneo coinciden
+            if (StageTournament.objects.filter(id_fase=stage, id_torneo=torneo).count() > 0):
+                match_form.save()
+                # Obtenemos el id último registro del partido (el que se acaba de insertar)
+                c = Match.objects.order_by('-id')[0].id
+                print(c)
+                return redirect('main:teams_match', pk_partido=c, pk_torneo=torneo, pk_fase=stage)
+        
+            #En caso de que la fase y el torneo no coinciden
+            else:
+                messages.error(request, 'La Fase y el torneo seleccionados no coinciden')
+                match_form = MatchCreateForm(initial=None)
+                stages = StageTourForMatchForm()
 
     else:
         match_form = MatchCreateForm(initial=None)
-
+        stages = StageTourForMatchForm()
 
     context = {
         'match_form': match_form,
@@ -43,10 +52,20 @@ def createMatch(request):
 
 
 #Asociar los equipos al partido
-def createTeams(request, pk_torneo, pk_fase):
-    print('pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
+def createTeams(request, pk_partido, pk_torneo, pk_fase):
+    print('pk_partido: '+ pk_partido +' pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
 
 
+    #Hacer un inlineformset de la participación con el EQUIPO (ya que el partido se mantiene estático)
+
+
+    cant_equipos = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
+    print()
+    context = {
+        'cant_equipos': cant_equipos.id_fase.equipos_por_partido
+    }
+
+    return render(request, 'admin/matches/teams_match.html', context)
 
 
 

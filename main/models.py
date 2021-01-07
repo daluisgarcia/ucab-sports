@@ -36,8 +36,6 @@ class Team(models.Model):
 class Stage(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   descripcion = models.CharField(max_length=100, verbose_name='Descripción')
-  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo')
-  num_grupos = models.SmallIntegerField(verbose_name='Número de grupos')
   part_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
   equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
 
