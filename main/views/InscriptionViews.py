@@ -220,8 +220,6 @@ def approveInscription(request, pk_team, pk_tour):
     return redirect('/inscripciones/pendientes/')
 
 
-
-
 #Anular inscripción
 def failInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister

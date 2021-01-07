@@ -1,4 +1,8 @@
 {% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
 {% block content %}
 
 <br>
@@ -39,16 +43,10 @@
       <div class="col-3 text-center">
         <a class="label label-default">Descripcion</a>
       </div>
-      <div class="col-1 text-center">
-        <a class="label label-default">Equipos por grupo</a>
+      <div class="col-2 text-center">
+        <a class="label label-default">Participantes por equipo</a>
       </div>
-      <div class="col-1 text-center">
-        <a class="label label-default">Numero de grupos</a>
-      </div>
-      <div class="col-1 text-center">
-        <a class="label label-default">Partidos por equipo</a>
-      </div>
-      <div class="col-1 text-center">
+      <div class="col-2 text-center">
         <a class="label label-default">Equipos por partido</a>
       </div>
       <div class="col-3 text-center"></div>
@@ -64,16 +62,10 @@
           <div class="col-3 text-center">
             {{ stage.descripcion }}
           </div>
-          <div class="col-1 text-center">
-            {{ stage.equipos_por_grupo }}
-          </div>
-          <div class="col-1 text-center">
-            {{ stage.num_grupos }}
-          </div>
-          <div class="col-1 text-center">
+          <div class="col-2 text-center">
             {{ stage.part_por_equipo }}
           </div>
-          <div class="col-1 text-center">
+          <div class="col-2 text-center">
             {{ stage.equipos_por_partido }}
           </div>
           <div class="col-3 text-center">

@@ -1,4 +1,8 @@
 {% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
 {% block content %}
   <br>
   <h2 class="text-center">{{ title }}</h2>

@@ -1,23 +1,81 @@
 {% extends 'admin/adminMain.html' %}
-{% block head %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+<br>
+<h2 class="text-center">Solicitudes pendientes</h2>
 
-  <h1>Solicitudes pendientes</h1>
-
+<div class="card-body">
+          
+  <!--Validación de errores-->
+  {% csrf_token %} 
+  {% if form.errors %}
+  <div class="alert alert-danger alert-dismissible">
+    <button
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-hidden="true"
+    >
+      ×
+    </button>
+    <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+    {% for field in form %} 
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %} 
+    {% endfor %}
+  </div>
+  {% endif %} 
+  
   {% if cant_pendientes > 0 %}
-    <h3></h3>
+    <div class="row ">
+      <div class="col-2 text-center">
+          <a class="label label-default">Torneo</a>
+      </div>
+      <div class="col-2 text-center">
+        <a class="label label-default">Equipo</a>
+      </div>
+      <div class="col-4 text-center">
+        <a class="label label-default">Comentario</a>
+      </div>
+    </div>
+
     {% for reg in register %}
-      {{ reg.id_equipo__nombre }}
-      {{ reg.id_torneo__nombre }}
-      {% if reg.id_equipo__comentario %}
-        {{ reg.id_equipo__comentario }}
-      {% endif %}
-      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
-      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>
-      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
-      <br/>
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-2 text-center">
+            <td>
+              {{ reg.id_torneo__nombre }}
+            </td>
+          </div>
+          <div class="col-2 text-center">
+            <td>
+              {{ reg.id_equipo__nombre }}
+            </td>
+          </div>
+          <div class="col-4 text-left">
+            {% if reg.id_equipo__comentario %}
+            <td>
+              {{ reg.id_equipo__comentario }}
+            </td>
+            {% endif %}
+          </div>
+          <div class="col-4 align-middle">
+            <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
+            <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
+          </div>
+        </div>
+      </li>
+    </ul>
     {% endfor %}
   {% else %}
     <h4>¡No tienes Solicitudes pendientes por aprobar!</h4>
   {% endif %}
-    
+  
+</div>    
 {% endblock %}

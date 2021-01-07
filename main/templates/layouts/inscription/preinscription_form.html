@@ -28,76 +28,7 @@
       {% endif %}
     </div>
     {% endif %}
-    <!--
-    <br>
 
-    <div class="row">
-      <div class="col-3"></div>
-      <div class="col-6 text-center">
-        <div class="text-center">
-          <div class="row mb-3">
-            <div class="col-2">
-              <label class="label label-default font-weight-bold align-middle">Cedula</label>
-            </div>
-            <div class="col-10">
-              <input type="number" class="form-control" id="input_cedula" placeholder="Ingrese cedula">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-2">
-              <label class="label label-default font-weight-bold align-middle">Nombre</label>
-            </div>
-            <div class="col-10">
-              <input type="text" class="form-control" id="input_nombre" placeholder="Ingrese primer nombre">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-2">
-              <label class="label label-default font-weight-bold align-middle">Apellido</label>
-            </div>
-            <div class="col-10">
-              <input type="text" class="form-control" id="input_apellido" placeholder="Ingrese primer apellido">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-2">
-              <label class="label label-default font-weight-bold align-middle">Correo</label>
-            </div>
-            <div class="col-10">
-              <input type="email" class="form-control" id="input_correo" placeholder="Ingrese correo">
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-2">
-              <label class="label label-default font-weight-bold align-middle">Username</label>
-            </div>
-            <div class="col-10">
-              <input type="email" class="form-control" id="input_username" placeholder="Ingrese username">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-3"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-8"></div>
-      <div class="col-2">
-        <div class="text-right">
-          <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-10">
-              <button type="button" class="btn btn-primary btn-flat float-right" onclick="saveToTable()">Ingresar Datos</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <br>
-    -->
     <div class="row">
       <div class="col-1"></div>
       <div class="col-3">
@@ -173,26 +104,14 @@
       <div class="col-1"></div>
     </div>
     
-     <!--
-    {% for person_form in person_formset %}
-        <div>
-            {{ person_form.cedula }}
-            {{ person_form.nombre }}
-            {{ person_form.apellido }}
-            {{ person_form.correo }}
-            {{ person_form.nickname }}
-        </div>
-    {% endfor %}
-    
-    <h4>Roles de los usuarios</h4>
-    {% for team_form in team_register_formset %}
-        <div>
-            {{ team_form.rol }}
-        </div>
-    {% endfor %}
-    -->
-    <label>Comentario (opcional)</label>
-    {{ team_form.comentario }}
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10">
+        <label>Comentario (opcional)</label>
+          {{ team_form.comentario }}
+      </div>
+      <div class="col-1"></div>
+    </div>
   </div>
 
   <div class="card-footer">
@@ -200,152 +119,6 @@
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
   </div>
-    
-    <!--<script>
-      function saveToTable() {
-        var tableBody = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0];
-        var allRows = tableBody.getElementsByTagName('tr');
-        var row = tableBody.insertRow(allRows.length);
-        row.id = "row_"+(allRows.length).toString();
-        var cedulaCell = row.insertCell(0);
-        var nombreCell = row.insertCell(1);
-        var apellidoCell = row.insertCell(2);
-        var correoCell = row.insertCell(3);
-        var usernameCell = row.insertCell(4);
-        var rolCell = row.insertCell(5);
-        var modificarCell = row.insertCell(6);
-        var eliminarCell = row.insertCell(7);
-
-        cedulaCell.innerHTML = document.getElementById("input_cedula").value;
-        cedulaCell.id = "cedula_cell_row_"+(allRows.length).toString();
-        document.getElementById("input_cedula").value = "";
-        nombreCell.innerHTML = document.getElementById("input_nombre").value;
-        nombreCell.id = "nombre_cell_row_"+(allRows.length).toString();
-        document.getElementById("input_nombre").value = "";
-        apellidoCell.innerHTML = document.getElementById("input_apellido").value;
-        apellidoCell.id = "apellido_cell_row_"+(allRows.length).toString();
-        document.getElementById("input_apellido").value = "";
-        correoCell.innerHTML = document.getElementById("input_correo").value;
-        correoCell.id = "correo_cell_row_"+(allRows.length).toString();
-        document.getElementById("input_correo").value = "";
-        usernameCell.innerHTML = document.getElementById("input_username").value;
-        usernameCell.id = "username_cell_row_"+(allRows.length).toString();
-        document.getElementById("input_username").value = "";
-
-        var editImageIcon = document.createElement("IMG");
-        editImageIcon.src = "/static/icons/clipboard.svg";
-        editImageIcon.width = 30;
-        editImageIcon.classList.add("nav-icon");
-
-        var editBtn = document.createElement("BUTTON");
-        editBtn.appendChild(editImageIcon);
-        editBtn.id = "edit_btn_row_"+(allRows.length).toString();
-        editBtn.classList.add("btn");
-        editBtn.type = "button"
-        editBtn.onclick = editRow;
-
-        var deleteImageIcon = document.createElement("IMG");
-        deleteImageIcon.src = "/static/icons/role.svg";
-        deleteImageIcon.width = 30;
-        deleteImageIcon.classList.add("nav-icon");
-
-        var deleteBtn = document.createElement("BUTTON");
-        deleteBtn.appendChild(deleteImageIcon);
-        deleteBtn.id = "delete_btn_row_"+(allRows.length).toString();
-        deleteBtn.classList.add("btn");
-        deleteBtn.type = "button"
-        deleteBtn.onclick = deleteRow;
-
-        rolCell.innerHTML = "rol"//document.getElementById("input_cedula").innerHTML;
-        rolCell.id = "role_cell_row_"+(allRows.length).toString();
-        modificarCell.appendChild(editBtn);
-        modificarCell.id = "modificar_cell_row_"+(allRows.length).toString();
-        eliminarCell.appendChild(deleteBtn);
-        eliminarCell.id = "eliminar_cell_row_"+(allRows.length).toString();
-        updateRowIds();
-      }
-
-      function editRow() {
-        var id = parseInt(this.id.slice(this.id.length-1, this.id.length));
-        console.log("id del boton "+ id);
-
-        document.getElementById("input_cedula").value = document.getElementById(("cedula_cell_row_"+ id)).innerHTML;
-        document.getElementById("input_nombre").value = document.getElementById(("nombre_cell_row_"+ id)).innerHTML;
-        document.getElementById("input_apellido").value = document.getElementById(("apellido_cell_row_"+ id)).innerHTML;
-        document.getElementById("input_correo").value = document.getElementById(("correo_cell_row_"+ id)).innerHTML;
-        document.getElementById("input_username").value = document.getElementById(("username_cell_row_"+ id)).innerHTML;
-
-        document.getElementById("tabla_usuarios").deleteRow(id);
-        updateRowIds();
-      }
-
-      function deleteRow() {
-        var id = parseInt(this.id.slice(this.id.length-1, this.id.length));
-        console.log("id del boton "+ id);
-        document.getElementById("tabla_usuarios").deleteRow(id);
-        updateRowIds();
-      }
-
-      function updateRowIds() {
-        var totalRows = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows.length;
-        console.log("rows to iterate"+totalRows);
-        for (var i = 0; i<totalRows; i++) {
-          console.log("VALUE OF I IN ROW FOR"+i);
-          var row = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows[i];
-          console.log("row id before change "+row.id);
-          var rowNum = i+1;
-          console.log("VALUE OF I after assign rownum"+i);
-          row.id = "row_"+(parseInt(rowNum));
-          var cells = row.cells;
-          console.log("number of row "+rowNum)
-
-          for (var j=0; j<cells.length; j++) {
-            console.log(cells[j].id);
-            var row_element_id = cells[j].id.slice((cells[j].id.length - 1), cells[j].id.length);
-            cells[j].id = cells[j].id.slice(0, (cells[j].id.length - 1)) + rowNum;
-
-            if (j == cells.length - 1) {
-              console.log("element row ="+row_element_id);
-
-              var editButton = document.getElementById("edit_btn_row_"+ row_element_id);
-              console.log("edit id "+editButton.id);
-              editButton.id = "edit_btn_row_"+rowNum;
-
-              var deleteButton = document.getElementById(("delete_btn_row_"+ row_element_id));
-              console.log("edit id "+deleteButton.id);
-              deleteButton.id = "delete_btn_row_"+rowNum;
-            }
-          }
-        }
-      }
-
-      function startProcess() {
-        var formFields = ['cedula', 'nombre', 'apellido', 'correo', 'username', 'rol']
-        var finalData = [];
-        var totalRows = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows.length;
-        console.log("rows to iterate"+totalRows);
-        for (var i = 0; i<totalRows; i++) {
-          var row = document.getElementById("tabla_usuarios").getElementsByTagName('tbody')[0].rows[i];
-          var rowNum = i+1;
-          row.id = "row_"+(parseInt(rowNum));
-          var cells = row.cells;
-
-          var userData = new Object();
-          for (var j=0; j<cells.length - 2; j++) {
-            console.log(cells[j].id);
-            var valueOfCell = document.getElementById(cells[j].id).innerHTML
-            console.log(valueOfCell);
-            userData[formFields[j]] = valueOfCell;
-          }
-          finalData.push(userData);
-        }
-        console.log("--------------------------");
-        console.log(finalData);
-        console.log("--------------------------");
-      }
-
-    </script>-->
-
 </form>
 
 {% endblock %}

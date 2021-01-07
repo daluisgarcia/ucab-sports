@@ -1,4 +1,8 @@
 {% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
 {% block content %}
 <br>
 <h2 class="text-center">{{ title }}</h2>
@@ -34,7 +38,7 @@
     {% endfor %}
   </div>
 
-  <div class="card-footer">
+  <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> Seleccionar fases
     </button>
@@ -42,6 +46,7 @@
       Cancelar
     </a>
   </div>
-
+  <br>
+  <br>
 </form>
 {% endblock %}
