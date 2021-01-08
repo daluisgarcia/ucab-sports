@@ -1,17 +1,47 @@
 {% extends 'admin/adminMain.html' %}
-{% block head %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+    <br>
+    <h2 class="text-center">Detalle de inscripción</h2>
+    <br>
+    <div class="row">
+        <div class="offset-1 col-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">Cedula</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Rol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons %}
+                    <tr>
+                        <td>{{ person.id_persona.cedula }}</td>
+                        <td>{{ person.id_persona.nombre }}</td>
+                        <td>{{ person.id_persona.apellido }}</td>
+                        <td>{{ person.id_persona.correo }}</td>
+                        <td>{{ person.id_persona.nickname }}</td>
+                        <td>{{ person.rol }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <h1>Detalle de inscripción</h1>
-
-    {% for person in persons %}
-        {{ person.id_persona.cedula }}
-        {{ person.id_persona.nombre }}
-        {{ person.id_persona.apellido }}
-        {{ person.id_persona.correo }}
-        {{ person.id_persona.nickname }}
-        <br/>
-    {% endfor %}
     <br/>
-    <a href="{% url 'main:inscription_list' %}">Volver</a>
+
+    <div class="card-footer col-11 ml-4 admin_footer">
+        <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:inscription_list' %}">
+          Volver
+        </a>
+    </div>
     
 {% endblock %}

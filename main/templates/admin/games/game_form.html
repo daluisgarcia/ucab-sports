@@ -1,6 +1,11 @@
-{% extends 'layouts/head.html' %}
-{% block head %}
-<h1>{{ title }}</h1>
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+<br>
+<h2 class="text-center">{{ title }}</h2>
 
 <form method="POST" action="">
 
@@ -34,10 +39,13 @@
       </div>
     {% endfor %}
   </div>
-  <div class="card-footer">
-    <button type="submit" class="btn btn-primary btn-flat">
+  <div class="card-footer admin_footer">
+    <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
+    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:game_list' %}">
+      Volver
+    </a>
   </div>
 
 </form>

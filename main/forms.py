@@ -286,8 +286,8 @@ class PersonsFormSet(formsets.BaseFormSet):
         apellidos = []
         correos = []
         nicknames = []
-        duplicates = False
-
+        duplicate_cedula = False
+        duplicate_correo = False 
         for form in self.forms:
           
             if form.cleaned_data:
@@ -299,18 +299,17 @@ class PersonsFormSet(formsets.BaseFormSet):
 
                 # Verificar que no haya cédulas ni correos repetidos
                 if cedula and nombre and apellido and correo:
-                    if cedula in cedulas:
-                        duplicates = True
+                    if (cedula in cedulas) and duplicate_cedula == False:
+                        form.add_error('cedula', 'Las cédulas deben ser distintas en todos los campos.')
                         print('CEDULAS REPETIDAS')
+                        duplicate_cedula = True
                     cedulas.append(cedula)
 
-                    if correo in correos:
-                        duplicates = True
+                    if (correo in correos) and duplicate_correo == False:
+                        form.add_error('correo', 'Los correos deben ser distintos en todos los campos.')
                         print('CORREOS REPETIDOS')
+                        duplicate_correo = True
                     correos.append(correo)
-                
-                if duplicates:
-                    raise forms.ValidationError('Las cédulas y los correos deben ser distintos en todos los campos.')
                   
 
 

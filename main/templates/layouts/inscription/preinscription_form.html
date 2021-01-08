@@ -9,6 +9,7 @@
     <!--Validación de errores-->
     {% csrf_token %} 
     {% if person_formset.errors or team_register_formset.errors %}
+    {{ person_formset.cedula.errors }}
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -18,12 +19,18 @@
       >
         ×
       </button>
-      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {{ team_register_formset.errors.as_ul }} 
-      {{ person_formset.errors.as_ul }} 
+      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4> 
+      {% for dict in team_register_formset.errors %}
+        {{ dict }}
+      {% endfor %}
+
+      {% for dict in person_formset.errors %}
+        {{ dict }}
+      {% endfor %}
+      
       {% if person_formset.cedula.errors %}
-        {% for error in link_form.cedula.errors %}
-          {{ error|escape }}
+        {% for error in person_formset.cedula.errors %}
+          {{ error }}
         {% endfor %}
       {% endif %}
     </div>

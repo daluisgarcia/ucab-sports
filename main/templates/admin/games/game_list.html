@@ -1,4 +1,8 @@
 {% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
 {% block content %}
   <br>
   <h2 class="text-center">{{ title }}</h2>
@@ -32,8 +36,8 @@
     </div>
     <br>
     <div class="row ml-2">
-      <div class="col-2 text-center">
-          <a class="label label-default">Nombre</a>
+      <div class="col-2 text-left">
+          <h6 class="label label-default">Nombre</h6>
       </div>
     </div>
   
@@ -41,11 +45,10 @@
     <ul class="list-group admin_list_group">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-2 text-center">
+          <div class="col-4 text-left">
             {{ c.nombre }}
           </div>
-          <div class="col-6"></div>
-          <div class="col-4 text-center">
+          <div class="offset-4 col-4 text-center">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_game">
               Eliminar
             </button>
@@ -77,15 +80,4 @@
     </ul>
   {% endfor %}
 </div>
-<!-- 
-  <h1>{{ title }}</h1>
-
-  {% for c in object_list %}
-    <br/>{{ c.nombre }}
-    <br/>
-    <a href="{% url 'main:update_game' c.id %}">update</a>
-    <a href="{% url 'main:delete_game' c.id %}">Eliminar</a>
-    <br/>
-  {% endfor %}
-    -->
 {% endblock %}
