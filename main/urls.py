@@ -32,6 +32,7 @@ urlpatterns = [
     path('torneo/<int:pk>/', TournamentViews.tournamentInfo, name='tournament_detail'),
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
     path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
+    path('torneos/abiertos/', TournamentViews.PublicTournamentList.as_view(), name='tournaments_public_list'),
 
     #Stages
     path('fases/', StageViews.StageList.as_view(), name='stage_list'),

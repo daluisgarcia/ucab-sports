@@ -1,6 +1,10 @@
-{% extends 'layouts/head.html' %}
-{% block head %}
-<h1>{{ title }}</h1>
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+<h2 class="text-center">{{ title }}</h2>
 
 <div class="row mx-4">
   <form action="{% url 'main:create_stage' %}" method="POST">
@@ -46,8 +50,8 @@
     {% endfor %}
   </div>
 
-  <div class="card-footer">
-    <button type="submit" class="btn btn-primary btn-flat">
+  <div class="card-footer col-11 ml-4 admin_footer">
+    <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
   </div>

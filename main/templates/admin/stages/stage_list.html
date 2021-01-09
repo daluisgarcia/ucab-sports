@@ -1,6 +1,6 @@
 {% extends 'admin/adminMain.html' %}
 {% load static %}
-{% block extra_scripts %}
+{% block extra_css %}
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block content %}
@@ -38,16 +38,16 @@
     <br>
     <div class="row ml-2">
       <div class="col-2 text-center">
-          <a class="label label-default">Nombre</a>
+          <h6 class="label label-default">Nombre</h6>
       </div>
       <div class="col-3 text-center">
-        <a class="label label-default">Descripcion</a>
+        <h6 class="label label-default">Descripcion</h6>
       </div>
       <div class="col-2 text-center">
-        <a class="label label-default">Participantes por equipo</a>
+        <h6 class="label label-default">Participantes por equipo</h6>
       </div>
       <div class="col-2 text-center">
-        <a class="label label-default">Equipos por partido</a>
+        <h6 class="label label-default">Equipos por partido</h6>
       </div>
       <div class="col-3 text-center"></div>
     </div>

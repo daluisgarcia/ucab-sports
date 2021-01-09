@@ -1,6 +1,6 @@
 {% extends 'admin/adminMain.html' %}
 {% load static %}
-{% block extra_scripts %}
+{% block extra_css %}
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block content %}
@@ -17,7 +17,7 @@
                     <th scope="col">Apellido</th>
                     <th scope="col">Correo</th>
                     <th scope="col">Username</th>
-                    <th scope="col">Rol</th>
+                    <th scope="col">Rol</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +28,7 @@
                         <td>{{ person.id_persona.apellido }}</td>
                         <td>{{ person.id_persona.correo }}</td>
                         <td>{{ person.id_persona.nickname }}</td>
-                        <td>{{ person.rol }}</td>
+                        <td>{{  person.get_rol_display }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

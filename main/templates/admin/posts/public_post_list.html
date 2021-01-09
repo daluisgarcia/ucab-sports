@@ -1,6 +1,6 @@
 {% extends 'layouts/head.html' %}
 {% load static %}
-{% block extra_scripts %}
+{% block extra_css %}
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 
@@ -10,13 +10,13 @@
   <div class="card-body">
       <div class="row ">
         <div class="col-2 text-center">
-            <a class="label label-default">Imagen</a>
+            <h6 class="label label-default">Imagen</h6>
         </div>
         <div class="col-3 text-center">
-          <a class="label label-default">Titulo</a>
+          <h6 class="label label-default">Titulo</h6>
         </div>
         <div class="col-3 text-center">
-          <a class="label label-default">Cuerpo</a>
+          <h6 class="label label-default">Cuerpo</h6>
         </div>
       </div>
     {% for c in object_list %}

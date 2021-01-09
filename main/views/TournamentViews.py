@@ -83,6 +83,11 @@ class TournamentList(LoginRequiredMixin, ListView):
         context['title'] = 'Torneos'
         return context
 
+class PublicTournamentList(ListView):
+    model = Tournament
+    template_name = 'admin/tournaments/public_tournaments_list.html'
+
+
 #Detalle del torneo
 class TournamentDetail(LoginRequiredMixin, DetailView):
     model = Tournament
