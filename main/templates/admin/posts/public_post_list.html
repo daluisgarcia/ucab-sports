@@ -1,0 +1,52 @@
+{% extends 'layouts/head.html' %}
+{% load static %}
+{% block extra_scripts %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+
+{% block head %}
+  <br>
+  <h2 class="text-center">{{ title }}</h2>
+  <div class="card-body">
+      <div class="row ">
+        <div class="col-2 text-center">
+            <a class="label label-default">Imagen</a>
+        </div>
+        <div class="col-3 text-center">
+          <a class="label label-default">Titulo</a>
+        </div>
+        <div class="col-3 text-center">
+          <a class="label label-default">Cuerpo</a>
+        </div>
+      </div>
+    {% for c in object_list %}
+      <ul class="list-group admin_list_group">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-2 text-center">
+              <td>
+                {% if c.imagen %}
+                <img class="post_images" src={{ c.imagen.url }}>
+                {% endif %}
+              </td>
+            </div>
+            <div class="col-3 text-center">
+              <td>
+                {{ c.titulo }}
+              </td>
+            </div>
+            <div class="col-3 text-left">
+              <td class="label">
+                {% if c.cuerpo|length > 100 %}
+                  {{ c.cuerpo|slice:":100" }} ...
+                {% else %}
+                  {{ c.cuerpo }}
+                {% endif %}
+              </td>
+            </div>
+          </div>
+        </li>
+      </ul>
+    {% endfor %}
+  </div>
+{% endblock %}

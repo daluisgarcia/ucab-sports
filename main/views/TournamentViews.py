@@ -6,10 +6,9 @@ from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Post, Tournament, Stage, Game, StageTournament, StageStandard
+from main.models import Post, Tournament, Stage, Game, StageTournament
 from main.forms import TournamentCreateForm, StageTournamentCreateForm
 
-from ..owner import *
 
 #Crear Torneo
 class CreateTournament(LoginRequiredMixin, CreateView):
@@ -62,7 +61,8 @@ def createStageTournament(request, pk):
     context = {
         'stage_formset': formset, 
         'title': 'Asociar fases al torneo', 
-        'botton_title': 'Asociar fases'
+        'botton_title': 'Asociar fases',
+        'pk': pk
     }
     return render(request, 'admin/tournaments/stage_tour_form.html', context)
 
@@ -71,6 +71,12 @@ def createStageTournament(request, pk):
 class TournamentList(LoginRequiredMixin, ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            self.object_list = Tournament.objects.filter(owner=request.user)
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -82,10 +88,20 @@ class TournamentDetail(LoginRequiredMixin, DetailView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_detail.html'
 
+    def get(self, request, pk):
+        tournament = get_object_or_404(self.model, pk=pk)
+        if tournament.owner == request.user:
+            return super(TournamentDetail, self).get(request, pk)
+        return redirect('main:admin_index')
+
 def tournamentInfo(request, pk):
     tournament = Tournament.objects.get(id=pk)
-    tourStage = StageTournament.objects.filter(id_torneo=pk)
-    return render(request, 'admin/tournaments/tournament_detail.html', {'tournament': tournament, 'tourStage': tourStage})
+    if tournament.owner == request.user:
+        tourStage = StageTournament.objects.filter(id_torneo=pk)
+        return render(request, 'admin/tournaments/tournament_detail.html',
+                      {'tournament': tournament, 'tourStage': tourStage})
+    return redirect('main:admin_index')
+
 
 #Editar Torneo
 class UpdateTournament(LoginRequiredMixin, UpdateView):
@@ -96,9 +112,11 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
 
     def get(self, request, pk):
         tournament = get_object_or_404(self.model, pk=pk)
-        form = TournamentCreateForm(instance=tournament)
-        ctx = {'form': form}
-        return render(request, self.template_name, ctx)
+        if tournament.owner == request.user:
+            form = TournamentCreateForm(instance=tournament)
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+        return redirect('main:admin_index')
 
     def post(self, request, pk):
         tournament = get_object_or_404(self.model, pk=pk)

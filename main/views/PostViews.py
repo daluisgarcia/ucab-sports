@@ -39,17 +39,24 @@ class CreatePost(LoginRequiredMixin, CreateView):
 
 
 # Lista de posts
-class PostsList(ListView):
+class PostsList(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'admin/posts/post_list.html'
-    print(model.cuerpo)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Posts'
         return context
 
+# Lista de posts para el publico en general
+class PublicPostList(ListView):
+    model = Post
+    template_name = 'admin/posts/public_post_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Posts'
+        return context
 
 # Detalle del post
 class PostDetail(DetailView):

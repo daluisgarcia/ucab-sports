@@ -11,7 +11,11 @@ from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews,
 app_name='main'
 urlpatterns = [
 
-    path('index/', IndexViews.adminIndex, name='admin_index'),
+    #Public views
+    path('', PostViews.PublicPostList.as_view(), name='posts'),
+
+    #Admin views
+    path('index/', IndexViews.AdminIndex.as_view(), name='admin_index'),
 
     #Posts
     path('posts/', PostViews.PostsList.as_view(), name='post_list'),
@@ -19,7 +23,7 @@ urlpatterns = [
     path('post/<int:pk>/', PostViews.PostDetail.as_view(), name='post_detail'),
     path('post/edit/<int:pk>/', PostViews.UpdatePost.as_view(), name='update_post'),
     path('post/delete/<int:pk>/', PostViews.DeletePost.as_view(), name='delete_post'),
-    
+
     #Tournaments
     path('torneo/create/', TournamentViews.CreateTournament.as_view(), name='create_tournament'),
     #Asociar fases al torneo
@@ -35,7 +39,7 @@ urlpatterns = [
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
     path('fase/edit/<int:pk>', StageViews.UpdateStage.as_view(), name='update_stage'),
     path('fase/delete/<int:pk>', StageViews.DeleteStage.as_view(), name='delete_stage'),
-    
+
     #Games
     path('index/juegos/', IndexViews.GamesList.as_view(), name='games_list'),
 
@@ -53,7 +57,7 @@ urlpatterns = [
     path('permiso/create/', PermissionViews.CreatePermission.as_view(), name='create_permission'),
     path('permisos/', PermissionViews.PermissionList.as_view(), name='permission_list'),
     path('permiso/edit/<int:pk>/', PermissionViews.UpdatePermission.as_view(), name='update_permission'),
-    
+
     #Preinscription
     path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createRegisterTeam, name='create_inscription'),
     path('inscripciones/pendientes/', InscriptionViews.preinscriptionList, name='inscription_list'),

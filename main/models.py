@@ -151,28 +151,6 @@ class HistoryParticipation(models.Model):
 
 
 
-class WinningStandard(models.Model):
-  criterio = models.CharField(max_length=30, verbose_name='Criterio')
-
-  def __str__(self):
-    return self.criterio
-
-  class Meta:
-    verbose_name = 'Criterio Ganador'
-    verbose_name_plural = 'Criterios Ganadores'
-
-
-
-class StageStandard(models.Model):
-  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
-  importancia = models.SmallIntegerField(verbose_name='Importancia')
-  id_crit_ganador = models.ForeignKey(WinningStandard, on_delete=models.SET_NULL, null=True, blank=True)
-
-  def __str__(self):
-    return self.importancia
-
-
-
 class StageTournament(models.Model):
   id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)

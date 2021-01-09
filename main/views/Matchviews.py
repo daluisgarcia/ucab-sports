@@ -10,8 +10,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from main.models import Tournament, Match, StageTournament, Stage
 from main.forms import MatchCreateForm, StageTourForMatchForm
 
-from ..owner import *
-
 #Falta filtrar los torneos de acuerdo al id del organizador
 def createMatch(request):
 

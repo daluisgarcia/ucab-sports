@@ -129,23 +129,6 @@ class StageCreateForm(ModelForm):
       'equipos_por_partido': NumberInput(),
     }
 
-class WinningStandardCreateForm(ModelForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
-
-  class Meta:
-    model = WinningStandard
-    fields = ['criterio']
-    widgets = {
-      'criterio': TextInput(
-        attrs={
-          'placeholder': 'Ingrese un nombre para el criterio'
-        }
-      ),
-    }
 
 #Formulario de juego
 class GameCreateForm(ModelForm):

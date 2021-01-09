@@ -1,17 +1,21 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
 
 
-def adminIndex(request):
-    return render(request, 'admin/adminMain.html', context=None)
+class AdminIndex(LoginRequiredMixin, View):
+    template_name = 'admin/adminMain.html'
+
+    def get(self, request):
+        return render(request, self.template_name, context=None)
 
 # Lista de juegos
-class GamesList(ListView):
+class GamesList(LoginRequiredMixin, ListView):
     model = Game
     template_name = 'admin/game/game.html'
 

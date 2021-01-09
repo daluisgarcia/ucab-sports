@@ -13,7 +13,7 @@
 
     <!--Validación de errores-->
     {% csrf_token %}
-    {% if form.errors %}
+    {% if form.errors and not 'noshow' in request.POST %}
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -39,6 +39,9 @@
     </div>
     {% endfor %}
   </div>
+  {% if 'next' in request.POST %}
+      <input class="d-none" name="next" value="{{ request.POST.next }}"/>
+  {% endif %}
   <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> Procesar
