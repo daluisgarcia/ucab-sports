@@ -21,11 +21,12 @@ class CreatePost(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         # print(request.POST)
         form = PostCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'El post ha sido creado satisfactoriamente')
-            return HttpResponseRedirect(self.success_url)
         self.object = None
+        if form.is_valid():
+            object = form.save(commit=False)
+            object.owner = self.request.user
+            object.save()
+            return HttpResponseRedirect(self.success_url)
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return render(request, self.template_name, context)
@@ -42,6 +43,12 @@ class CreatePost(LoginRequiredMixin, CreateView):
 class PostsList(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'admin/posts/post_list.html'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            self.object_list = self.model.objects.filter(owner=request.user)
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,6 +70,11 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'admin/posts/post_detail.html'
 
+    def get(self, request, pk):
+        tournament = get_object_or_404(self.model, pk=pk)
+        if tournament.owner == request.user:
+            return super(TournamentDetail, self).get(request, pk)
+        return redirect('main:admin_index')
 
 # Actualizar Post
 class UpdatePost(LoginRequiredMixin, UpdateView):
@@ -71,9 +83,19 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
     template_name = 'admin/posts/post_form.html'
     success_url = reverse_lazy('main:post_list')
 
+    def get(self, request, pk):
+        post = get_object_or_404(self.model, pk=pk)
+        if post.owner == request.user:
+            form = TournamentCreateForm(instance=post)
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+        return redirect('main:admin_index')
+
     def post(self, request, pk):
-        make = get_object_or_404(self.model, pk=pk)
-        form = PostCreateForm(request.POST, instance=make)
+        post = get_object_or_404(self.model, pk=pk)
+        if post.owner != request.user:
+            return redirect('main:admin_index')
+        form = PostCreateForm(request.POST, instance=post)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del post', 'botton_title': 'Editar post'}
             return render(request, self.template_name, ctx)

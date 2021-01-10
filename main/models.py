@@ -2,7 +2,9 @@ from django.db import models
 from datetime import datetime
 from django.conf import settings
 
-
+'''
+  PERSON MODEL
+'''
 class Person(models.Model):
   cedula = models.CharField(max_length=10, verbose_name='Cédula')
   nombre = models.CharField(max_length=50, verbose_name='Nombre')
@@ -18,8 +20,10 @@ class Person(models.Model):
     verbose_name_plural = 'Usuarios'
 
 
-
 #Revisar luego para cambiar el upload_to
+'''
+  Team MODEL
+'''
 class Team(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   logo = models.ImageField(upload_to='team_logos', null=True, blank=True)
@@ -32,7 +36,9 @@ class Team(models.Model):
     verbose_name_plural = 'Equipos'
 
 
-
+'''
+  STAGE MODEL
+'''
 class Stage(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   descripcion = models.CharField(max_length=100, verbose_name='Descripción')
@@ -47,7 +53,9 @@ class Stage(models.Model):
     verbose_name_plural = 'Modalidades de Fase'
 
 
-
+'''
+  GAME MODEL
+'''
 class Game(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
 
@@ -59,47 +67,9 @@ class Game(models.Model):
     verbose_name_plural = 'Juegos'
 
 
-
-class Permission(models.Model):
-  nombre = models.CharField(max_length=30, verbose_name='Nombre')
-
-  def __str__(self):
-    return self.nombre
-
-  class Meta:
-    verbose_name = 'Permiso'
-    verbose_name_plural = 'Permisos'
-
-
-
-class Role(models.Model):
-  nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  rol_permiso = models.ManyToManyField(Permission)
-
-  def __str__(self):
-    return self.nombre
-
-  class Meta:
-    verbose_name = 'Rol'
-    verbose_name_plural = 'Roles'
-
-
-
-class Organizer(models.Model):
-  usuario = models.CharField(max_length=30, verbose_name='Usuario')
-  contrasena = models.CharField(max_length=30, verbose_name='Contraseña')
-  correo = models.EmailField(max_length=100, verbose_name='Email')
-  id_rol = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
-
-  def __str__(self):
-    return self.usuario
-
-  class Meta:
-    verbose_name = 'Organizador'
-    verbose_name_plural = 'Organizadores'
-
-
-
+'''
+  TOURNAMENT MODEL
+'''
 class Tournament(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
@@ -108,8 +78,6 @@ class Tournament(models.Model):
   edicion = models.SmallIntegerField(verbose_name='Edición')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
-  #ESTA ↓ PROPIEDAD YA NO VA
-  #id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.nombre
@@ -119,12 +87,14 @@ class Tournament(models.Model):
     verbose_name_plural = 'Torneos'
 
 
-
+'''
+  POST MODEL
+'''
 class Post(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
   imagen = models.ImageField(null=True, blank=True)
-  id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
+  owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
 
   def __str__(self):
     return self.titulo
@@ -134,7 +104,9 @@ class Post(models.Model):
     verbose_name_plural = 'Posts'
 
 
-
+'''
+  HISTORY PARTICIPATION MODEL
+'''
 class HistoryParticipation(models.Model):
   ROLES = (
     ('j','jugador'),
@@ -152,14 +124,18 @@ class HistoryParticipation(models.Model):
     return self.rol
 
 
-
+'''
+  STAGE TOURNAMENT MODEL
+'''
 class StageTournament(models.Model):
   id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
 
 
-
+'''
+  MATCH MODEL
+'''
 class Match(models.Model):
   fecha = models.DateField(verbose_name='Fecha del partido')
   direccion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Dirección')
@@ -173,7 +149,9 @@ class Match(models.Model):
     verbose_name_plural = 'Partidos'
 
 
-
+'''
+  PARTICIPATION MODEL
+'''
 class Participation(models.Model):
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_partido = models.ForeignKey(Match, on_delete=models.CASCADE)
@@ -188,15 +166,17 @@ class Participation(models.Model):
     verbose_name_plural = 'Partidos'
 
 
-
+'''
+  CLASSIFIED MODEL
+'''
 class Classified(models.Model):
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.CASCADE)
 
 
-
-#Modelos de solicitud de inscripción
-
+'''
+  PRE-PERSON MODEL
+'''
 class PrePerson(models.Model):
   cedula = models.CharField(max_length=10, verbose_name='Cédula')
   nombre = models.CharField(max_length=50, verbose_name='Nombre')
@@ -212,7 +192,9 @@ class PrePerson(models.Model):
     verbose_name_plural = 'Usuarios'
 
 
-
+'''
+  PRE-TEAM MODEL
+'''
 class PreTeam(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
@@ -226,7 +208,9 @@ class PreTeam(models.Model):
     verbose_name_plural = 'Equipos'
 
 
-
+'''
+  PRE-TEAM REGISTER MODEL
+'''
 class PreTeamRegister(models.Model):
   ROLES = (
     ('j','jugador'),

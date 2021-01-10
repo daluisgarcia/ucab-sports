@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, RoleViews, InscriptionViews, PermissionViews, Matchviews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, InscriptionViews, Matchviews
 
 
 app_name='main'
@@ -48,16 +48,6 @@ urlpatterns = [
     path('juegos/', GameViews.GamesList.as_view(), name='game_list'),
     path('juego/edit/<int:pk>/', GameViews.UpdateGame.as_view(), name='update_game'),
     path('juego/delete/<int:pk>/', GameViews.DeleteGame.as_view(), name='delete_game'),
-
-    #Roles
-    path('rol/create/', RoleViews.CreateRole.as_view(), name='create_role'),
-    path('roles/', RoleViews.RolesList.as_view(), name='role_list'),
-    path('rol/edit/<int:pk>/', RoleViews.UpdateRole.as_view(), name='update_role'),
-
-    #Permission
-    path('permiso/create/', PermissionViews.CreatePermission.as_view(), name='create_permission'),
-    path('permisos/', PermissionViews.PermissionList.as_view(), name='permission_list'),
-    path('permiso/edit/<int:pk>/', PermissionViews.UpdatePermission.as_view(), name='update_permission'),
 
     #Preinscription
     path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createRegisterTeam, name='create_inscription'),

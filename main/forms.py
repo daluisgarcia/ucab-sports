@@ -1,7 +1,5 @@
 from django.forms import *
 from django.core.exceptions import ValidationError
-
-
 from main.models import *
 
 """
@@ -15,7 +13,9 @@ class DateInput(forms.DateInput):
 """
 
 
-#Formulario de post
+'''
+    POST CREATE FORM
+'''
 class PostCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -41,9 +41,9 @@ class PostCreateForm(ModelForm):
     }
 
 
-
-
-#Formulario de torneo
+'''
+    TOURNAMENT CREATE FORM
+'''
 class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -81,8 +81,9 @@ class TournamentCreateForm(ModelForm):
           raise forms.ValidationError('La fecha de fin tiene que ser posterior a la fecha de inicio')
 
 
-
-#Formulario de fase de torneo
+'''
+    STAGE-TOURNAMENT CREATE FORM
+'''
 class StageTournamentCreateForm(forms.Form):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -102,7 +103,9 @@ class StageTournamentCreateForm(forms.Form):
     }
 
 
-#Formulario de fase
+'''
+    STAGE CREATE FORM
+'''
 class StageCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -130,7 +133,9 @@ class StageCreateForm(ModelForm):
     }
 
 
-#Formulario de juego
+'''
+    GAME CREATE FORM
+'''
 class GameCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -149,48 +154,10 @@ class GameCreateForm(ModelForm):
       )
     }
 
-#Formulario de rol
-class RoleCreateForm(ModelForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
 
-  class Meta:
-    model = Role
-    fields = ['nombre']
-    widgets = {
-      'nombre': TextInput(
-        attrs = {
-          'placeholder': 'Ingrese el nombre del Rol'
-        }
-      )
-    }
-
-#Formulario de permiso
-class PermissionCreateForm(ModelForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
-
-  class Meta:
-    model = Permission
-    fields = ['nombre']
-    widgets = {
-      'nombre': TextInput(
-        attrs = {
-          'placeholder': 'Ingrese el nombre del permiso'
-        }
-      )
-    }
-
-
-#Formularios para la solicitud de inscripción a los torneos
-
-#Inscripción del Equipo
+'''
+    PRE-TEAM CREATE FORM
+'''
 class PreteamCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -216,7 +183,9 @@ class PreteamCreateForm(ModelForm):
     }
 
 
-#inscripción de los participantes
+'''
+    PRE-PERSON CREATE FORM
+'''
 class PrePersonCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -257,7 +226,9 @@ class PrePersonCreateForm(ModelForm):
 
 #REVISAR
 #La validacion s eetsa haciendo pero no muestra el error en el template :(
-#Formset de las personas
+'''
+    PERSON CREATE FORM
+'''
 class PersonsFormSet(formsets.BaseFormSet):
     def clean(self):
         #Validaciones para eviat que hayan correos y cédulas repetidas
@@ -295,8 +266,9 @@ class PersonsFormSet(formsets.BaseFormSet):
                     correos.append(correo)
                   
 
-
-#Formulario inscripción
+'''
+    TEAM-REGISTER CREATE FORM
+'''
 class TeamRegisterCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -311,8 +283,9 @@ class TeamRegisterCreateForm(ModelForm):
     }
 
 
-
-#Formset de los roles de la inscripción
+'''
+    TEAM-REGISTER CREATE FORMSET
+'''
 class TeamsRegisterFormSet(formsets.BaseFormSet):
     def clean(self):
         #Validaciones para verificar que haya solamente un delegado
@@ -340,9 +313,9 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     raise forms.ValidationError('Sólo puede existir un delegado por equipo.')
 
 
-
-
-#Formulario de partido
+'''
+    MATCH CREATE FORM
+'''
 class MatchCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -363,7 +336,9 @@ class MatchCreateForm(ModelForm):
     }
 
 
-#Fases y torneo para mostrar en el formulario del partido
+'''
+    STAGE TOUR MATCH CREATE FORM
+'''
 class StageTourForMatchForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
@@ -378,6 +353,3 @@ class StageTourForMatchForm(ModelForm):
       'id_fase': Select(),
       'id_torneo': Select(),
     }
-
-
-

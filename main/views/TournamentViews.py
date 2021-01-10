@@ -74,7 +74,7 @@ class TournamentList(LoginRequiredMixin, ListView):
 
     def get(self, request):
         if request.user.is_authenticated:
-            self.object_list = Tournament.objects.filter(owner=request.user)
+            self.object_list = self.model.objects.filter(owner=request.user)
             context = self.get_context_data()
             return render(request, self.template_name, context)
 
@@ -125,6 +125,8 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
 
     def post(self, request, pk):
         tournament = get_object_or_404(self.model, pk=pk)
+        if tournament.owner != request.user:
+            return redirect('main:admin_index')
         form = TournamentCreateForm(request.POST, instance=tournament)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del torneo', 'botton_title': 'Editar torneo'}
