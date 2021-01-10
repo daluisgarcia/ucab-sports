@@ -88,6 +88,7 @@ class Role(models.Model):
 class Organizer(models.Model):
   usuario = models.CharField(max_length=30, verbose_name='Usuario')
   contrasena = models.CharField(max_length=30, verbose_name='Contraseña')
+  correo = models.EmailField(max_length=100, verbose_name='Email')
   id_rol = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
@@ -103,11 +104,12 @@ class Tournament(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
+  inscripcion_abierta = models.BooleanField(default=True)
   edicion = models.SmallIntegerField(verbose_name='Edición')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
   #ESTA ↓ PROPIEDAD YA NO VA
-  id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
+  #id_organizador = models.ForeignKey(Organizer, on_delete=models.SET_NULL, null=True, blank=True)
 
   def __str__(self):
     return self.nombre
@@ -175,8 +177,8 @@ class Match(models.Model):
 class Participation(models.Model):
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_partido = models.ForeignKey(Match, on_delete=models.CASCADE)
-  ganador = models.BooleanField()
-  puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo')
+  ganador = models.BooleanField(null=True, blank=True)
+  puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo', null=True, blank=True)
 
   def __str__(self):
     return 'Puntaje del equipo %s: %s' % (self.id_equipo.nombre,self.puntos_equipo)
@@ -184,6 +186,12 @@ class Participation(models.Model):
   class Meta:
     verbose_name = 'Partido'
     verbose_name_plural = 'Partidos'
+
+
+
+class Classified(models.Model):
+  id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
+  id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.CASCADE)
 
 
 
