@@ -76,6 +76,11 @@ class Tournament(models.Model):
   fecha_fin = models.DateField(verbose_name='Fecha de fin')
   inscripcion_abierta = models.BooleanField(default=True)
   edicion = models.SmallIntegerField(verbose_name='Edición')
+  DELEGADO = (
+    ('d','delegado'),
+    ('jd','delegado y jugador')
+  )
+  tipo_delegado = models.CharField(max_length=2, choices=DELEGADO, verbose_name='Tipo de delegado')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
 

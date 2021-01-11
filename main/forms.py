@@ -48,13 +48,12 @@ class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
     for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
+      # form.field.widget.attrs['class'] = 'form-control'
       form.field.widget.attrs['autocomplete'] = 'off'
-      form.field.widget.attrs['required'] = True
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'id_juego']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'inscripcion_abierta', 'edicion', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -63,6 +62,7 @@ class TournamentCreateForm(ModelForm):
       ),
       'fecha_inicio': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
       'fecha_fin': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'inscripcion_abierta':  CheckboxInput(),
       'edicion': NumberInput(),
       'id_juego': Select()
     }
@@ -294,6 +294,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
 
         roles = []
         duplicates = False
+        duplicate_rol = False
 
         for form in self.forms:
             
@@ -308,10 +309,10 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     roles.append(role)
                 
                 if not role:
-                    raise forms.ValidationError('Debe llenar todos los campos de los roles')
-                if duplicates:
-                    raise forms.ValidationError('Sólo puede existir un delegado por equipo.')
-
+                    form.add_error('rol','Debe llenar todos los campos de los roles')
+                if duplicates and duplicate_rol == False:
+                    form.add_error('rol','Sólo puede existir un delegado por equipo.')
+                    duplicate_rol = True
 
 '''
     MATCH CREATE FORM
@@ -353,3 +354,55 @@ class StageTourForMatchForm(ModelForm):
       'id_fase': Select(),
       'id_torneo': Select(),
     }
+
+
+'''
+    PARTICIPATION CREATE FORM
+'''
+class ParticipationCreateForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+
+  class Meta:
+    model = Participation
+    fields = ['ganador','puntos_equipo','id_equipo']
+    widgets = {
+      'ganador': CheckboxInput(),
+      'cedula': NumberInput(
+        attrs = {
+          'placeholder': 'Puntos que obtuvo el equipo'
+        }
+      ),
+      'id_equipo': Select()
+    }
+
+
+'''
+    PARTICIPATION CREATE FORMSET
+'''
+class ParticipationFormSet(formsets.BaseFormSet):
+    def clean(self):
+        #Validaciones para verificar que haya solamente un delegado
+        if any(self.errors):
+            return
+
+        teams = []
+        duplicates = False
+        duplicate_team = False
+
+        for form in self.forms:
+            
+            if form.cleaned_data:
+                team = form.cleaned_data['id_equipo']
+
+                # Verificar que no haya cédulas ni correos repetidos
+                if team:
+                    if (team in teams) and (duplicate_team == False):
+                        form.add_error('team', 'Los equipos no pueden estar repetidos.')
+                        duplicate_team = True
+                    teams.append(team)
+
+                if not team:
+                    form.add_error('team','Debe llenar los campos de los equipos')

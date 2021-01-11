@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Tournament, Match, StageTournament, Stage
+from main.models import Tournament, Match, StageTournament, Stage, Participation, Team, Classified
 from main.forms import MatchCreateForm, StageTourForMatchForm
 
 #Falta filtrar los torneos de acuerdo al id del organizador
@@ -56,11 +56,21 @@ def createTeams(request, pk_partido, pk_torneo, pk_fase):
 
     #Hacer un inlineformset de la participación con el EQUIPO (ya que el partido se mantiene estático)
 
+    #REVISAR
+    #Fase del torneo
+    fase_torneo = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
+    print(fase_torneo)
+    #clasificados de esta fase del torneo
+    clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo)
+    #Equipos
+    print(clasificados)
+    equipos = Team.objects.filter(id__in=clasificados.id_equipo)
 
-    cant_equipos = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
+    
     print()
     context = {
-        'cant_equipos': cant_equipos.id_fase.equipos_por_partido
+        'cant_equipos': fase_torneo.id_fase.equipos_por_partido,
+        'equipos': equipos
     }
 
     return render(request, 'admin/matches/teams_match.html', context)

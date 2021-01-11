@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.views.generic import DetailView
 
-from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game
+from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
 
 
@@ -18,6 +18,10 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 def createRegisterTeam(request, pk_torneo):
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
     person_number = StageTournament.objects.get(jerarquia=1, id_torneo=pk_torneo).id_fase.part_por_equipo
+
+    #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
+    if(Tournament.objects.get(id=pk_torneo).tipo_delegado == 'd'):
+        person_number = person_number + 1
 
     #Obtenemos el torneo
     tournament = Tournament.objects.get(id=pk_torneo)
@@ -67,26 +71,41 @@ def createRegisterTeam(request, pk_torneo):
                         messages.error(request, 'El usuario '+ nombre +' '+ apellido +'ya se inscribió con anterioridad al torneo.')
                         return redirect('/torneos/')
 
-
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
-
             i=0
             
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
                 print('Role Form: ', role)
 
+                #Validar que los roles sean exclusivamente del tipo de delegado
+                if((tournament.tipo_delegado == 'd' and role == 'jd') or(tournament.tipo_delegado == 'jd' and role == 'd')):
+                    
+                    #REVISAR
+                    #Salen el error corto y el de "Ha ocurrido un error"
+                    messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
+                    context = {
+                        'person_formset': person_formset,
+                        'team_form': team_form,
+                        'team_register_formset': team_register_formset,
+                        'title': 'Inscribe al equipo y a los participantes', 
+                        'botton_title': 'Inscribirse'
+                    }
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
+
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
                 if role:
                     new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=pk_tournament))
                 i=i+1
-            
+
             PreTeamRegister.objects.bulk_create(new_team_register)
 
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
-            return redirect('/torneos/')
+
+            #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
+            return redirect('torneos/abiertos/')
         
         else:
             
@@ -101,14 +120,6 @@ def createRegisterTeam(request, pk_torneo):
                 if (not cedula) or (not nombre) or (not apellido) or (not correo):
                     messages.error(request, 'Debe llenar los campos de los datos de los participantes')
                     break
-            """
-            for role_form in team_register_formset:
-                role = role_form.cleaned_data.get('rol')
-                print('Formulario incompleto, roles ingresados: ', role)
-
-                if (not role):
-                    messages.error(request, 'Debe llenar los roles de los participantes')
-            """
             
     else:
         #Formset inicial vacío
@@ -192,6 +203,12 @@ def approveInscription(request, pk_team, pk_tour):
         break
     
     print(nuevo_registro_equipo)
+
+    #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 1 (jerarquía 1 porque es la primera fase del torneo)
+
+    fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=1)
+    equipo_clasificado = Classified(id_equipo=nuevo_registro_equipo, id_fase_torneo=fase_torneo)
+    equipo_clasificado.save()
     
     #Creamos los registros de los participantes en el torneo
     i=0
