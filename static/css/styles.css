@@ -13,6 +13,10 @@
     height: 100px;
 }
 
+.main_post_images {
+    height: 150px;
+}
+
 .admin_list_group {
     margin-bottom: 5px;
 }

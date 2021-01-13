@@ -68,7 +68,7 @@ def createRegisterTeam(request, pk_torneo):
                 
                     #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
                     if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
-                        messages.error(request, 'El usuario '+ nombre +' '+ apellido +'ya se inscribió con anterioridad al torneo.')
+                        messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
                         return redirect('/torneos/')
 
             #Con bulk se insertan todos los objetos en el array
@@ -105,7 +105,7 @@ def createRegisterTeam(request, pk_torneo):
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
 
             #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
-            return redirect('torneos/abiertos/')
+            return redirect('main:admin_index')
         
         else:
             

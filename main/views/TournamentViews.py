@@ -119,7 +119,9 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
         tournament = get_object_or_404(self.model, pk=pk)
         if tournament.owner == request.user:
             form = TournamentCreateForm(instance=tournament)
-            ctx = {'form': form}
+            self.object = None
+            ctx = self.get_context_data()
+            ctx['form'] = form
             return render(request, self.template_name, ctx)
         return redirect('main:admin_index')
 

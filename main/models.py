@@ -80,7 +80,7 @@ class Tournament(models.Model):
     ('d','delegado'),
     ('jd','delegado y jugador')
   )
-  tipo_delegado = models.CharField(max_length=2, choices=DELEGADO, verbose_name='Tipo de delegado')
+  tipo_delegado = models.CharField(max_length=2, choices=DELEGADO, verbose_name='Tipo de delegado', default='d')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
 

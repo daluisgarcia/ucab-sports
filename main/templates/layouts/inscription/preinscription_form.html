@@ -1,4 +1,8 @@
 {% extends 'layouts/head.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
 {% block head %}
 <h2 class="text-center">{{ title }}</h2>
 
@@ -121,11 +125,13 @@
     </div>
   </div>
 
-  <div class="card-footer">
+  <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
   </div>
+  <br>
+  <br>
 </form>
 
 {% endblock %}

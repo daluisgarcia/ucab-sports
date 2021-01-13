@@ -34,7 +34,7 @@ class CreatePost(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Creación del post'
-        context['botton_title'] = 'Crear post'
+        context['button_title'] = 'Crear post'
         context['action'] = 'add'
         return context
 
@@ -71,9 +71,9 @@ class PostDetail(DetailView):
     template_name = 'admin/posts/post_detail.html'
 
     def get(self, request, pk):
-        tournament = get_object_or_404(self.model, pk=pk)
-        if tournament.owner == request.user:
-            return super(TournamentDetail, self).get(request, pk)
+        post = get_object_or_404(self.model, pk=pk)
+        if post.owner == request.user:
+            return super(PostDetail, self).get(request, pk)
         return redirect('main:admin_index')
 
 # Actualizar Post
@@ -86,10 +86,12 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
     def get(self, request, pk):
         post = get_object_or_404(self.model, pk=pk)
         if post.owner == request.user:
-            form = TournamentCreateForm(instance=post)
-            ctx = {'form': form}
+            form = PostCreateForm(instance=post)
+            self.object = None
+            ctx = self.get_context_data()
+            ctx['form'] = form
             return render(request, self.template_name, ctx)
-        return redirect('main:admin_index')
+        return redirect('main:admin_index') 
 
     def post(self, request, pk):
         post = get_object_or_404(self.model, pk=pk)
@@ -97,18 +99,16 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
             return redirect('main:admin_index')
         form = PostCreateForm(request.POST, instance=post)
         if not form.is_valid():
-            ctx = {'form': form, 'title': 'Edición del post', 'botton_title': 'Editar post'}
+            ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None
-        context = self.get_context_data(**kwargs)
-        context['form'] = form
         return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición del post'
-        context['botton_title'] = 'Editar post'
+        context['button_title'] = 'Editar post'
         context['entity'] = 'Post'
         context['action'] = 'edit'
         return context

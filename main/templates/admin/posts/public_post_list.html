@@ -5,48 +5,28 @@
 {% endblock %}
 
 {% block head %}
-  <br>
-  <h2 class="text-center">{{ title }}</h2>
-  <div class="card-body">
-      <div class="row ">
-        <div class="col-2 text-center">
-            <h6 class="label label-default">Imagen</h6>
-        </div>
-        <div class="col-3 text-center">
-          <h6 class="label label-default">Titulo</h6>
-        </div>
-        <div class="col-3 text-center">
-          <h6 class="label label-default">Cuerpo</h6>
+<br>
+<div class="card-body">
+  {% for c in object_list %}
+      <h2 class="text-center">{{ c.titulo }}</h2>
+      <br>
+      <div class="col-11">
+        <div class="row">
+          <div class="col-3">
+            {% if c.imagen %}
+              <img class="main_post_images" src={{ c.imagen.url }}>
+            {% endif %}
+          </div>
+          <div class="col-8 text-left">
+            <p>
+              {{ c.cuerpo }}
+            </p>
+          </div>
         </div>
       </div>
-    {% for c in object_list %}
-      <ul class="list-group admin_list_group">
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-2 text-center">
-              <td>
-                {% if c.imagen %}
-                <img class="post_images" src={{ c.imagen.url }}>
-                {% endif %}
-              </td>
-            </div>
-            <div class="col-3 text-center">
-              <td>
-                {{ c.titulo }}
-              </td>
-            </div>
-            <div class="col-3 text-left">
-              <td class="label">
-                {% if c.cuerpo|length > 100 %}
-                  {{ c.cuerpo|slice:":100" }} ...
-                {% else %}
-                  {{ c.cuerpo }}
-                {% endif %}
-              </td>
-            </div>
-          </div>
-        </li>
-      </ul>
-    {% endfor %}
+      <br>
+      <br>
+      <br>
+  {% endfor %}
   </div>
 {% endblock %}

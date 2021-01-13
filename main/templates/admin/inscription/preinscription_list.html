@@ -11,20 +11,30 @@
   {% if cant_pendientes > 0 %}
     <div class="row ">
       <div class="col-2 text-center">
+        <h6 class="label label-default">Imagen</h6>
+    </div>
+      <div class="col-2 text-center">
           <h6 class="label label-default">Torneo</h6>
       </div>
       <div class="col-2 text-center">
         <h6 class="label label-default">Equipo</h6>
       </div>
-      <div class="col-4 text-center">
+      <div class="col-2 text-center">
         <h6 class="label label-default">Comentario</h6>
       </div>
     </div>
 
     {% for reg in register %}
-    <ul class="list-group admin_list_group">
+    <ul class="list-group admin_list_group mr-4">
       <li class="list-group-item">
         <div class="row">
+          <div class="col-2 text-center">
+            {% if reg.id_equipo__logo %}
+            <td>
+              {{ reg.id_equipo__logo }}
+            </td>
+            {% endif %}
+          </div>
           <div class="col-2 text-center">
             <td>
               {{ reg.id_torneo__nombre }}
@@ -35,7 +45,7 @@
               {{ reg.id_equipo__nombre }}
             </td>
           </div>
-          <div class="col-4 text-left">
+          <div class="col-2 text-left">
             {% if reg.id_equipo__comentario %}
             <td>
               {{ reg.id_equipo__comentario }}
@@ -45,14 +55,14 @@
           <div class="col-4 align-middle">
             <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
             <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>
-            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Ver integrantes</a>
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Integrantes</a>
           </div>
         </div>
       </li>
     </ul>
     {% endfor %}
   {% else %}
-    <h4>¡No tienes Solicitudes pendientes por aprobar!</h4>
+    <h5 class="text-center">¡No tienes Solicitudes pendientes por aprobar!</h5>
   {% endif %}
   
 </div>    
