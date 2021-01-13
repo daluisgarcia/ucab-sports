@@ -17,7 +17,7 @@
 
 <form method="POST" action="">
 
-  <div class="card-body">
+  <div id="form-card" class="card-body">
     
     <!--Validación de errores-->
     {% csrf_token %} 
@@ -41,7 +41,7 @@
     {% endif %}
 
     {{ stage_formset.management_form }}
-    <h4>Seleccione las fases y sus jerarquías</h4>
+    <h4>Seleccione las fases y sus jerarquías <button id="addBtn" type="button" class="btn btn-primary">Agregar campo</button></h4>
     {% for stage_form in stage_formset %}
         <div>
             {{ stage_form.id_fase }}
@@ -56,5 +56,8 @@
     </button>
   </div>
 
+    {% block extra_scripts %}
+        <script src={% static 'js/stage_colector.js' %}></script>
+    {% endblock %}
 </form>
 {% endblock %}

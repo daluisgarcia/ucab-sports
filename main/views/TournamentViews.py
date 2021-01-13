@@ -44,7 +44,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
 #Asociar las fases al torneo (mediante un método)
 def createStageTournament(request, pk):
     #Se define formset de la fase
-    StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','jerarquia'), extra=7)
+    StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','jerarquia'), extra=1)
 
     #Obtenemos el torneo y se instancia el formset al torneo
     tournament = Tournament.objects.get(id=pk)
@@ -55,7 +55,7 @@ def createStageTournament(request, pk):
         if formset.is_valid():
             formset.save()
             messages.success(request, 'El torneo ha sido creado satisfactoriamente')
-            return redirect('/torneos/')
+            return redirect(reverse_lazy('main:tournament_list'))
         messages.error(request, 'Cada fase debe llevar su correspondiente jerarquía')
         
     context = {
