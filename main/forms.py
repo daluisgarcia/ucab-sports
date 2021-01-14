@@ -367,15 +367,14 @@ class ParticipationCreateForm(ModelForm):
 
   class Meta:
     model = Participation
-    fields = ['ganador','puntos_equipo','id_equipo']
+    fields = ['ganador','puntos_equipo']
     widgets = {
       'ganador': CheckboxInput(),
-      'cedula': NumberInput(
+      'puntos_equipo': NumberInput(
         attrs = {
           'placeholder': 'Puntos que obtuvo el equipo'
         }
-      ),
-      'id_equipo': Select()
+      )
     }
 
 
@@ -384,25 +383,30 @@ class ParticipationCreateForm(ModelForm):
 '''
 class ParticipationFormSet(formsets.BaseFormSet):
     def clean(self):
-        #Validaciones para verificar que haya solamente un delegado
+        #Validar que si todos los campos están llenos, no todos sean ganadores
         if any(self.errors):
             return
 
-        teams = []
-        duplicates = False
-        duplicate_team = False
+        todos_ganadores = True
+        puntos = False
+        un_ganador = False
 
         for form in self.forms:
             
             if form.cleaned_data:
-                team = form.cleaned_data['id_equipo']
+                ganador = form.cleaned_data['ganador']
+                puntos_equipo = form.cleaned_data['puntos_equipo']
 
-                # Verificar que no haya cédulas ni correos repetidos
-                if team:
-                    if (team in teams) and (duplicate_team == False):
-                        form.add_error('team', 'Los equipos no pueden estar repetidos.')
-                        duplicate_team = True
-                    teams.append(team)
+                if ganador == True:
+                    un_ganador = True
+                if ganador == False:
+                    todos_ganadores = False
+                if puntos_equipo:
+                    puntos = True
 
-                if not team:
-                    form.add_error('team','Debe llenar los campos de los equipos')
+        if (todos_ganadores):
+            form.add_error('ganador','No todos los participantes pueden ser ganadores')
+        if ((puntos == True) and (un_ganador == False)):
+            form.add_error('puntos_equipo','Si va a colocar puntajes tiene que colocar el o los ganadores del partido')
+
+        

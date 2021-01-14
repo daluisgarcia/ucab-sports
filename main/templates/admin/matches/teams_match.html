@@ -1,11 +1,68 @@
 {% extends 'admin/adminMain.html' %}
 {% block head %}
 
-    <h3>Seleccione a los equipos que participaron en el partido</h3>
-    <h4>cantidad de campos de equipos a poner</h4>
+<h3>Seleccione a los equipos que participaron en el partido</h3>
+<h4>cantidad de campos de equipos a poner</h4>
     {{ cant_equipos }}
+</br>
+<h4>Equipos</h4>
+<select name="select">
     {% for equipo in equipos %}
-        {{ equipo.nombre }}
+    <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
     {% endfor %}
+</select>
+</br>
+{% for equipo in equipos %}
+    {{ equipo.id_equipo.nombre }}
+    {{ equipo.id_equipo.id }}
+    </br>
+{% endfor %}
+
+
+
+<form method="POST" action="">
+
+    <div id="form-card" class="card-body">
+      
+        <!--Validación de errores-->
+        {% csrf_token %} 
+        {% if participacion_formset.errors %}
+        <div class="alert alert-danger alert-dismissible">
+            <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-hidden="true"
+            >
+            ×
+            </button>
+            <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+            {% for field in participacion_formset %} 
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %} 
+            {% endfor %}
+        </div>
+        {% endif %}
+    
+        {{ participacion_formset.management_form }}
+
+        {% for participacion in participacion_formset %}
+            <div>
+                {{ participacion.ganador }}
+                {{ participacion.puntos_equipo }}
+            </div>
+        {% endfor %}
+    </div>
+  
+    <div class="card-footer col-11 ml-4 admin_footer">
+        <button type="submit" class="btn btn-primary btn-flat float-right">
+            <i class="fas fa-save"></i> Crear partido
+        </button>
+    </div>
+  
+</form>
+  
+      
 
 {% endblock %}

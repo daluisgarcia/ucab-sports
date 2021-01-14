@@ -43,7 +43,6 @@ urlpatterns = [
 
     #Games
     path('index/juegos/', IndexViews.GamesList.as_view(), name='games_list'),
-
     path('juego/create/', GameViews.CreateGame.as_view(), name='create_game'),
     path('juegos/', GameViews.GamesList.as_view(), name='game_list'),
     path('juego/edit/<int:pk>/', GameViews.UpdateGame.as_view(), name='update_game'),

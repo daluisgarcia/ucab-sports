@@ -8,7 +8,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Tournament, Match, StageTournament, Stage, Participation, Team, Classified
-from main.forms import MatchCreateForm, StageTourForMatchForm
+from main.forms import MatchCreateForm, StageTourForMatchForm, ParticipationCreateForm, ParticipationFormSet
 
 #Falta filtrar los torneos de acuerdo al id del organizador
 def createMatch(request):
@@ -24,11 +24,15 @@ def createMatch(request):
 
             #Verificar que la fase y el torneo coinciden
             if (StageTournament.objects.filter(id_fase=stage, id_torneo=torneo).count() > 0):
+                #Buscamos la fase del torneo y la asociamos al partido
+                stage_tour = StageTournament.objects.filter(id_fase=stage, id_torneo=torneo)
+                match_form.id_fase_torneo = stage_tour
+                #Guardamos el partido
                 match_form.save()
                 # Obtenemos el id último registro del partido (el que se acaba de insertar)
-                c = Match.objects.order_by('-id')[0].id
-                print(c)
-                return redirect('main:teams_match', pk_partido=c, pk_torneo=torneo, pk_fase=stage)
+                partido = Match.objects.order_by('-id')[0].id
+                print(partido)
+                return redirect('main:teams_match', pk_partido=partido, pk_torneo=torneo, pk_fase=stage)
         
             #En caso de que la fase y el torneo no coinciden
             else:
@@ -52,51 +56,41 @@ def createMatch(request):
 #Asociar los equipos al partido
 def createTeams(request, pk_partido, pk_torneo, pk_fase):
     print('pk_partido: '+ pk_partido +' pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
-
-
-    #Hacer un inlineformset de la participación con el EQUIPO (ya que el partido se mantiene estático)
-
-    #REVISAR
+    
+    #Lógica para traerse a los clasificados de la fase
     #Fase del torneo
     fase_torneo = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
     print(fase_torneo)
+    print(fase_torneo.id)
     #clasificados de esta fase del torneo
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo)
     #Equipos
     print(clasificados)
-    equipos = Team.objects.filter(id__in=clasificados.id_equipo)
 
+
+    #Formset de los equipos que participaron en el partido
+    #Creación del formset, especificando el form y el formset a usar. La cantidad de campos está definida por los equipos por partido
+    PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet, extra=fase_torneo.id_fase.equipos_por_partido)
+
+
+    #Manejar la lógica de los formularios
+    if request.method == 'POST':
+        participation_formset = PartFormSet(request.POST)
+
+        if participation_formset.is_valid():
+            print("Es válido c:")
     
-    print()
+    else:
+        #Formset inicial vacío
+        participation_formset = PartFormSet(initial=None)
+    
+
     context = {
         'cant_equipos': fase_torneo.id_fase.equipos_por_partido,
-        'equipos': equipos
+        'equipos': clasificados,
+        "participacion_formset": participation_formset
     }
 
     return render(request, 'admin/matches/teams_match.html', context)
 
 
-
-#Lista de inscripciones (Lista de equipos)
-def inscriptionList(request):
-    register = HistoryParticipation.objects.values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo__nombre','fecha_registro','fecha_fin').distinct('id_equipo')
-    cant_pendientes = HistoryParticipation.objects.filter().count()
-    print(register)
-    print(cant_pendientes)
-    context = {
-        'register': register,
-        'cant_pendientes': cant_pendientes
-    }
-
-    return render(request, 'admin/inscription/inscription_list.html', context)
-
-
-#Detalle de inscripcion (detalle de equipo)
-def inscriptionDetail(request, pk):
-    persons = HistoryParticipation.objects.filter(id_equipo=pk)
-    
-    context = {
-        'persons': persons
-    }
-
-    return render(request, 'admin/inscription/inscription_detail.html', context)

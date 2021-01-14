@@ -105,7 +105,7 @@ def createRegisterTeam(request, pk_torneo):
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
 
             #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
-            return redirect('main:admin_index')
+            return redirect('main:tournaments_public_list')
         
         else:
             
