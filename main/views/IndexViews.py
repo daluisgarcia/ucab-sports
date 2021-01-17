@@ -5,7 +5,6 @@ from django.views.generic import ListView, CreateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.models import Post, Tournament, Stage, Game
-from main.forms import PostCreateForm
 
 
 class AdminIndex(LoginRequiredMixin, View):

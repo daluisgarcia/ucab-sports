@@ -5,30 +5,27 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from main.models import Post, Tournament, Stage, Game, StageTournament
 from main.forms import TournamentCreateForm, StageTournamentCreateForm
 
 
-#Crear Torneo
+''' Redirect to the tournament list or render the form
+
+Create a tournament and assign the owner
+'''
 class CreateTournament(LoginRequiredMixin, CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
  
-    def post(self, request, *args, **kwargs):
-        #print(request.POST)
+    def post(self, request):
         form = TournamentCreateForm(request.POST)
         self.object = None
         if form.is_valid():
             object = form.save(commit=False)
             object.owner = self.request.user
             object.save()
-            # Obtenemos el id último registro del torneo (el que se acaba de insertar)
-            c = Tournament.objects.order_by('-id')[0].id
-            print(c)
-            return redirect('main:create_stage_tournament', pk=c)
-
+            return redirect('main:tournament_list')
         context = self.get_context_data()
         context['form'] = form
         return render(request, self.template_name, context)
@@ -48,6 +45,9 @@ def createStageTournament(request, pk):
 
     #Obtenemos el torneo y se instancia el formset al torneo
     tournament = Tournament.objects.get(id=pk)
+    #Se cierra la inscripcion
+    tournament.inscripcion_abierta = False
+    tournament.save()
     formset = StageFormSet(queryset=StageTournament.objects.none(), instance=tournament)
 
     if request.method == 'POST':
@@ -67,7 +67,10 @@ def createStageTournament(request, pk):
     return render(request, 'admin/tournaments/stage_tour_form.html', context)
 
 
-#Lista de torneos
+''' Render the list view
+
+Shows the tournament list to the owner
+'''
 class TournamentList(LoginRequiredMixin, ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
@@ -83,12 +86,19 @@ class TournamentList(LoginRequiredMixin, ListView):
         context['title'] = 'Torneos'
         return context
 
+
+'''
+Shows all the tournaments to the common user
+'''
 class PublicTournamentList(ListView):
     model = Tournament
     template_name = 'admin/tournaments/public_tournaments_list.html'
 
 
-#Detalle del torneo
+''' Render the detail view or redirect to the main page if user is not the owner
+
+Shows the detail for a tournament
+'''
 class TournamentDetail(LoginRequiredMixin, DetailView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_detail.html'

@@ -42,8 +42,6 @@ class Team(models.Model):
 class Stage(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   descripcion = models.CharField(max_length=100, verbose_name='Descripción')
-  part_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
-  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
 
   def __str__(self):
     return self.nombre
@@ -136,6 +134,10 @@ class StageTournament(models.Model):
   id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
+  participantes_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo', default=1)
+  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido', default=2)
+  num_grupos = models.SmallIntegerField(verbose_name='Numero de grupos', null=True)
+  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo', null=True)
 
 
 '''
@@ -177,6 +179,7 @@ class Participation(models.Model):
 class Classified(models.Model):
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.CASCADE)
+  grupo = models.CharField(max_length=1, verbose_name='Grupo', null=True)
 
 
 '''

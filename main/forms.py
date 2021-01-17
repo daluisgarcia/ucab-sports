@@ -53,7 +53,7 @@ class TournamentCreateForm(ModelForm):
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'inscripcion_abierta', 'edicion', 'id_juego']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -62,7 +62,6 @@ class TournamentCreateForm(ModelForm):
       ),
       'fecha_inicio': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
       'fecha_fin': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
-      'inscripcion_abierta':  CheckboxInput(),
       'edicion': NumberInput(),
       'id_juego': Select()
     }
@@ -115,7 +114,7 @@ class StageCreateForm(ModelForm):
 
   class Meta:
     model = Stage
-    fields = ['nombre', 'descripcion', 'part_por_equipo', 'equipos_por_partido']
+    fields = ['nombre', 'descripcion']
     widgets = {
       'nombre': TextInput(
         attrs = {
@@ -128,8 +127,6 @@ class StageCreateForm(ModelForm):
           'rows': 5
         }
       ),
-      'part_por_equipo': NumberInput(),
-      'equipos_por_partido': NumberInput(),
     }
 
 

@@ -5,10 +5,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
-
 
 
 # Crear Post
