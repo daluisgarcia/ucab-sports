@@ -112,12 +112,28 @@ class StageTournamentCreateForm(forms.Form):
 
   class Meta:
     model = StageTournament
-    fields = ['id_fase', 'jerarquia']
+    fields = ['id_fase', 'participantes_por_equipo', 'equipos_por_partido', 'num_grupos', 'equipos_por_grupo']
     widgets = {
       'id_fase': Select(),
-      'jerarquia': NumberInput(
+      'participantes_por_equipo': NumberInput(),
+      'participantes_por_equipo': NumberInput(
         attrs = {
-          'placeholder': 'Ingrese la jerarquía'
+          'placeholder': 'número de participantes'
+        }
+      ),
+      'equipos_por_partido': NumberInput(
+        attrs = {
+          'placeholder': 'número de equipos'
+        }
+      ),
+      'num_grupos': NumberInput(
+        attrs = {
+          'placeholder': 'número de grupos'
+        }
+      ),
+      'equipos_por_grupo': NumberInput(
+        attrs = {
+          'placeholder': 'número de equipos por grupo'
         }
       )
     }

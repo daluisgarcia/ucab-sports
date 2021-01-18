@@ -30,7 +30,10 @@ urlpatterns = [
     path('torneo/<int:pk>/stages/', TournamentViews.createStageTournament, name='create_stage_tournament'),
     path('torneos/', TournamentViews.TournamentList.as_view(), name='tournament_list'),
     path('torneo/<int:pk>/', TournamentViews.tournamentInfo, name='tournament_detail'),
+    #Editar el torneo
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
+    #Editar sus fases
+    path('torneo/edit/<int:pk>/stages/', TournamentViews.editStageTournament, name='edit_stage_tournament'),
     path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
     path('torneos/abiertos/', TournamentViews.PublicTournamentList.as_view(), name='tournaments_public_list'),
 

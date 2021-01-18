@@ -134,10 +134,10 @@ class StageTournament(models.Model):
   id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
-  participantes_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo', default=1)
-  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido', default=2)
-  num_grupos = models.SmallIntegerField(verbose_name='Numero de grupos', null=True)
-  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo', null=True)
+  participantes_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
+  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
+  num_grupos = models.SmallIntegerField(verbose_name='Numero de grupos', null=True, blank=True)
+  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo', null=True, blank=True)
 
 
 '''

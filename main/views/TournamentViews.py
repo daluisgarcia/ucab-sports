@@ -20,11 +20,11 @@ class CreateTournament(LoginRequiredMixin, CreateView):
  
     def post(self, request):
         form = TournamentCreateForm(request.POST)
-        initial_form = InitialStageTournamentForm(request.POST)
+        #initial_form = InitialStageTournamentForm(request.POST)
         #participantes = initial_form['participantes_por_equipo'].value()
         #print(participantes)
         self.object = None
-        if form.is_valid() and initial_form.is_valid():
+        if form.is_valid():
             object = form.save(commit=False)
             object.owner = self.request.user
             object.save()
@@ -51,7 +51,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
 #Asociar las fases al torneo (mediante un método)
 def createStageTournament(request, pk):
     #Se define formset de la fase
-    StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','jerarquia'), extra=1)
+    StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','participantes_por_equipo','equipos_por_partido','num_grupos','equipos_por_grupo'), extra=1)
 
     #Obtenemos el torneo y se instancia el formset al torneo
     tournament = Tournament.objects.get(id=pk)
@@ -63,10 +63,15 @@ def createStageTournament(request, pk):
     if request.method == 'POST':
         formset = StageFormSet(request.POST, instance=tournament)
         if formset.is_valid():
+            #Creamos las jerarquías en el orden en como llegan las fases en el formset
+            jerarquia = 1
+            for form in formset:
+                form.jerarquia = jerarquia
+                jerarquia = jerarquia + 1
+                print(form.jerarquia)
             formset.save()
             messages.success(request, 'El torneo ha sido creado satisfactoriamente')
             return redirect(reverse_lazy('main:tournament_list'))
-        messages.error(request, 'Cada fase debe llevar su correspondiente jerarquía')
         
     context = {
         'stage_formset': formset, 
@@ -133,7 +138,6 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
-    success_url = reverse_lazy('main:tournament_list')
 
     def get(self, request, pk):
         tournament = get_object_or_404(self.model, pk=pk)
@@ -155,13 +159,75 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None
-        return redirect(self.success_url)
+        return redirect('main:edit_stage_tournament',  pk=pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición del torneo'
+        context['action'] = 'edit'
         context['botton_title'] = 'Editar torneo'
         return context
+
+
+#Editar las fases del torneo
+
+def editStageTournament(request, pk):
+    #Traemos las fases del torneo
+    cantidad_fases = StageTournament.objects.filter(id_torneo=pk).count()
+    #Cantidad de filas que tendrá el formset
+    if(cantidad_fases == 0):
+        filas = 1
+    else:
+        filas = cantidad_fases
+
+    #Se define formset de la fase
+    StageFormSet = inlineformset_factory(Tournament, StageTournament, fields=('id_fase','participantes_por_equipo','equipos_por_partido','num_grupos','equipos_por_grupo'), extra=filas-1)
+
+    #Obtenemos el torneo y se instancia el formset al torneo
+    tournament = Tournament.objects.get(id=pk)
+
+    if(cantidad_fases == 0):
+        formset = StageFormSet(queryset=StageTournament.objects.none(), instance=tournament)
+    else:
+        formset = StageFormSet(queryset=StageTournament.objects.filter(id_torneo=pk), instance=tournament)
+
+
+    if request.method == 'POST':
+        formset = StageFormSet(request.POST, instance=tournament)
+
+        if formset.is_valid():
+            #Creamos las jerarquías en el orden en como llegan las fases en el formset
+            jerarquia = 1
+            for form in formset:
+                stage = Stage.objects.get(id=form['id_fase'].value())
+
+                if(not form['num_grupos'].value()):
+                    num_grupos = None
+                else:
+                    num_grupos = form['num_grupos'].value()
+
+                if(not form['equipos_por_grupo'].value()):
+                    eq_grupo = None
+                else:
+                    eq_grupo = form['equipos_por_grupo'].value()
+
+                stage_tournament = StageTournament(id_fase=stage, id_torneo=tournament, jerarquia=jerarquia, participantes_por_equipo=form['participantes_por_equipo'].value(), equipos_por_partido=form['equipos_por_partido'].value(), num_grupos=num_grupos, equipos_por_grupo=eq_grupo)
+                
+                stage_tournament.save()
+                
+                jerarquia = jerarquia + 1
+
+            messages.success(request, 'El torneo ha sido modificado satisfactoriamente')
+            return redirect(reverse_lazy('main:tournament_list'))
+        
+    context = {
+        'stage_formset': formset, 
+        'title': 'Asociar fases al torneo', 
+        'botton_title': 'Asociar fases',
+        'pk': pk
+    }
+    return render(request, 'admin/tournaments/stage_tour_form.html', context)
+
 
 
 #Eliminar torneo
