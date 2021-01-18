@@ -81,6 +81,27 @@ class TournamentCreateForm(ModelForm):
 
 
 '''
+    INITIAL STAGE-TOURNAMENT
+'''
+class InitialStageTournamentForm(forms.Form):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+
+  class Meta:
+    model = StageTournament
+    fields = ['participantes_por_equipo']
+    widgets = {
+      'participantes_por_equipo': NumberInput(
+        attrs = {
+          'placeholder': 'Ingrese los participantes del equipo'
+        }
+      )
+    }
+
+
+'''
     STAGE-TOURNAMENT CREATE FORM
 '''
 class StageTournamentCreateForm(forms.Form):

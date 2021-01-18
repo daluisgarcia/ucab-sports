@@ -5,8 +5,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from main.models import Post, Tournament, Stage, Game, StageTournament
-from main.forms import TournamentCreateForm, StageTournamentCreateForm
+from main.models import Post, Tournament, Stage, Game, Stage, StageTournament
+from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
 
 
 ''' Redirect to the tournament list or render the form
@@ -20,11 +20,20 @@ class CreateTournament(LoginRequiredMixin, CreateView):
  
     def post(self, request):
         form = TournamentCreateForm(request.POST)
+        initial_form = InitialStageTournamentForm(request.POST)
+        #participantes = initial_form['participantes_por_equipo'].value()
+        #print(participantes)
         self.object = None
-        if form.is_valid():
+        if form.is_valid() and initial_form.is_valid():
             object = form.save(commit=False)
             object.owner = self.request.user
             object.save()
+            tour = Tournament.objects.order_by('-id')[0].id
+            """
+            #Se creala fase inicial
+            fase_inicial = StageTournament(id_fase=1, id_torneo=tour, jerarquia=1, participantes_por_equipo=participantes, equipos_por_partido=1)
+            fase_inicial.save()
+            """
             return redirect('main:tournament_list')
         context = self.get_context_data()
         context['form'] = form
@@ -33,6 +42,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
     def get_context_data(self):
         context = super().get_context_data()
         context['title'] = 'Creación del torneo'
+        #context['match_form'] = InitialStageTournamentForm(initial=None)
         context['botton_title'] = 'Crear torneo'
         context['action'] = 'add'
         return context
