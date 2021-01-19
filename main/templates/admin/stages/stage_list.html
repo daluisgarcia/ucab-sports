@@ -36,39 +36,29 @@
       </a>
     </div>
     <br>
-    <div class="row ml-2">
-      <div class="col-2 text-center">
-          <h6 class="label label-default">Nombre</h6>
+    <div class="container col-11">
+      <div class="row">
+        <div class="col-3 text-left">
+            <h6 class="label label-default">Nombre</h6>
+        </div>
+        <div class="col-5 text-left">
+          <h6 class="label label-default">Descripcion</h6>
+        </div>
+        <div class="col-3 text-right"></div>
       </div>
-      <div class="col-3 text-center">
-        <h6 class="label label-default">Descripcion</h6>
-      </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Participantes por equipo</h6>
-      </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Equipos por partido</h6>
-      </div>
-      <div class="col-3 text-center"></div>
     </div>
 
     {% for stage in stage_list %}
     <ul class="list-group admin_list_group">
-      <li class="list-group-item">
+      <li class="list-group-item col-11">
         <div class="row">
-          <div class="col-2 text-center">
+          <div class="col-3 text-left">
             {{ stage.nombre }}
           </div>
-          <div class="col-3 text-center">
+          <div class="col-5 text-left">
             {{ stage.descripcion }}
           </div>
-          <div class="col-2 text-center">
-            {{ stage.part_por_equipo }}
-          </div>
-          <div class="col-2 text-center">
-            {{ stage.equipos_por_partido }}
-          </div>
-          <div class="col-3 text-center">
+          <div class="offset-1 col-3 text-right">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_stage">
               Eliminar
             </button>

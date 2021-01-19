@@ -16,21 +16,21 @@
     <br>
     <div class="row ml-2">
       <div class="col-1 text-center">
-          <h6 class="label label-default">Nombre</h6>
+          <h6 class="label label-default list_titles">Nombre</h6>
       </div>
       <div class="col-2 text-center">
-        <h6 class="label label-default">Juego</h6>
+        <h6 class="label label-default list_titles">Juego</h6>
       </div>
       <div class="col-1 text-center">
-        <h6 class="label label-default">Edicion</h6>
+        <h6 class="label label-default list_titles">Edicion</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Fecha inicio</h6>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">Inicio</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Fecha fin</h6>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">Fin</h6>
       </div>
-      <div class="col-4 text-center">
+      <div class="col-6 text-center">
       </div>
     </div>
   
@@ -47,13 +47,16 @@
         <div class="col-1 text-center">
           {{ c.edicion }}
         </div>
-        <div class="col-2 text-center">
+        <div class="col-1 text-center">
           {{ c.fecha_inicio }}
         </div>
-        <div class="col-2 text-center">
+        <div class="col-1 text-center">
           {{ c.fecha_fin }}
         </div>
-        <div class="col-4 text-center">
+        <div class="col-6 text-center">
+          <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:create_stage_tournament' c.id %}">
+            Cerrar inscripcion
+          </a>
           <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_tournament">
             Eliminar
           </button>
@@ -79,9 +82,6 @@
               </div>
             </div>
           </div>
-          <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:create_stage_tournament' c.id %}">
-            Cerrar inscripcion
-          </a>
           <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_tournament' c.id %}">
             Modificar
           </a>

@@ -33,9 +33,11 @@
     {% endif %}
 
     {% for field in form.visible_fields %}
-    <div class="form-group">
+    <div class="form-group col-11">
       <label>{{ field.label }}</label>
-      {{ field }}
+      <div class="col-5">
+        {{ field }}
+      </div>
     </div>
     {% endfor %}
   </div>

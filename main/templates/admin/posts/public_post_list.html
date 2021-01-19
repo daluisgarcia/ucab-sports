@@ -3,10 +3,9 @@
 {% block extra_css %}
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
-
 {% block head %}
-<br>
-<div class="card-body">
+<img class="header_img" style="background-image: url(https://images.unsplash.com/photo-1471965187167-4a4c69ae4707?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1618&q=80)">
+<div class="card-body general_background">
   {% for c in object_list %}
       <h2 class="text-center">{{ c.titulo }}</h2>
       <br>
@@ -17,7 +16,7 @@
               <img class="main_post_images" src={{ c.imagen.url }}>
             {% endif %}
           </div>
-          <div class="col-8 text-left">
+          <div class="offset-1 col-8 text-left">
             <p>
               {{ c.cuerpo }}
             </p>
