@@ -17,7 +17,7 @@
 
 <form method="POST" action="">
 
-  <div id="form-card" class="card-body">
+  <div class="card-body">
     
     <!--Validación de errores-->
     {% csrf_token %} 
@@ -32,18 +32,20 @@
         ×
       </button>
       <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {% for field in stage_formset %} 
+      {% for field in stage_formset %}
+        <ul>
         {% for error in field.errors %}
           <li>{{ error }}</li>
-        {% endfor %} 
+        {% endfor %}
+        </ul>
       {% endfor %}
     </div>
     {% endif %}
 
     {{ stage_formset.management_form }}
     <h6>Seleccione las fases, la cantidad de participantes y los grupos (si este torneo no tiene división de grupos, puede omitir estos campos)<button id="addBtn" type="button" class="btn btn-primary">Agregar campo</button></h6>
-    {% for stage_form in stage_formset %}
-    <ul class="list-group admin_list_group">
+    <ul id="form-list" class="list-group admin_list_group">
+      {% for stage_form in stage_formset %}
       <li class="list-group-item">
         <div class="row">
           <div class="col-2 text-center">
@@ -63,18 +65,20 @@
           </div>
         <div>
       </li>
+      {% endfor %}
     </ul>
-    {% endfor %}
 
 
-  <div class="card-footer col-11 ml-4 admin_footer">
-    <button type="submit" class="btn btn-primary btn-flat float-right">
-      <i class="fas fa-save"></i> {{ botton_title }}
-    </button>
+    <div class="card-footer col-11 ml-4 admin_footer">
+      <button type="submit" class="btn btn-primary btn-flat float-right">
+        <i class="fas fa-save"></i> {{ botton_title }}
+      </button>
+    </div>
+
   </div>
-
-    {% block extra_scripts %}
-        <script src={% static 'js/stage_colector.js' %}></script>
-    {% endblock %}
 </form>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src={% static 'js/stage_colector.js' %}></script>
 {% endblock %}

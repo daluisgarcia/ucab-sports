@@ -54,9 +54,13 @@
           {{ c.fecha_fin }}
         </div>
         <div class="col-6 text-center">
-          <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:create_stage_tournament' c.id %}">
-            Cerrar inscripcion
-          </a>
+          {% if c.inscripcion_abierta %}
+              <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:create_stage_tournament' c.id %}">
+                Cerrar inscripcion
+              </a>
+          {% else %}
+              <!-- Boton a gestionar torneo, para agregar patidos, establecer ganadores, etc. -->
+          {% endif %}
           <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_tournament">
             Eliminar
           </button>

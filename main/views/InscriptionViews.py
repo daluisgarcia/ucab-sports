@@ -17,7 +17,7 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 #Inscribir a los participantes del torneo
 def createRegisterTeam(request, pk_torneo):
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
-    person_number = StageTournament.objects.get(jerarquia=1, id_torneo=pk_torneo).id_fase.part_por_equipo
+    person_number = StageTournament.objects.get(jerarquia=1, id_torneo=pk_torneo).participantes_por_equipo
 
     #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
     if(Tournament.objects.get(id=pk_torneo).tipo_delegado == 'd'):
@@ -204,9 +204,9 @@ def approveInscription(request, pk_team, pk_tour):
     
     print(nuevo_registro_equipo)
 
-    #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 1 (jerarquía 1 porque es la primera fase del torneo)
+    #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 0 (jerarquía 0 porque es la fase de inscripcion)
 
-    fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=1)
+    fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=0)
     equipo_clasificado = Classified(id_equipo=nuevo_registro_equipo, id_fase_torneo=fase_torneo)
     equipo_clasificado.save()
     

@@ -20,6 +20,7 @@ $(document).ready(function(){
     /*Add a new input to the form*/
     $("#addBtn").click(function(){
         let div = document.createElement('div');
+        div.classList.add('row');
 
         let selector = $(`#${stage_selector_id}`).clone();
         let input1 = $(`#${stage_participante_equipo_id}`).clone();
@@ -32,40 +33,59 @@ $(document).ready(function(){
         selectorCont = obj.cont;
         selector.attr('id', str);
         selector.attr('name', str.slice(3, str.length));
-        selector.appendTo(div);
+        let divIn = document.createElement('div');
+        divIn.classList.add('col-2', 'text-center');
+        selector.appendTo(divIn);
+        div.append(divIn);
 
         obj = {'cont': input1Cont};
         str = changeIdNumber(stage_participante_equipo_id, obj);
         input1Cont = obj.cont;
         input1.attr("id", str);
         input1.attr('name', str.slice(3, str.length));
-        input1.appendTo(div);
+        divIn = document.createElement('div');
+        divIn.classList.add('col-2', 'text-center');
+        input1.appendTo(divIn);
+        div.append(divIn);
 
         obj = {'cont': input2Cont};
         str = changeIdNumber(stage_equipo_partido_id, obj);
         input2Cont = obj.cont;
         input2.attr("id", str);
         input2.attr('name', str.slice(3, str.length));
-        input2.appendTo(div);
+        divIn = document.createElement('div');
+        divIn.classList.add('col-2', 'text-center');
+        input2.appendTo(divIn);
+        div.append(divIn);
         
         obj = {'cont': input3Cont};
         str = changeIdNumber(stage_num_grupos_id, obj);
         input3Cont = obj.cont;
         input3.attr("id", str);
         input3.attr('name', str.slice(3, str.length));
-        input3.appendTo(div);
+        divIn = document.createElement('div');
+        divIn.classList.add('col-2', 'text-center');
+        input3.appendTo(divIn);
+        div.append(divIn);
         
         obj = {'cont': input4Cont};
         str = changeIdNumber(stage_equipos_grupo_id, obj);
         input4Cont = obj.cont;
         input4.attr("id", str);
         input4.attr('name', str.slice(3, str.length));
-        input4.appendTo(div);
+        divIn = document.createElement('div');
+        divIn.classList.add('col-2', 'text-center');
+        input4.appendTo(divIn);
+        div.append(divIn);
 
         form_num = $(`#${forms_num_id}`);
         form_num.val(parseInt(form_num.val()) + 1);
 
-        $('#form-card').append(div);
+        let li = document.createElement('li');
+        li.classList.add('list-group-item');
+        li.append(div);
+
+        $('#form-list').append(li);
     });
 
 });
