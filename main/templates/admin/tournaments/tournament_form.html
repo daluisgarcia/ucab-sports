@@ -30,13 +30,19 @@
     {% for error in form.non_field_errors %} 
           <li>{{ error }}</li>
       {% endfor %}
-    <div class="form-group">
     {% for field in form.visible_fields %}
-      <label>{{ field.label }}</label>
-      {{ field }}
+      <div class="form-group">
+        <label>{{ field.label }}</label>
+        {{ field }}
+      </div>
     {% endfor %}
 
-    </div>
+    {% for field in num_p_form %}
+      <div class="form-group">
+      <label>{{ field.label }}</label>
+      {{ field }}
+      </div>
+    {% endfor %}
   </div>
 
   <div class="card-footer col-11 ml-4 admin_footer">

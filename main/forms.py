@@ -83,7 +83,7 @@ class TournamentCreateForm(ModelForm):
 '''
     INITIAL STAGE-TOURNAMENT
 '''
-class InitialStageTournamentForm(forms.Form):
+class InitialStageTournamentForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
     for form in self.visible_fields():

@@ -131,7 +131,7 @@ class HistoryParticipation(models.Model):
   STAGE TOURNAMENT MODEL
 '''
 class StageTournament(models.Model):
-  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
+  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE, null=True)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
   participantes_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')

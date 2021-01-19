@@ -20,7 +20,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
  
     def post(self, request):
         form = TournamentCreateForm(request.POST)
-        #initial_form = InitialStageTournamentForm(request.POST)
+        initial_form = InitialStageTournamentForm(request.POST)
 
         self.object = None
         if form.is_valid() and initial_form.is_valid():
@@ -30,14 +30,14 @@ class CreateTournament(LoginRequiredMixin, CreateView):
             tour = Tournament.objects.order_by('-id')[0].id
 
             #Se creala fase inicial
-            # fase_inicial = StageTournament(
-            #     id_fase=None,
-            #     id_torneo=tour,
-            #     jerarquia=0,
-            #     participantes_por_equipo=initial_form['participantes_por_equipo'].value(),
-            #     equipos_por_partido=1
-            # )
-            # fase_inicial.save()
+            fase_inicial = StageTournament(
+                id_fase=None,
+                id_torneo=object,
+                jerarquia=0,
+                participantes_por_equipo=initial_form['participantes_por_equipo'].value(),
+                equipos_por_partido=1
+            )
+            fase_inicial.save()
 
             return redirect('main:tournament_list')
         context = self.get_context_data()
@@ -47,7 +47,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
     def get_context_data(self):
         context = super().get_context_data()
         context['title'] = 'Creación del torneo'
-        #context['num_p_form'] = InitialStageTournamentForm(initial=None)
+        context['num_p_form'] = InitialStageTournamentForm(initial=None)
         context['botton_title'] = 'Crear torneo'
         context['action'] = 'add'
         return context
@@ -153,7 +153,7 @@ class TournamentDetail(LoginRequiredMixin, DetailView):
 def tournamentInfo(request, pk):
     tournament = Tournament.objects.get(id=pk)
     if tournament.owner == request.user:
-        tourStage = StageTournament.objects.filter(id_torneo=pk)
+        tourStage = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False)
         return render(request, 'admin/tournaments/tournament_detail.html',
                       {'tournament': tournament, 'tourStage': tourStage})
     return redirect('main:admin_index')
@@ -199,7 +199,7 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
 
 def editStageTournament(request, pk):
     #Traemos las fases del torneo
-    cantidad_fases = StageTournament.objects.filter(id_torneo=pk).count()
+    cantidad_fases = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False).count()
     #Cantidad de filas que tendrá el formset
     if(cantidad_fases == 0):
         filas = 1
@@ -220,7 +220,7 @@ def editStageTournament(request, pk):
     if(cantidad_fases == 0):
         formset = StageFormSet(queryset=StageTournament.objects.none(), instance=tournament)
     else:
-        formset = StageFormSet(queryset=StageTournament.objects.filter(id_torneo=pk), instance=tournament)
+        formset = StageFormSet(queryset=StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False), instance=tournament)
 
     if request.method == 'POST':
         formset = StageFormSet(request.POST, instance=tournament)
