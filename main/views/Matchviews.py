@@ -18,8 +18,8 @@ def createMatch(request):
         match_form = MatchCreateForm(request.POST)
 
         if match_form.is_valid() and stages.is_valid():    
-            stage=stages['id_fase'].value()
-            torneo=stages['id_torneo'].value()
+            stage = stages['id_fase'].value()
+            torneo = stages['id_torneo'].value()
             print('stage:'+ stage +' torneo:'+ torneo)
 
             #Verificar que la fase y el torneo coinciden
@@ -94,3 +94,12 @@ def createTeams(request, pk_partido, pk_torneo, pk_fase):
     return render(request, 'admin/matches/teams_match.html', context)
 
 
+#Lista de solicitudes de inscripciones
+def matchList(request):
+    print(request.user)
+    matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo')
+
+    context = {
+        'match_list': matches
+    }
+    return render(request, 'admin/matches/match_list.html', context)

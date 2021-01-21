@@ -42,6 +42,7 @@ def createRegisterTeam(request, pk_torneo):
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
             
+            #REVISAR ESTA VALIDACION
             #validar que los roles ingresados cumplan los estándares para este torneo
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']

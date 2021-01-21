@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, InscriptionViews, Matchviews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, InscriptionViews, MatchViews
 
 
 app_name='main'
@@ -65,10 +65,11 @@ urlpatterns = [
     path('equipo/<int:pk>/', InscriptionViews.inscriptionDetail, name='team_detail'),
 
     #Match
+    path('partidos/', MatchViews.matchList, name='match_list'),
     #Primero mostramos la lista de torneos y la lista de fases de cada torneo
-    path('partido/fases/', Matchviews.createMatch, name='create_match'),
+    path('partido/fases/', MatchViews.createMatch, name='create_match'),
     #Form del partido
-    path('partido/<str:pk_partido>/torneo/<str:pk_torneo>/fase/<str:pk_fase>/', Matchviews.createTeams, name='teams_match'),
+    path('partido/<str:pk_partido>/torneo/<str:pk_torneo>/fase/<str:pk_fase>/', MatchViews.createTeams, name='teams_match'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

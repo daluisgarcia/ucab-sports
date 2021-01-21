@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from main.models import Post, Tournament, Stage, Game, Stage, StageTournament
+from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified
 from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
 
 
@@ -89,7 +89,19 @@ def createStageTournament(request, pk):
                     equipos_por_grupo=form['equipos_por_grupo'].value() if form['equipos_por_grupo'].value() else None
                 )
                 stage_tournament.save()
+
+                if(jerarquia == 1):
+                    stage_1 = StageTournament.objects.get(id_torneo=tournament, jerarquia=jerarquia)
+
                 jerarquia = jerarquia + 1
+
+            #Pasamos a los participantes de la fase con jerarquía 0 a la fase con jerarquía 1
+            stage_tour_0 = StageTournament.objects.get(id_torneo=tournament, jerarquia=0)
+            teams = Classified.objects.filter(id_fase_torneo=stage_tour_0)
+            
+            for team in teams:
+                clasificado = Classified(id_fase_torneo=stage_1, id_equipo=team.id_equipo)
+                clasificado.save()
 
             messages.success(request, 'El torneo ha sido creado satisfactoriamente')
 
@@ -133,7 +145,7 @@ Shows all the tournaments to the common user
 '''
 class PublicTournamentList(ListView):
     model = Tournament
-    template_name = 'admin/tournaments/public_tournaments_list.html'
+    template_name = 'layouts/tournaments/public_tournaments_list.html'
 
 
 ''' Render the detail view or redirect to the main page if user is not the owner

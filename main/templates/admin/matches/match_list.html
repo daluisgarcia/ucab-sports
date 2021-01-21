@@ -6,46 +6,58 @@
 {% block content %}
 
 <br>
-<h2 class="text-center">{{ title }}</h2>
+<h2 class="text-center">Partidos</h2>
 
   <div class="card-body">
     <div>
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_stage' %}">
+      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
         Agregar
       </a>
     </div>
     <br>
     <div class="container col-11">
       <div class="row">
-        <div class="col-3 text-left">
-            <h6 class="label label-default">Nombre</h6>
+        <div class="col-2 text-left">
+            <h6 class="label label-default">Fecha</h6>
         </div>
-        <div class="col-5 text-left">
-          <h6 class="label label-default">Descripcion</h6>
+        <div class="col-4 text-left">
+          <h6 class="label label-default">Lugar</h6>
         </div>
-        <div class="col-3 text-right"></div>
+        <div class="col-2 text-left">
+            <h6 class="label label-default">Fase</h6>
+        </div>
+        <div class="col-2 text-left">
+          <h6 class="label label-default">Torneo</h6>
+        </div>
+        <div class="col-2 text-right"></div>
       </div>
     </div>
 
-    {% for stage in stage_list %}
+    {% for match in match_list %}
     <ul class="list-group admin_list_group">
       <li class="list-group-item col-11">
         <div class="row">
-          <div class="col-3 text-left">
-            {{ stage.nombre }}
+          <div class="col-2 text-left">
+            {{ match.fecha }}
           </div>
-          <div class="col-5 text-left">
-            {{ stage.descripcion }}
+          <div class="col-4 text-left">
+            {{ match.direccion }}
+          </div>
+          <div class="col-2 text-left">
+            {{ match.id_fase_torneo.id_torneo }}
+          </div>
+          <div class="col-2 text-left">
+            {{ match.id_fase_torneo.id_fase }}
           </div>
           <div class="offset-1 col-3 text-right">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_stage">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_match">
               Eliminar
             </button>
             <div class="modal fade" id="delete_modal_stage" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar esta fase?</h5>
+                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este partido?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -60,9 +72,12 @@
                 </div>
               </div>
             </div>
-            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_stage' stage.id %}">
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_stage' match.id %}">
               Modificar
             </a>
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:tournament_detail' match.id %}">
+                Detalle
+              </a>
           </div>
         </div>
       </li>

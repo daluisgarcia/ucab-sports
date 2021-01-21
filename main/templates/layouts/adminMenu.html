@@ -9,9 +9,6 @@
     </li>
 {#    <button type="button" style="border: none; background-color:#A9A9A9; outline: none; box-shadow: none;">#}
 {#        <img src="/static/icons/criteria.svg" class="nav-icon " width="30">#}
-{#        <span>#}
-{#            Criterios ganadores#}
-{#        </span>#}
 {#    </button>#}
     <li class="list-group-item">
         <a href="{% url 'main:inscription_list' %}">
@@ -30,7 +27,7 @@
         </a>
     </li>
     <li class="list-group-item">
-        <a href="#">
+        <a href="{% url 'main:match_list' %}">
             <img src="/static/icons/soccer-field.svg" class="nav-icon " width="30">
             <span>
                 Partidos
