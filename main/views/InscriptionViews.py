@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.forms.utils import ErrorList
 from django.views.generic import DetailView
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
@@ -16,6 +16,7 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 
 #Inscribir a los participantes del torneo
 def createRegisterTeam(request, pk_torneo):
+
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
     person_number = StageTournament.objects.get(jerarquia=0, id_torneo=pk_torneo, id_fase__isnull=True).participantes_por_equipo
 
@@ -41,6 +42,28 @@ def createRegisterTeam(request, pk_torneo):
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
             
+            #validar que los roles ingresados cumplan los estándares para este torneo
+            for role_form in team_register_formset:
+                role = role_form.cleaned_data['rol']
+                print('Role Form: ', role)
+
+                if((tournament.tipo_delegado == 'd' and role == 'jd') or(tournament.tipo_delegado == 'jd' and role == 'd')):
+                    
+                    #REVISAR
+                    #Salen el error corto y el de "Ha ocurrido un error"
+                    messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
+
+                    team_register_formset.validate_role()
+
+                    context = {
+                        'person_formset': person_formset,
+                        'team_form': team_form,
+                        'team_register_formset': team_register_formset,
+                        'title': 'Inscribe al equipo y a los participantes', 
+                        'botton_title': 'Inscribirse'
+                    }
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
+
             team_form.save()
             #Obtenemos el último registro del equipo
             pk_team = PreTeam.objects.order_by('-id')[0]
@@ -77,22 +100,6 @@ def createRegisterTeam(request, pk_torneo):
             
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
-                print('Role Form: ', role)
-
-                #Validar que los roles sean exclusivamente del tipo de delegado
-                if((tournament.tipo_delegado == 'd' and role == 'jd') or(tournament.tipo_delegado == 'jd' and role == 'd')):
-                    
-                    #REVISAR
-                    #Salen el error corto y el de "Ha ocurrido un error"
-                    messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
-                    context = {
-                        'person_formset': person_formset,
-                        'team_form': team_form,
-                        'team_register_formset': team_register_formset,
-                        'title': 'Inscribe al equipo y a los participantes', 
-                        'botton_title': 'Inscribirse'
-                    }
-                    return render(request, 'layouts/inscription/preinscription_form.html', context)
 
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
@@ -129,6 +136,7 @@ def createRegisterTeam(request, pk_torneo):
         team_form = PreteamCreateForm()
     
     context = {
+        'tipo_delegado': tournament.tipo_delegado,
         'person_formset': person_formset,
         'team_form': team_form,
         'team_register_formset': team_register_formset,

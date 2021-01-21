@@ -211,7 +211,7 @@ def editStageTournament(request, pk):
         Tournament,
         StageTournament,
         fields=('id_fase','participantes_por_equipo','equipos_por_partido','num_grupos','equipos_por_grupo'),
-        extra=filas-1
+        extra=0
     )
 
     #Obtenemos el torneo y se instancia el formset al torneo
@@ -224,8 +224,10 @@ def editStageTournament(request, pk):
 
     if request.method == 'POST':
         formset = StageFormSet(request.POST, instance=tournament)
-        print(request.POST)
+        #print(request.POST)
+        print('pasó')
         if formset.is_valid():
+            print('pasó')
             #Creamos las jerarquías en el orden en como llegan las fases en el formset
             jerarquia = 1
             for form in formset:

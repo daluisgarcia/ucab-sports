@@ -42,6 +42,20 @@
 
     <div class="row">
       <div class="col-1"></div>
+      {% if tipo_delegado == 'd' %}
+      <div class="col-8">
+        <li>En este torneo uno de los participantes debe ser de tipo delegado.</li>
+      </div>
+      {% endif %}
+      {% if tipo_delegado == 'jd' %}
+      <div class="col-8">
+        <li>En este torneo uno de los participantes debe ser de un jugador delegado.</li>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="row">
+      <div class="col-1"></div>
       <div class="col-3">
         <label>Nombre del equipo</label>
         {{ team_form.nombre }}

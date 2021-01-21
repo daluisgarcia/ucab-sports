@@ -43,7 +43,26 @@
     {% endif %}
 
     {{ stage_formset.management_form }}
-    <h6>Seleccione las fases, la cantidad de participantes y los grupos (si este torneo no tiene división de grupos, puede omitir estos campos)<button id="addBtn" type="button" class="btn btn-primary">Agregar campo</button></h6>
+    <p>Seleccione las fases, la cantidad de participantes y los grupos (si este torneo no tiene división de grupos, puede omitir estos campos)</p><button id="addBtn" type="button" class="btn btn-primary">Agregar campo</button></p>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-2 text-center">
+          Fase
+        </div>
+        <div class="col-2 text-center">
+          Participantes por equipo
+        </div>
+        <div class="col-2 text-center">
+          Equipos por partido
+        </div>
+        <div class="col-2 text-center">
+          Número de grupos
+        </div>
+        <div class="col-2 text-center">
+          Equipos por grupo
+        </div>
+      <div>
+    </div>
     <ul id="form-list" class="list-group admin_list_group">
       {% for stage_form in stage_formset %}
       <li class="list-group-item">

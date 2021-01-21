@@ -2,16 +2,6 @@ from django.forms import *
 from django.core.exceptions import ValidationError
 from main.models import *
 
-"""
-#Se deja comentado por si llega a ser necesario
-class DateInput(forms.DateInput):
-    input_type = "date"
-
-    def __init__(self, **kwargs):
-        kwargs["format"] = "%Y-%m-%d"
-        super().__init__(**kwargs)
-"""
-
 
 '''
     POST CREATE FORM
@@ -48,21 +38,22 @@ class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
     for form in self.visible_fields():
-      # form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['class'] = 'form-control'
       form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'id_juego']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'tipo_delegado', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
           'placeholder': 'Ingrese un nombre'
         }
       ),
-      'fecha_inicio': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
-      'fecha_fin': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'fecha_inicio': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
+      'fecha_fin': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
       'edicion': NumberInput(),
+      'tipo_delegado': Select(),
       'id_juego': Select()
     }
 
@@ -315,6 +306,7 @@ class TeamRegisterCreateForm(ModelForm):
     widgets = {
       'rol': Select()
     }
+  
 
 
 '''
@@ -324,7 +316,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
     def clean(self):
         #Validaciones para verificar que haya solamente un delegado
         if any(self.errors):
-            return
+            return 
 
         roles = []
         duplicates = False
@@ -348,6 +340,14 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     form.add_error('rol','Sólo puede existir un delegado por equipo.')
                     duplicate_rol = True
 
+    #Intento de validación de los roles de los usuarios
+    def validate_role(self):
+        for form in self.forms:
+            if form.cleaned_data:
+                role = form.cleaned_data['rol']
+                raise form.add_error('rol','El tipo de participantes no coincide con las reglas para este torneo')
+
+
 '''
     MATCH CREATE FORM
 '''
@@ -362,7 +362,7 @@ class MatchCreateForm(ModelForm):
     model = Match
     fields = ['fecha', 'direccion']
     widgets = {
-      'fecha': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'fecha': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
       'direccion': TextInput(
         attrs = {
           'placeholder': 'Ingrese la dirección del partido (opcional)'
