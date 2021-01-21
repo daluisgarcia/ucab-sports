@@ -14,11 +14,11 @@
 }
 
 .post_images {
-    height: 100px;
+    width: 100%;
 }
 
 .main_post_images {
-    width: 300px;
+    width: 100%;
 }
 
 .admin_list_group {

@@ -73,7 +73,7 @@
               </td>
             </div>
             <div class="col-4 align-middle">
-              <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_post">
+              <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_post">
                 Eliminar
               </button>
               <div class="modal fade" id="delete_modal_post" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
@@ -95,10 +95,10 @@
                   </div>
                 </div>
               </div>
-              <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_post' c.id %}">
+              <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_post' c.id %}">
                 Modificar
               </a>
-              <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:post_detail' c.id %}">
+              <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:post_detail' c.id %}">
                 Detalle
               </a>
             </div>

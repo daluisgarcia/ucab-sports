@@ -55,13 +55,13 @@
         </div>
         <div class="col-6 text-center">
           {% if c.inscripcion_abierta %}
-              <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:create_stage_tournament' c.id %}">
+              <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:create_stage_tournament' c.id %}">
                 Cerrar inscripcion
               </a>
           {% else %}
               <!-- Boton a gestionar torneo, para agregar patidos, establecer ganadores, etc. -->
           {% endif %}
-          <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_tournament">
+          <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_tournament">
             Eliminar
           </button>
           <div class="modal fade" id="delete_modal_tournament" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
@@ -86,10 +86,10 @@
               </div>
             </div>
           </div>
-          <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_tournament' c.id %}">
+          <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_tournament' c.id %}">
             Modificar
           </a>
-          <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:tournament_detail' c.id %}">
+          <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:tournament_detail' c.id %}">
             Detalle
           </a>
         </div>

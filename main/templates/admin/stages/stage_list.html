@@ -59,7 +59,7 @@
             {{ stage.descripcion }}
           </div>
           <div class="offset-1 col-3 text-right">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_stage">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_stage">
               Eliminar
             </button>
             <div class="modal fade" id="delete_modal_stage" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
@@ -81,7 +81,7 @@
                 </div>
               </div>
             </div>
-            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_stage' stage.id %}">
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_stage' stage.id %}">
               Modificar
             </a>
           </div>

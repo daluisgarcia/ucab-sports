@@ -28,7 +28,7 @@
             {{ c.nombre }}
           </div>
           <div class="offset-4 col-4 text-center">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_game">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_game">
               Eliminar
             </button>
             <div class="modal fade" id="delete_modal_game" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
@@ -50,7 +50,7 @@
                 </div>
               </div>
             </div>
-            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_game' c.id %}">
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_game' c.id %}">
               Modificar
             </a>
           </div>
