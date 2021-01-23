@@ -4,11 +4,22 @@
     {% if form.errors %}
       <p>Tu nombre de usuario o contraseña son incorrectas</p>
     {% endif %}
-
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn btn-primary" value="Login" />
-        <input type="hidden" name="next" value="{{ next }}" />
-    </form>
+    <div class="row login-img">
+      <section class="container-fluid">
+          <section class="row">
+              <section class="col-12">
+                <div class="offset-4 col-4 text-center form-container">
+                  <h3 class="text-center">Iniciar Sesión</h3>
+                  <br>
+                  <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-primary" value="Login" />
+                    <input type="hidden" name="next" value="{{ next }}" />
+                </form> 
+                </div>
+              </section>
+          </section>
+      </section>
+    </div>
 {% endblock %}

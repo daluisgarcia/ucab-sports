@@ -151,7 +151,7 @@ class StageCreateForm(ModelForm):
       ),
       'descripcion': Textarea(
         attrs = {
-          'placeholder': 'Ingrese el cuerpo del post',
+          'placeholder': 'Ingrese una descripción breve de la fase',
           'rows': 5
         }
       ),

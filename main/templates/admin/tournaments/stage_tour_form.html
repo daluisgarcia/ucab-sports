@@ -47,19 +47,19 @@
     <div class="form-group">
       <div class="row">
         <div class="col-2 text-center">
-          Fase
+          <h6 class="label label-default">Fase</h6>
         </div>
-        <div class="col-2 text-center">
-          Participantes por equipo
+        <div class="col-2 text-center ml-2 mr-3">
+          <h6 class="label label-default">Participantes por equipo</h6>
         </div>
-        <div class="col-2 text-center">
-          Equipos por partido
+        <div class="col-2 text-center ml-3 mr-3">
+          <h6 class="label label-default">Equipos por partido</h6>
         </div>
-        <div class="col-2 text-center">
-          Número de grupos
+        <div class="col-2 text-center ml-3 mr-3">
+          <h6 class="label label-default">Número de grupos</h6>
         </div>
-        <div class="col-2 text-center">
-          Equipos por grupo
+        <div class="col-2 text-center ml-3 mr-2">
+          <h6 class="label label-default">Equipos por grupo</h6>
         </div>
       <div>
     </div>
@@ -68,19 +68,29 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-2 text-center">
-            {{ stage_form.id_fase }}
+            <td>
+              {{ stage_form.id_fase }}
+            </td>
           </div>
-          <div class="col-2 text-center">
-            {{ stage_form.participantes_por_equipo }}
+          <div class="col-2 text-center ml-2 mr-3">
+            <td>
+              {{ stage_form.participantes_por_equipo }}
+            </td>
           </div>
-          <div class="col-2 text-center">
-            {{ stage_form.equipos_por_partido }}
+          <div class="col-2 text-center ml-3 mr-3">
+            <td>
+              {{ stage_form.equipos_por_partido }}
+            </td>
           </div>
-          <div class="col-2 text-center">
-            {{ stage_form.num_grupos }}
+          <div class="col-2 text-center ml-3 mr-3">
+            <td>
+              {{ stage_form.num_grupos }}
+            </td>
           </div>
-          <div class="col-2 text-center">
-            {{ stage_form.equipos_por_grupo }}
+          <div class="col-2 text-center ml-3 mr-2">
+            <td>
+              {{ stage_form.equipos_por_grupo }}
+            </td>
           </div>
         <div>
       </li>

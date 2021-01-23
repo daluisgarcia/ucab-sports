@@ -4,148 +4,143 @@
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block head %}
-<h2 class="text-center">{{ title }}</h2>
-
-<form method="POST" action="">
-
-  <div class="card-body">
-    
-    <!--Validación de errores-->
-    {% csrf_token %} 
-    {% if person_formset.errors or team_register_formset.errors %}
-    {{ person_formset.cedula.errors }}
-    <div class="alert alert-danger alert-dismissible">
-      <button
-        type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-hidden="true"
-      >
-        ×
-      </button>
-      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4> 
-      {% for dict in team_register_formset.errors %}
-        {{ dict }}
-      {% endfor %}
-      
-      {% for dict in person_formset.errors %}
-        {{ dict }}
-      {% endfor %}
-      
-      {% if person_formset.cedula.errors %}
-        {% for error in person_formset.cedula.errors %}
-          {{ error }}
-        {% endfor %}
-      {% endif %}
-    </div>
-    {% endif %}
-
-    <div class="row">
-      <div class="col-1"></div>
-      {% if tipo_delegado == 'd' %}
-      <div class="col-8">
-        <li>En este torneo uno de los participantes debe ser de tipo delegado.</li>
-      </div>
-      {% endif %}
-      {% if tipo_delegado == 'jd' %}
-      <div class="col-8">
-        <li>En este torneo uno de los participantes debe ser de un jugador delegado.</li>
-      </div>
-      {% endif %}
-    </div>
-
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-3">
-        <label>Nombre del equipo</label>
-        {{ team_form.nombre }}
-      </div>
-      <div class="col-8"></div>
-    </div>
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-3">
-        <label>Logo</label>
-        {{ team_form.logo }}
-      </div>
-      <div class="col-9"></div>
-    </div>
-
-    <br>
-
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-3">
-        <h4>Ingrese los campos</h4>
-      </div>
-      <div class="col-9"></div>
-    </div>
-
-    <br>
-
-    {{ person_formset.management_form }}
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-8">
-        <table class="table" id="tabla_usuarios">
-          <thead>
-            <tr>
-              <th scope="col">Cedula</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Apellido</th>
-              <th scope="col">Correo</th>
-              <th scope="col">Username</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for person_form in person_formset %}
-              <tr>
-                <td>{{ person_form.cedula }}</td>
-                <td>{{ person_form.nombre }}</td>
-                <td>{{ person_form.apellido }}</td>
-                <td>{{ person_form.correo }}</td>
-                <td>{{ person_form.nickname }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col-2">
-        <table class="table" id="tabla_roles">
-          <thead>
-            <tr>
-              <th scope="col">Rol</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for team_form in team_register_formset %}
-            <tr>
-              <td>{{ team_form.rol }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col-1"></div>
-    </div>
-    
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-10">
-        <label>Comentario (opcional)</label>
-          {{ team_form.comentario }}
-      </div>
-      <div class="col-1"></div>
-    </div>
-  </div>
-
-  <div class="card-footer col-11 ml-4 admin_footer">
-    <button type="submit" class="btn btn-primary btn-flat float-right">
-      <i class="fas fa-save"></i> {{ botton_title }}
-    </button>
-  </div>
-  <br>
-  <br>
-</form>
-
+<div class="row inscription-img">
+  <section class="container-fluid">
+      <section class="row">
+          <section class="col-12">
+            <div class="offset-1 col-10 text-center form-container">
+              <h2 class="text-center">{{ title }}</h2>
+              <form method="POST" action="">
+                <div class="card-body text-center">
+                  <!--Validación de errores-->
+                  {% csrf_token %} 
+                  {% if person_formset.errors or team_register_formset.errors %}
+                  {{ person_formset.cedula.errors }}
+                  <div class="alert alert-danger alert-dismissible">
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-hidden="true"
+                    >
+                      ×
+                    </button>
+                    <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4> 
+                    {% for dict in team_register_formset.errors %}
+                      {{ dict }}
+                    {% endfor %}
+                    
+                    {% for dict in person_formset.errors %}
+                      {{ dict }}
+                    {% endfor %}
+                    
+                    {% if person_formset.cedula.errors %}
+                      {% for error in person_formset.cedula.errors %}
+                        {{ error }}
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  {% endif %}
+              
+                  <div class="row">
+                    {% if tipo_delegado == 'd' %}
+                    <div class="offset-md-1 offset-lg-1 col-8">
+                      <li>En este torneo uno de los participantes debe ser solo delegado.</li>
+                    </div>
+                    {% endif %}
+                    {% if tipo_delegado == 'jd' %}
+                    <div class="offset-md-1 offset-lg-1 col-8">
+                      <li>En este torneo uno de los participantes debe ser un jugador delegado.</li>
+                    </div>
+                    {% endif %}
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="offset-md-1 offset-lg-1 col-12 col-sm-10 col-md-8 col-lg-4">
+                      <label>Nombre del equipo</label>
+                      {{ team_form.nombre }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="offset-md-1 offset-lg-1 col-12 col-sm-10 col-md-8 col-lg-4">
+                      <label>Logo</label>
+                      {{ team_form.logo }}
+                    </div>
+                  </div>
+              
+                  <br>
+              
+                  <div class="row">
+                    <div class="col-12">
+                      <h4 class="text-center">Ingrese los campos</h4>
+                    </div>
+                  </div>
+              
+                  <br>
+              
+                  {{ person_formset.management_form }}
+                  <div class="row">
+                    <div class="offset-md-1 offset-lg-1 col-10 col-sm-8 col-md-8 col-lg-8">
+                      <table class="table" id="tabla_usuarios">
+                        <thead>
+                          <tr>
+                            <th scope="col">Cedula</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Username</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for person_form in person_formset %}
+                            <tr>
+                              <td>{{ person_form.cedula }}</td>
+                              <td>{{ person_form.nombre }}</td>
+                              <td>{{ person_form.apellido }}</td>
+                              <td>{{ person_form.correo }}</td>
+                              <td>{{ person_form.nickname }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-2 col-sm-2">
+                      <table class="table" id="tabla_roles">
+                        <thead>
+                          <tr>
+                            <th scope="col">Rol</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for team_form in team_register_formset %}
+                          <tr>
+                            <td>{{ team_form.rol }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="offset-md-1 offset-lg-1 col-10 col-sm-10 col-md-8 col-lg-8">
+                      <label>Comentario (opcional)</label>
+                        {{ team_form.comentario }}
+                    </div>
+                  </div>
+                </div>
+              
+                <div class="card-footer offset-md-1 offset-lg-1 col-10 admin_footer">
+                  <button type="submit" class="btn btn-primary btn-flat float-right">
+                    <i class="fas fa-save"></i> {{ botton_title }}
+                  </button>
+                </div>
+                <br>
+                <br>
+              </form>
+            </div>
+          </section>
+      </section>
+  </section>
+</div>
 {% endblock %}
