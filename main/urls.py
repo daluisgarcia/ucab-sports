@@ -43,6 +43,7 @@ urlpatterns = [
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
     path('fase/edit/<int:pk>', StageViews.UpdateStage.as_view(), name='update_stage'),
     path('fase/delete/<int:pk>', StageViews.DeleteStage.as_view(), name='delete_stage'),
+    path('torneo/<int:pkt>/fase/<int:pks>/groups', StageViews.StageGroups.as_view(), name='stage_groups'),
 
     #Games
     path('index/juegos/', IndexViews.GamesList.as_view(), name='games_list'),

@@ -1,6 +1,5 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
@@ -93,7 +92,16 @@ def createRegisterTeam(request, pk_torneo):
                     #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
                     if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
                         messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
-                        return redirect('/torneos/')
+
+                        context = {
+                            'person_formset': person_formset,
+                            'team_form': team_form,
+                            'team_register_formset': team_register_formset,
+                            'title': 'Inscribe al equipo y a los participantes',
+                            'botton_title': 'Inscribirse'
+                        }
+
+                        return render(request, 'layouts/inscription/preinscription_form.html', context)
 
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)

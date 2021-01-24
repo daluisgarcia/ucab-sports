@@ -1,0 +1,26 @@
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+    <h1>Grupos de la fase</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for num, group in groups.items %}
+            <h2>Grupo {{ num }}</h2>
+            {% for key, value in group.items %}
+                <div class="form-group-inline">
+                    <label>Equipo {{ key }}</label>
+                    <select class="custom-control-inline" name="{{ value }}">
+                        {% for team in classified %}
+                            <option value="{{ team.id_equipo.id }}">{{ team.id_equipo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Asignar grupos</button>
+    </form>
+{% endblock %}
