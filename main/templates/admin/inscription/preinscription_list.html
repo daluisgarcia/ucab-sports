@@ -9,6 +9,13 @@
 
 <div class="card-body">  
   {% if cant_pendientes > 0 %}
+  
+    <!--Mostrar las solicitudes aprobadas hasta el momento-->
+    <p>Inscritos hasta los momentos en cada torneo:</p>
+    {% for ins in inscritos %}
+      <ul>Torneo: {{ ins.nombre_torneo }}, Inscritos: {{ ins.cantidad_inscritos }}</ul>
+    {% endfor %}
+
     <div class="row ">
       <div class="col-2 text-center">
         <h6 class="label label-default">Imagen</h6>
@@ -93,5 +100,5 @@
     <h5 class="text-center">¡No tienes Solicitudes pendientes por aprobar!</h5>
   {% endif %}
   
-</div>    
+</!->    
 {% endblock %}

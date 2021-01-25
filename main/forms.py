@@ -248,6 +248,15 @@ class PrePersonCreateForm(ModelForm):
       ),
     }
 
+  #Función para validar fechas de inicio y fin del torneo
+  def clean(self):
+    cleaned_data = super().clean()
+    cedula = cleaned_data.get('cedula')
+
+    if cedula:
+      if int(cedula) < 0:
+        raise forms.ValidationError('Las cédulas tienen que ser números positivos')
+
 
 #REVISAR
 #La validacion s eetsa haciendo pero no muestra el error en el template :(
@@ -321,6 +330,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
         roles = []
         duplicates = False
         duplicate_rol = False
+        hay_delegado = False
 
         for form in self.forms:
             
@@ -329,6 +339,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                 print('Rol validator: ', role)
                 # Verificar que no hayan delegados repetidos
                 if (role == 'd') or (role=='jd'):
+                    hay_delegado = True
                     print('delegado')
                     if role in roles:
                         duplicates = True
@@ -340,12 +351,8 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     form.add_error('rol','Sólo puede existir un delegado por equipo.')
                     duplicate_rol = True
 
-    #Intento de validación de los roles de los usuarios
-    def validate_role(self):
-        for form in self.forms:
-            if form.cleaned_data:
-                role = form.cleaned_data['rol']
-                raise form.add_error('rol','El tipo de participantes no coincide con las reglas para este torneo')
+            if(not hay_delegado):
+                form.add_error('rol','Tiene que existir un delegado.')
 
 
 '''

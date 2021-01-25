@@ -29,7 +29,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
             object.save()
             tour = Tournament.objects.order_by('-id')[0].id
 
-            #Se creala fase inicial
+            #Se crea la fase inicial
             fase_inicial = StageTournament(
                 id_fase=None,
                 id_torneo=object,
@@ -102,6 +102,9 @@ def createStageTournament(request, pk):
             for team in teams:
                 clasificado = Classified(id_fase_torneo=stage_1, id_equipo=team.id_equipo)
                 clasificado.save()
+
+            #Por último, se elimina la jerarquía 0 de
+            stage_tour_0.delete()
 
             messages.success(request, 'El torneo ha sido creado satisfactoriamente')
 
@@ -197,7 +200,12 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None
-        return redirect('main:edit_stage_tournament',  pk=pk)
+
+        #Si la inscripción todavía sigue abierta entonces no se pueden modificar las fases del torneo
+        if(tournament.inscripcion_abierta):
+            return redirect('main:tournament_list')
+        else:
+            return redirect('main:edit_stage_tournament',  pk=pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

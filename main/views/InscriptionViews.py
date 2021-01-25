@@ -53,8 +53,6 @@ def createRegisterTeam(request, pk_torneo):
                     #Salen el error corto y el de "Ha ocurrido un error"
                     messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
 
-                    team_register_formset.validate_role()
-
                     context = {
                         'person_formset': person_formset,
                         'team_form': team_form,
@@ -275,14 +273,32 @@ def failInscription(request, pk_team, pk_tour):
 
 #Lista de solicitudes de inscripciones
 def preinscriptionList(request):
-    register = PreTeamRegister.objects.values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').distinct('id_equipo')
-    cant_pendientes = PreTeamRegister.objects.filter().count()
-    print(register)
-    print(cant_pendientes)
+    #Lista de las solicitudes pendientes
+    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_torneo','fecha_registro')
+    #.distinct('id_equipo')
+
+    solicitudes_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).distinct('id_equipo')
+
+    #Cantidad de solicitudes aprobadas por torneo
+    torneos = []
+    inscritos = []
+    for solicitudes in solicitudes_pendientes:
+        if not solicitudes.id_torneo in torneos:
+            torneos.append(solicitudes.id_torneo)
+
+    for i in torneos:
+        solicitudes_aprobadas = HistoryParticipation.objects.filter(id_torneo=i).count()
+        inscritos.append({'nombre_torneo': i.nombre, 'cantidad_inscritos': solicitudes_aprobadas})
+    #print(inscritos)
+
+    #Cantidad de solicitudes pendientes
+    cant_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).count()
+
     context = {
         'register': register,
-        'cant_pendientes': cant_pendientes
-    }
+        'cant_pendientes': cant_pendientes,
+        'inscritos': inscritos
+        }
 
     return render(request, 'admin/inscription/preinscription_list.html', context)
 
