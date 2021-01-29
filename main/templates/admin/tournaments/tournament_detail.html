@@ -9,39 +9,42 @@
 
   <div class="card-body">
     <div class="col-8 text-left ml-5">
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Nombre:</h6>
         <div class="label label-default ml-2">{{ tournament.nombre }}</div>
       </div>
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Juego:</h6>
         <div class="label label-default ml-2">{{ tournament.id_juego }}</div>
       </div>
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Edicion:</h6>
         <div class="label label-default ml-2">{{ tournament.edicion }}</div>
       </div>
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Fecha de inicio:</h6>
         <div class="label label-default ml-2">{{ tournament.fecha_inicio }}</div>
       </div>
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Fecha de fin:</h6>
         <div class="label label-default ml-2">{{ tournament.fecha_fin }}</div>
       </div>
       <br>
-      <div class="row">
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Fases:</h6>
       </div>
       <ul>
         {% for result in tourStage %}
           <li class="mb-1">
             <span class="label label-default ml-2">{{ result.id_fase }}</span>
-            <a href="{% url 'main:stage_groups' tournament.id result.id_fase.id%}" class="btn btn-primary">Gestionar grupos</a>
-            <a href="#" class="btn btn-secondary">Gestionar partidos</a>
+            <a href="{% url 'main:stage_groups' tournament.id result.id_fase.id%}" class="btn btn-primary mb-1">Gestionar grupos</a>
+            <a href="#" class="btn btn-secondary mb-1">Gestionar partidos</a>
           </li>          
         {% endfor %}
       </ul>
+      {% if tournament.inscripcion_abierta == False %}
+
+      {% endif %}
   </div>
 
   <div class="card-footer col-11 ml-4 admin_footer">

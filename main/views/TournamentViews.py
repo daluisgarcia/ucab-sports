@@ -173,6 +173,11 @@ def tournamentInfo(request, pk):
                       {'tournament': tournament, 'tourStage': tourStage})
     return redirect('main:admin_index')
 
+class TournamentBracket(ListView):
+    model = Tournament
+    template_name = 'layouts/tournaments/tournament_bracket.html'
+
+
 
 #Editar Torneo
 class UpdateTournament(LoginRequiredMixin, UpdateView):
