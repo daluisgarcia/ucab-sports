@@ -2,23 +2,6 @@
 {% block head %}
 
 <h3>Seleccione a los equipos que participaron en el partido</h3>
-<h4>cantidad de campos de equipos a poner</h4>
-    {{ cant_equipos }}
-</br>
-<h4>Equipos</h4>
-<select name="select">
-    {% for equipo in equipos %}
-    <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
-    {% endfor %}
-</select>
-</br>
-{% for equipo in equipos %}
-    {{ equipo.id_equipo.nombre }}
-    {{ equipo.id_equipo.id }}
-    </br>
-{% endfor %}
-
-
 
 <form method="POST" action="">
 
@@ -49,6 +32,11 @@
 
         {% for participacion in participacion_formset %}
             <div>
+                <select name="equipo-{{ participacion.valor }}">
+                    {% for equipo in equipos %}
+                    <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
+                    {% endfor %}
+                </select>
                 {{ participacion.ganador }}
                 {{ participacion.puntos_equipo }}
             </div>

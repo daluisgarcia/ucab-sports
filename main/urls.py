@@ -34,7 +34,9 @@ urlpatterns = [
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
     #Editar sus fases
     path('torneo/edit/<int:pk>/stages/', TournamentViews.editStageTournament, name='edit_stage_tournament'),
-    path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
+    #path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
+    path('torneo/delete/<int:pk>/', TournamentViews.deleteTournament, name='delete_tournament'),
+    #Vistas públicas
     path('torneos/abiertos/', TournamentViews.PublicTournamentList.as_view(), name='tournaments_public_list'),
     path('torneos/bracket/', TournamentViews.TournamentBracket.as_view(), name='tournament_bracket'),
     
@@ -44,6 +46,7 @@ urlpatterns = [
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
     path('fase/edit/<int:pk>', StageViews.UpdateStage.as_view(), name='update_stage'),
     path('fase/delete/<int:pk>', StageViews.DeleteStage.as_view(), name='delete_stage'),
+    #Fases de grupo
     path('torneo/<int:pkt>/fase/<int:pks>/groups', StageViews.StageGroups.as_view(), name='stage_groups'),
 
     #Games

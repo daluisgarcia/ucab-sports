@@ -38,7 +38,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
                 equipos_por_partido=1
             )
             fase_inicial.save()
-
+            messages.success(request, 'El torneo ha sido creado satisfactoriamente')
             return redirect('main:tournament_list')
         context = self.get_context_data()
         context['form'] = form
@@ -75,7 +75,6 @@ def createStageTournament(request, pk):
         formset = StageFormSet(request.POST, instance=tournament)
 
         if formset.is_valid():
-
             jerarquia = 1
             # Creamos las jerarquías en el orden en como llegan las fases en el formset
             for form in formset:
@@ -205,9 +204,10 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
         form.save()
         self.object = None
-
+        
         #Si la inscripción todavía sigue abierta entonces no se pueden modificar las fases del torneo
         if(tournament.inscripcion_abierta):
+            messages.success(request, 'El torneo ha sido modificado satisfactoriamente')
             return redirect('main:tournament_list')
         else:
             return redirect('main:edit_stage_tournament',  pk=pk)
@@ -250,9 +250,7 @@ def editStageTournament(request, pk):
     if request.method == 'POST':
         formset = StageFormSet(request.POST, instance=tournament)
         #print(request.POST)
-        print('pasó')
         if formset.is_valid():
-            print('pasó')
             #Creamos las jerarquías en el orden en como llegan las fases en el formset
             jerarquia = 1
             for form in formset:
@@ -300,3 +298,11 @@ class DeleteTournament(LoginRequiredMixin, DeleteView):
     model = Tournament
     success_url = reverse_lazy('main:tournament_list')
     template_name = 'admin/tournaments/tournament_confirm_delete.html'
+
+
+def deleteTournament(request, pk):
+    print(pk)
+    tournament = Tournament.objects.get(id=pk)
+    tournament.delete()
+    print('Torneo eliminado')
+    return redirect(reverse_lazy('main:tournament_list'))

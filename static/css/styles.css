@@ -67,14 +67,14 @@
 }
 
 .inscription-img {
-    background-image:url("https://images.unsplash.com/photo-1522947961977-67fe74257c16?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80");
-    background-repeat:no-repeat;
+    background-image:url("../images/pelota_wallpaper.jpg");
+    background-repeat: repeat-y;
     background-size:100%;
     height:80rem
 }
 
 .login-img {
-    background-image:url("https://images.unsplash.com/photo-1484482340112-e1e2682b4856?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=755&q=80");
+    background-image:url("../images/login_image.jpg");
     background-repeat:no-repeat;
     background-size:100%;
     height:40rem

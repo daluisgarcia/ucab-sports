@@ -40,6 +40,7 @@ class TournamentCreateForm(ModelForm):
     for form in self.visible_fields():
       form.field.widget.attrs['class'] = 'form-control'
       form.field.widget.attrs['autocomplete'] = 'off'
+      form.field.widget.attrs['required'] = 'true'
 
   class Meta:
     model = Tournament
@@ -69,7 +70,7 @@ class TournamentCreateForm(ModelForm):
     if fecha_fin and fecha_inicio:
       if(fecha_fin < fecha_inicio):
           raise forms.ValidationError('La fecha de fin tiene que ser posterior a la fecha de inicio')
-
+    
 
 '''
     INITIAL STAGE-TOURNAMENT
@@ -403,8 +404,6 @@ class StageTourForMatchForm(ModelForm):
 class ParticipationCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
 
   class Meta:
     model = Participation
