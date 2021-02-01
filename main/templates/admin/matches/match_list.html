@@ -15,32 +15,32 @@
       </a>
     </div>
     <br>
-    <div class="container col-11">
+    <div class="container col-12">
       <div class="row">
-        <div class="col-2 text-left">
+        <div class="col-1 text-left">
             <h6 class="label label-default">Fecha</h6>
         </div>
-        <div class="col-4 text-left">
+        <div class="col-2 text-left">
           <h6 class="label label-default">Lugar</h6>
         </div>
         <div class="col-2 text-left">
-            <h6 class="label label-default">Fase</h6>
+            <h6 class="label label-default">Torneo</h6>
         </div>
         <div class="col-2 text-left">
-          <h6 class="label label-default">Torneo</h6>
+          <h6 class="label label-default">Fase</h6>
         </div>
-        <div class="col-2 text-right"></div>
+        <div class="col-5 text-right"></div>
       </div>
     </div>
 
     {% for match in match_list %}
     <ul class="list-group admin_list_group">
-      <li class="list-group-item col-11">
+      <li class="list-group-item col-12">
         <div class="row">
-          <div class="col-2 text-left">
+          <div class="col-1 text-left">
             {{ match.fecha }}
           </div>
-          <div class="col-4 text-left">
+          <div class="col-2 text-left">
             {{ match.direccion }}
           </div>
           <div class="col-2 text-left">
@@ -49,7 +49,7 @@
           <div class="col-2 text-left">
             {{ match.id_fase_torneo.id_fase }}
           </div>
-          <div class="offset-1 col-3 text-right">
+          <div class=" col-5 text-center">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_match">
               Eliminar
             </button>
@@ -75,7 +75,7 @@
             <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_stage' match.id %}">
               Modificar
             </a>
-            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:tournament_detail' match.id %}">
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:match_detail' match.id %}">
                 Detalle
               </a>
           </div>

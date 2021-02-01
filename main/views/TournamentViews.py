@@ -150,20 +150,11 @@ class PublicTournamentList(ListView):
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
 
-''' Render the detail view or redirect to the main page if user is not the owner
+''' 
+Render the detail view or redirect to the main page if user is not the owner
 
 Shows the detail for a tournament
 '''
-class TournamentDetail(LoginRequiredMixin, DetailView):
-    model = Tournament
-    template_name = 'admin/tournaments/tournament_detail.html'
-
-    def get(self, request, pk):
-        tournament = get_object_or_404(self.model, pk=pk)
-        if tournament.owner == request.user:
-            return super(TournamentDetail, self).get(request, pk)
-        return redirect('main:admin_index')
-
 def tournamentInfo(request, pk):
     tournament = Tournament.objects.get(id=pk)
     if tournament.owner == request.user:
@@ -172,6 +163,10 @@ def tournamentInfo(request, pk):
                       {'tournament': tournament, 'tourStage': tourStage})
     return redirect('main:admin_index')
 
+
+''' 
+Bracket del torneo
+'''
 class TournamentBracket(ListView):
     model = Tournament
     template_name = 'layouts/tournaments/tournament_bracket.html'
@@ -266,17 +261,26 @@ def editStageTournament(request, pk):
                 else:
                     eq_grupo = form['equipos_por_grupo'].value()
 
-                stage_tournament = StageTournament(
-                    id_fase=stage,
-                    id_torneo=tournament,
-                    jerarquia=jerarquia,
-                    participantes_por_equipo=form['participantes_por_equipo'].value(),
-                    equipos_por_partido=form['equipos_por_partido'].value(),
-                    num_grupos=num_grupos,
-                    equipos_por_grupo=eq_grupo
-                )
-                
-                stage_tournament.save()
+                #Comprobamos si la fase está ya creada o si hay que crear una nueva
+                if(not StageTournament.objects.get(id_fase=stage, id_torneo=tournament, jerarquia=jerarquia)):
+                    #Se crea la nueva fase
+                    stage_tournament = StageTournament(
+                        id_fase=stage,
+                        id_torneo=tournament,
+                        jerarquia=jerarquia,
+                        participantes_por_equipo=form['participantes_por_equipo'].value(),
+                        equipos_por_partido=form['equipos_por_partido'].value(),
+                        num_grupos=num_grupos,
+                        equipos_por_grupo=eq_grupo
+                    )
+                    stage_tournament.save()
+                else:
+                    StageTournament.objects.get(id_fase=stage, id_torneo=tournament, jerarquia=jerarquia).update(
+                        participantes_por_equipo=form['participantes_por_equipo'].value(),
+                        equipos_por_partido=form['equipos_por_partido'].value(),
+                        num_grupos=num_grupos,
+                        equipos_por_grupo=eq_grupo
+                    )
                 
                 jerarquia = jerarquia + 1
 

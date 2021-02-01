@@ -1,0 +1,48 @@
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+  <br>
+  <h2 class="text-center">Partido</h2>
+
+  <div class="card-body">
+    <div class="col-8 text-left ml-5">
+      <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Fecha:</h6>
+        <div class="label label-default ml-2">{{ match.fecha }}</div>
+      </div>
+      <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Dirección:</h6>
+        <div class="label label-default ml-2">{{ match.direccion }}</div>
+      </div>
+      <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Torneo:</h6>
+        <div class="label label-default ml-2">{{ match.id_fase_torneo.id_torneo }}</div>
+      </div>
+      <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Fase:</h6>
+        <div class="label label-default ml-2">{{ match.id_fase_torneo.id_fase }}</div>
+      </div>
+      <br>
+      <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Equipos:</h6>
+      </div>
+      <ul>
+        {% for team in matchTeams %}
+          <li class="mb-1">
+            <span class="label label-default ml-2">{{ team.id_equipo }}</span>
+            <span class="label label-default ml-2">{{ team.id_equipo }}</span>
+          </li>          
+        {% endfor %}
+      </ul>
+  </div>
+
+  <div class="card-footer col-11 ml-4 admin_footer">
+    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:match_list' %}">
+      Volver
+    </a>
+  </div>
+    
+{% endblock %}

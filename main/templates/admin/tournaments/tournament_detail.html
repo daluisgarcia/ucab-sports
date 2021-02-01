@@ -30,6 +30,7 @@
         <div class="label label-default ml-2">{{ tournament.fecha_fin }}</div>
       </div>
       <br>
+      {% if tournament.inscripcion_abierta == False %}
       <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Fases:</h6>
       </div>
@@ -42,8 +43,6 @@
           </li>          
         {% endfor %}
       </ul>
-      {% if tournament.inscripcion_abierta == False %}
-
       {% endif %}
   </div>
 

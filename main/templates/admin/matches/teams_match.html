@@ -5,7 +5,7 @@
 
 <form method="POST" action="">
 
-    <div id="form-card" class="card-body">
+    <id="form-card" class="card-body">
       
         <!--Validación de errores-->
         {% csrf_token %} 
@@ -28,8 +28,40 @@
         </div>
         {% endif %}
     
-        {{ participacion_formset.management_form }}
+        <!--Lista de clasificados-->
+        {% if grupos %}
+        <div class="container col-6">
+            <h6>Lista de equipos por grupo</h6>
+            <div class="row">
+                <div class="col-3 text-left">
+                    <h6 class="label label-default">Equipo</h6>
+                </div>
+                <div class="col-3 text-left">
+                <h6 class="label label-default">Grupo</h6>
+                </div>
+                <div class="col-6 text-right"></div>
+            </div>
+        </div>
+        {% for equipo in equipos %}
+        <ul class="list-group admin_list_group">
+            <li class="list-group-item col-6">
+                <div class="row">
+                    <div class="col-3 text-left">
+                    {{ equipo.id_equipo }}
+                    </div>
+                    <div class="col-3 text-left">
+                    {{ equipo.grupo }}
+                    </div>
+                    <div class="col-6 text-right"></div>
+                </div>
+            </li>
+        </ul>
+        {% endfor %}
+        {% endif %}
 
+        </br>
+
+        {{ participacion_formset.management_form }}
         {% for participacion in participacion_formset %}
             <div>
                 <select name="equipo-{{ participacion.valor }}">
