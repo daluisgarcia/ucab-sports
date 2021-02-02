@@ -70,7 +70,7 @@ def createTeams(request, pk_partido, pk_torneo, pk_fase):
     #clasificados de esta fase del torneo
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo")
     #Equipos
-    print(clasificados)
+    #print(clasificados)
 
     if(clasificados.first().grupo):
         groups = True
@@ -85,7 +85,7 @@ def createTeams(request, pk_partido, pk_torneo, pk_fase):
     #Manejar la lógica de los formularios
     if request.method == 'POST':
         participacion_formset = PartFormSet(request.POST)
-        print(participacion_formset)
+        #print(participacion_formset)
 
         if participacion_formset.is_valid():
             partido = Match.objects.get(id=pk_partido)
@@ -93,29 +93,47 @@ def createTeams(request, pk_partido, pk_torneo, pk_fase):
             #REVISAR
 
             #Validar que, si la fase es por grupos, los equipos seleccionados sean del mismo grupo
-            """
+            
             if groups:
+                print('hay grupos')
+
+                #variables necesarias para manejar la lógica de las validaciones
                 i = 0
                 lista_grupos = []
+                grupo_anterior = None
+                grupo_actual = None
+
                 for part in participacion_formset:
                     num_equipo = 'equipo-' + str(i)
                     i = i + 1
                     equipo = request.POST.get(num_equipo, None)
-                    print(equipo)
-                    if equipo not in lista_grupos:
+                    
+                    #Buscamos el número del grupo de este equipo y lo comparamos con el anterior
+                    for clas in clasificados:
+                        if(clas.id_equipo.id == int(equipo)):
+                            grupo_actual = clas.grupo
+
+                    #Validamos que no hayan equipos repetidos y que los equipos sean del mismo grupo
+                    if ((equipo not in lista_grupos) and ((grupo_anterior == None) or (grupo_actual == grupo_anterior))):
                         lista_grupos.append(equipo)
                         print(lista_grupos)
+                        grupo_anterior = grupo_actual
                     else:
-                        messages.error(request, 'Los equipos no pueden ser iguales.')
+                        messages.error(request, 'Los equipos no se pueden repetir y tiene que elegir equipos que pertenezcan al mismo grupo.')
+                                            
+                        i = 0
+                        for part in participacion_formset:
+                            part.valor = i
+                            i = i + 1
 
                         context = {
-                            'equipos': clasificados,
+                            'equipos': Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo"),
                             'participacion_formset': participacion_formset,
                             'grupos': groups
                         }
 
                         return render(request, 'admin/matches/teams_match.html', context)
-            """
+            
             i = 0
             for part in participacion_formset:
                 num_equipo = 'equipo-' + str(i)
@@ -175,4 +193,13 @@ def matchInfo(request, pk):
         match_teams = Participation.objects.filter(id_partido=pk)
         return render(request, 'admin/matches/match_detail.html', {'match': match, 'matchTeams': match_teams})
     return redirect('main:admin_index')
+
+
+#Eliminar partido
+def deleteMatch(request, pk):
+    print(pk)
+    match = Match.objects.get(id=pk)
+    match.delete()
+    print('Torneo eliminado')
+    return redirect(reverse_lazy('main:match_list'))
 
