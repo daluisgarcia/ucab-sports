@@ -15,7 +15,7 @@
     </div>
     <br>
     <div class="row ml-2">
-      <div class="col-2 text-left">
+      <div class="col-2 text-left d-none d-md-block">
           <h6 class="label label-default">Nombre</h6>
       </div>
     </div>
@@ -24,10 +24,14 @@
     <ul class="list-group admin_list_group col-11">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-4 text-left">
-            {{ c.nombre }}
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-left mb-3">
+            <h6 class="d-md-none">Nombre</h6>
+            <td>
+              {{ c.nombre }}
+            </td>
           </div>
-          <div class="offset-4 col-4 text-center">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="offset-lg-4 offset-xl-4 col col-sm col-md col-lg-4 col-xl-4 text-center">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_game">
               Eliminar
             </button>

@@ -13,10 +13,12 @@
         <h6 class="label label-default font-weight-bold">Fecha:</h6>
         <div class="label label-default ml-2">{{ match.fecha }}</div>
       </div>
+      {% if match.direccion %}
       <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Dirección:</h6>
         <div class="label label-default ml-2">{{ match.direccion }}</div>
       </div>
+      {% endif %}
       <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Torneo:</h6>
         <div class="label label-default ml-2">{{ match.id_fase_torneo.id_torneo }}</div>

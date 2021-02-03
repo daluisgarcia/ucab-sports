@@ -15,22 +15,20 @@
     </div>
     <br>
     <div class="row ml-2">
-      <div class="col-1 text-center">
+      <div class="col-1 text-left d-none d-md-block">
           <h6 class="label label-default list_titles">Nombre</h6>
       </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">Juego</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">Edicion</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">Inicio</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">Fin</h6>
-      </div>
-      <div class="col-6 text-center">
       </div>
     </div>
   
@@ -38,22 +36,40 @@
   <ul class="list-group admin_list_group">
     <li class="list-group-item">
       <div class="row">
-        <div class="col-1 text-center">
-          {{ c.nombre }}
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Nombre</h6>
+          <td>
+            {{ c.nombre }}
+          </td>
         </div>
-        <div class="col-2 text-center">
-          {{ c.id_juego }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+          <h6 class="d-md-none">Juego</h6>
+          <td>
+            {{ c.id_juego }}
+          </td>
         </div>
-        <div class="col-1 text-center">
-          {{ c.edicion }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Edición</h6>
+          <td>
+            {{ c.edicion }}
+          </td>
         </div>
-        <div class="col-1 text-center">
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Inicio</h6>
           {{ c.fecha_inicio }}
         </div>
-        <div class="col-1 text-center">
-          {{ c.fecha_fin }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Fin</h6>
+          <td>
+            {{ c.fecha_fin }}
+          </td>
         </div>
-        <div class="col-6 text-center">
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-6 col-xl-6 text-center">
           {% if c.inscripcion_abierta %}
               <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:create_stage_tournament' c.id %}">
                 Cerrar inscripcion

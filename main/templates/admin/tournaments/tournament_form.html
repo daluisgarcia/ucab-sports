@@ -13,7 +13,7 @@
     
     <!--Validación de errores-->
     {% csrf_token %} 
-    {% if form.errors %}
+    {% if form.errors %} 
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -33,7 +33,7 @@
     {% for field in form.visible_fields %}
       <div class="form-group">
         <label>{{ field.label }}</label>
-        <div class="col-12 col-sm-12 col-md-12">
+        <div class="col col-sm col-md-5">
           {{ field }}
         </div>
       </div>
@@ -42,7 +42,7 @@
     {% for field in num_p_form %}
       <div class="form-group">
       <label>{{ field.label }}</label>
-      <div class="col-12 col-sm-8 col-md-12">
+      <div class="col col-sm col-md-4">
         {{ field }}
       </div>
       </div>

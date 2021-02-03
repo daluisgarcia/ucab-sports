@@ -15,13 +15,13 @@
       </div>
       <br>
       <div class="row ">
-        <div class="col-2 text-center">
+        <div class="col-2 text-center d-none d-md-block">
             <h6 class="label label-default">Imagen</h6>
         </div>
-        <div class="col-3 text-center">
+        <div class="col-3 text-center d-none d-md-block">
           <h6 class="label label-default">Titulo</h6>
         </div>
-        <div class="col-3 text-center">
+        <div class="col-3 text-center d-none d-md-block">
           <h6 class="label label-default">Cuerpo</h6>
         </div>
       </div>
@@ -29,19 +29,23 @@
       <ul class="list-group admin_list_group mr-3">
         <li class="list-group-item">
           <div class="row">
-            <div class="col-2 text-center">
+            <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
               <td>
                 {% if c.imagen %}
                 <img class="post_images" src={{ c.imagen.url }}>
                 {% endif %}
               </td>
             </div>
-            <div class="col-3 text-center">
+            <br>
+            <div class="w-100 d-block d-sm-none"></div>
+            <div class="col col-sm col-md col-lg-3 col-xl-3 text-center mb-3">
               <td>
-                {{ c.titulo }}
+                <h5>{{ c.titulo }}</h5>
               </td>
-            </div>
-            <div class="col-3 text-left">
+            </div> 
+            <br>
+            <div class="w-100 d-block d-sm-none"></div>
+            <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3"> 
               <td class="label">
                 {% if c.cuerpo|length > 100 %}
                   {{ c.cuerpo|slice:":100" }} ...
@@ -50,7 +54,9 @@
                 {% endif %}
               </td>
             </div>
-            <div class="col-4 align-middle">
+            <br>
+            <div class="w-100 d-block d-sm-none"></div>
+            <div class="col col-sm col-md col-lg-4 col-xl-4 align-middle">
               <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_post">
                 Eliminar
               </button>

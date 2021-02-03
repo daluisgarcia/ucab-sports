@@ -17,16 +17,16 @@
     {% endfor %}
 
     <div class="row ">
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Imagen</h6>
     </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
           <h6 class="label label-default">Torneo</h6>
       </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Equipo</h6>
       </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Comentario</h6>
       </div>
     </div>
@@ -35,31 +35,38 @@
     <ul class="list-group admin_list_group mr-4">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-2 text-center">
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
             {% if reg.id_equipo__logo %}
             <td>
               {{ reg.id_equipo__logo }}
             </td>
             {% endif %}
           </div>
-          <div class="col-2 text-center">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
+            <h6 class="d-md-none">Torneo</h6>
             <td>
               {{ reg.id_torneo__nombre }}
             </td>
           </div>
-          <div class="col-2 text-center">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
+            <h6 class="d-md-none">Equipo</h6>
             <td>
               {{ reg.id_equipo__nombre }}
             </td>
           </div>
-          <div class="col-3 text-left">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
             {% if reg.id_equipo__comentario %}
+            <h6 class="d-md-none">Comentario</h6>
             <td>
               {{ reg.id_equipo__comentario }}
             </td>
             {% endif %}
           </div>
-          <div class="col-3 align-middle">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-3 col-xl-3 align-middle">
             <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_inscription">
             Eliminar

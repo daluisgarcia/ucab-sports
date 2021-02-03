@@ -5,31 +5,33 @@
 {% endblock %}
 {% block content %}
   <br>
-  <h2 class="text-center">Post</h2>
+  <h2 class="text-center">Post</h2> 
   <br>
-  <div class="container">
     <div class="row">
-      <div class="offset-2 col-2 text-center">
+      <div class="offset-2 col-2 text-center d-none d-lg-block">
         <h6 class="label label-default">Titulo</h6>
       </div>
       <br>
-      <div class="col-7 text-center">
+      <div class="col-7 text-center d-none d-lg-block">
         <h6 class="label label-default">Cuerpo</h6>
       </div>
     </div>
 
+    <div class="container">
     <div class="row">
-      <div class="col-2 text-center ml-3">
+      <div class="col col-sm col-md col-lg-2 col-xl-2 mb-3 text-center ml-3">
         {% if post.imagen %}
           <img class="post_images" src={{ post.imagen.url }}>
         {% endif %}
       </div>
-      <br>
-      <div class="col-2 text-left">
-        {{ post.titulo }}
+      <div class="w-100 d-block d-sm-none"></div>
+      <div class="col col-sm col-md col-lg-2 col-xl-2 text-center">
+        <h5>{{ post.titulo }}</h5>
       </div>
       <br>
-      <div class="col-7 text-left">
+      <br>
+      <div class="w-100 d-block d-sm-none"></div>
+      <div class="col col-sm col-md col-lg-7 col-xl-7 text-left">
         {{ post.cuerpo }}
       </div>
     </div>
