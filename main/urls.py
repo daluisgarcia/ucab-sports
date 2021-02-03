@@ -34,8 +34,11 @@ urlpatterns = [
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
     #Editar sus fases
     path('torneo/edit/<int:pk>/stages/', TournamentViews.editStageTournament, name='edit_stage_tournament'),
-    #path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
-    path('torneo/delete/<int:pk>/', TournamentViews.deleteTournament, name='delete_tournament'),
+    path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
+
+    #Clasificatorias
+    path('clasificatoria/torneo/<int:pk_torneo>/fase/<int:pk_fase>/', TournamentViews.clasificatorias, name='clasificatorias'),
+    
     #Vistas públicas
     path('torneos/abiertos/', TournamentViews.PublicTournamentList.as_view(), name='tournaments_public_list'),
     path('torneos/bracket/', TournamentViews.TournamentBracket.as_view(), name='tournament_bracket'),

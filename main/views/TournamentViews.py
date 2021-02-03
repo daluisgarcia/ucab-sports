@@ -158,9 +158,41 @@ Shows the detail for a tournament
 def tournamentInfo(request, pk):
     tournament = Tournament.objects.get(id=pk)
     if tournament.owner == request.user:
+        #Fases del torneo
         tourStage = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False)
-        return render(request, 'admin/tournaments/tournament_detail.html',
-                      {'tournament': tournament, 'tourStage': tourStage})
+        
+        #Verificar en cuál fase están actualmente los clasificados
+        i = 1
+        anterior_fase = None
+        while (True):
+            try:
+                fase = StageTournament.objects.filter(id_torneo=pk, jerarquia=i)
+            except StageTournament.DoesNotExist:
+                fase = None
+        
+            if(fase):
+                clasificados = Classified.objects.filter(id_fase_torneo__in=fase)
+            else:
+                break
+
+            if(clasificados):
+                anterior_fase = fase
+            else:
+                break
+                
+            i = i + 1
+                
+
+        print(anterior_fase.first().id_fase)
+
+        context = {
+            'tournament': tournament, 
+            'tourStage': tourStage,
+            'fase_clasificatoria': anterior_fase.first().id_fase,
+            'id_fase_clasif': anterior_fase.first().id_fase.id
+        }
+
+        return render(request, 'admin/tournaments/tournament_detail.html', context)
     return redirect('main:admin_index')
 
 
@@ -308,5 +340,12 @@ def deleteTournament(request, pk):
     print(pk)
     tournament = Tournament.objects.get(id=pk)
     tournament.delete()
+    print('Torneo eliminado')
+    return redirect(reverse_lazy('main:tournament_list'))
+
+
+#Tabla de clasificatoria
+def clasificatorias(request, pk_torneo, pk_fase):
+
     print('Torneo eliminado')
     return redirect(reverse_lazy('main:tournament_list'))

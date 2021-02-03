@@ -32,6 +32,12 @@
       <br>
       {% if tournament.inscripcion_abierta == False %}
       <div class="row mb-2">
+        <h6 class="label label-default font-weight-bold">Pasar a la siguiente Clasificatoria - fase actual en progreso: <strong>{{ fase_clasificatoria }}</strong></h6>
+        <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:clasificatorias' tournament.id id_fase_clasif  %}">
+          Pasar a la siguiente fase
+        </a>
+      </div>
+      <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Fases:</h6>
       </div>
       <ul>

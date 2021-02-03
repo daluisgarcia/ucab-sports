@@ -1,0 +1,56 @@
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %}
+  <br>
+  <h2 class="text-center">Clasificatoria</h2>
+  <h2 class="text-center">Partido tal - Fase tal</h2>
+
+  <div class="card-body">
+    <div class="row ml-2">
+      <div class="col-1 text-center">
+          <h6 class="label label-default list_titles">Equipo</h6>
+      </div>
+      <div class="col-2 text-center">
+        <h6 class="label label-default list_titles">Puntos Totales</h6>
+      </div>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">Partidos Jugados</h6>
+      </div>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">Partidos Ganados</h6>
+      </div>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">Partidos Perdidos</h6>
+      </div>
+      <div class="col-6 text-center">
+      </div>
+    </div>
+  
+  {% for equipo in tabla_clasificatoria %}
+  <ul class="list-group admin_list_group">
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-1 text-center">
+          {{ equipo.equipo }}
+        </div>
+        <div class="col-2 text-center">
+          {{ equipo.puntos_totales }}
+        </div>
+        <div class="col-1 text-center">
+          {{ equipo.partidos_jugados }}
+        </div>
+        <div class="col-1 text-center">
+          {{ equipo.partidos_ganados }}
+        </div>
+        <div class="col-1 text-center">
+          {{ equipo.partidos_perdidos }}
+        </div>
+      </div>
+    </li>
+  </ul>
+  {% endfor %}
+</div>
+{% endblock %}
