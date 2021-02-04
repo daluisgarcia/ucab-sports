@@ -161,35 +161,43 @@ def tournamentInfo(request, pk):
         #Fases del torneo
         tourStage = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False)
         
-        #Verificar en cuál fase están actualmente los clasificados
-        i = 1
-        anterior_fase = None
-        while (True):
-            try:
-                fase = StageTournament.objects.filter(id_torneo=pk, jerarquia=i)
-            except StageTournament.DoesNotExist:
-                fase = None
-        
-            if(fase):
-                clasificados = Classified.objects.filter(id_fase_torneo__in=fase)
+        if(tournament.inscripcion_abierta == False):
+            #Verificar en cuál fase están actualmente los clasificados
+            i = 1
+            anterior_fase = None
+            while (True):
+                try:
+                    fase = StageTournament.objects.filter(id_torneo=pk, jerarquia=i)
+                except StageTournament.DoesNotExist:
+                    fase = None
+            
+                if(fase):
+                    clasificados = Classified.objects.filter(id_fase_torneo__in=fase)
+                else:
+                    break
+
+                if(clasificados):
+                    anterior_fase = fase
+                else:
+                    break
+                    
+                i = i + 1
+            if(not anterior_fase):
+                id_fase_clasificados = None
+                fase_clasificados = None
             else:
-                break
+                id_fase_clasificados = anterior_fase.first().id_fase.id
+                fase_clasificados = anterior_fase.first().id_fase
+        else:
+            id_fase_clasificados = None
+            fase_clasificados = None
 
-            if(clasificados):
-                anterior_fase = fase
-            else:
-                break
-                
-            i = i + 1
-                
-
-        print(anterior_fase.first().id_fase)
-
+        print(tourStage)
         context = {
             'tournament': tournament, 
             'tourStage': tourStage,
-            'fase_clasificatoria': anterior_fase.first().id_fase,
-            'id_fase_clasif': anterior_fase.first().id_fase.id
+            'fase_clasificatoria': fase_clasificados,
+            'id_fase_clasif': id_fase_clasificados
         }
 
         return render(request, 'admin/tournaments/tournament_detail.html', context)

@@ -48,6 +48,7 @@ def createMatch(request):
     else:
         match_form = MatchCreateForm(initial=None)
         stages = StageTourForMatchForm()
+        #stages = StageTourForMatchForm(id_torneo=Tournament.objects.filter(owner=request.user, inscripcion_abierta=False))
 
     context = {
         'match_form': match_form,
