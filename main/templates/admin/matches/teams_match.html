@@ -1,8 +1,16 @@
 {% extends 'admin/adminMain.html' %}
 {% block head %}
 
-<h3>Seleccione a los equipos que participaron en el partido</h3>
+<div class="container">
+    <h3>Seleccione a los equipos que participaron o que van a participar en el partido</h3>
 
+    <h6>Tome en cuenta lo siguiente</h6>
+    <ul class="list-group">
+        <li class="list-group-item">Si el partido todavía no ha ocurrido, no es necesario que llene los campos de ganadores y puntos por equipo. Estos campos los podrá modificar luego.</li>
+        <li class="list-group-item">Si el partido finalizó como un <strong>empate</strong>, entonces debe colocar que todos los equipos ganaron.</li>
+        <li class="list-group-item">Si el partido ya ocurrió, entonces recuerde llenar los campos de los ganadores y los puntos</li>
+    </ul>
+</div>
 <form method="POST" action="">
 
     <id="form-card" class="card-body">

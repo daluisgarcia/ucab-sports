@@ -274,8 +274,7 @@ def failInscription(request, pk_team, pk_tour):
 #Lista de solicitudes de inscripciones
 def preinscriptionList(request):
     #Lista de las solicitudes pendientes
-    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_torneo','fecha_registro')
-    #.distinct('id_equipo')
+    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_equipo','id_torneo','fecha_registro').distinct('id_equipo')
 
     solicitudes_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).distinct('id_equipo')
 
@@ -287,7 +286,7 @@ def preinscriptionList(request):
             torneos.append(solicitudes.id_torneo)
 
     for i in torneos:
-        solicitudes_aprobadas = HistoryParticipation.objects.filter(id_torneo=i).count()
+        solicitudes_aprobadas = HistoryParticipation.objects.filter(id_torneo=i).distinct('id_equipo').count()
         inscritos.append({'nombre_torneo': i.nombre, 'cantidad_inscritos': solicitudes_aprobadas})
     #print(inscritos)
 

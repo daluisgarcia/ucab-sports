@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified
 from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
 

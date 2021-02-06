@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib import messages
 
 from main.models import Game
@@ -72,8 +72,10 @@ class UpdateGame(UpdateView):
         return context
 
 
-#Eliminar post
-class DeleteGame(DeleteView):
-    model = Game
-    success_url = reverse_lazy('main:game_list')
-    template_name = 'admin/games/game_confirm_delete.html'
+#Eliminar juego
+def deleteGame(request, pk):
+    game = Game.objects.get(id=pk)
+    game.delete()
+    print('Juego eliminado')
+    messages.success(request, 'El juego se ha eliminado satisfactoriamente')
+    return redirect(reverse_lazy('main:game_list'))

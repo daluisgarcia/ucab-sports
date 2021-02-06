@@ -1,8 +1,9 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, View
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 from main.models import Stage, Tournament, Classified, StageTournament
 from main.forms import StageCreateForm
@@ -82,10 +83,12 @@ class UpdateStage(LoginRequiredMixin, UpdateView):
 
 
 #Eliminar fase
-class DeleteStage(LoginRequiredMixin, DeleteView):
-    model = Stage
-    success_url = reverse_lazy('main:stage_list')
-    template_name = 'admin/stages/stage_confirm_delete.html'
+def deleteStage(request, pk):
+    stage = Stage.objects.get(id=pk)
+    stage.delete()
+    print('Fase eliminada')
+    messages.success(request, 'La fase se ha eliminado satisfactoriamente')
+    return redirect(reverse_lazy('main:stage_list'))
 
 
 '''

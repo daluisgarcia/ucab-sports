@@ -57,14 +57,14 @@
             <br>
             <div class="w-100 d-block d-sm-none"></div>
             <div class="col col-sm col-md col-lg-4 col-xl-4 align-middle">
-              <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_post">
+              <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#post-{{ c.id }}">
                 Eliminar
               </button>
-              <div class="modal fade" id="delete_modal_post" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+              <div class="modal fade" id="post-{{ c.id }}" role="dialog" aria-labelledby="delete_modal_post_Label" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este rol?</h5>
+                      <h5 class="modal-title" id="delete_modal_post_Label">¿Estás seguro que quieres eliminar este post?</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -73,8 +73,10 @@
                       Esto eliminará el registro de manera permanente.
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                      <button type="button" class="btn btn-primary">Si</button>
+                      <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                      <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_post' c.id %}">
+                        Sí
+                      </a>
                     </div>
                   </div>
                 </div>

@@ -32,14 +32,14 @@
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="offset-lg-4 offset-xl-4 col col-sm col-md col-lg-4 col-xl-4 text-center">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_game">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#game-{{ c.id }}">
               Eliminar
             </button>
-            <div class="modal fade" id="delete_modal_game" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal fade" id="game-{{ c.id }}" role="dialog" aria-labelledby="delete_modal_game_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este juego?</h5>
+                    <h5 class="modal-title" id="delete_modal_game_Label">¿Estás seguro que quieres eliminar este juego?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -48,8 +48,10 @@
                     Esto eliminará el registro de manera permanente.
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Si</button>
+                    <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_game' c.id %}">
+                      Sí
+                    </a>
                   </div>
                 </div>
               </div>

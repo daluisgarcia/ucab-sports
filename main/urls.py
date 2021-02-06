@@ -22,7 +22,7 @@ urlpatterns = [
     path('post/create/', PostViews.CreatePost.as_view(), name='create_post'),
     path('post/<int:pk>/', PostViews.PostDetail.as_view(), name='post_detail'),
     path('post/edit/<int:pk>/', PostViews.UpdatePost.as_view(), name='update_post'),
-    path('post/delete/<int:pk>/', PostViews.DeletePost.as_view(), name='delete_post'),
+    path('post/delete/<int:pk>/', PostViews.deletePost, name='delete_post'),
 
     #Tournaments
     path('torneo/create/', TournamentViews.CreateTournament.as_view(), name='create_tournament'),
@@ -48,7 +48,7 @@ urlpatterns = [
     path('fase/create', StageViews.CreateStage.as_view(), name='create_stage'),
     path('fase/<int:pk>', StageViews.StageDetail.as_view(), name='stage_detail'),
     path('fase/edit/<int:pk>', StageViews.UpdateStage.as_view(), name='update_stage'),
-    path('fase/delete/<int:pk>', StageViews.DeleteStage.as_view(), name='delete_stage'),
+    path('fase/delete/<int:pk>', StageViews.deleteStage, name='delete_stage'),
     #Fases de grupo
     path('torneo/<int:pkt>/fase/<int:pks>/groups', StageViews.StageGroups.as_view(), name='stage_groups'),
 
@@ -57,7 +57,7 @@ urlpatterns = [
     path('juego/create/', GameViews.CreateGame.as_view(), name='create_game'),
     path('juegos/', GameViews.GamesList.as_view(), name='game_list'),
     path('juego/edit/<int:pk>/', GameViews.UpdateGame.as_view(), name='update_game'),
-    path('juego/delete/<int:pk>/', GameViews.DeleteGame.as_view(), name='delete_game'),
+    path('juego/delete/<int:pk>/', GameViews.deleteGame, name='delete_game'),
 
     #Preinscription
     path('inscripcion/<int:pk_torneo>/create/', InscriptionViews.createRegisterTeam, name='create_inscription'),

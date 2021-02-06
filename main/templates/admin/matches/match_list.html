@@ -69,17 +69,14 @@
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-5 col-xl-5 text-center">
-            <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_match' match.id %}">
-              Sí
-            </a>
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_tournament">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#match-{{ match.id }}">
               Eliminar
             </button>
-            <div class="modal fade" id="delete_modal_tournament" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal fade" id="match-{{ match.id }}" role="dialog" aria-labelledby="delete_modal_match_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este partido?</h5>
+                    <h5 class="modal-title" id="delete_modal_match_Label">¿Estás seguro que quieres eliminar este partido?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -100,8 +97,8 @@
               Modificar
             </a>
             <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:match_detail' match.id %}">
-                Detalle
-              </a>
+              Detalle
+            </a>
           </div>
         </div>
       </li>

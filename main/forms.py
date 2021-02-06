@@ -379,24 +379,6 @@ class MatchCreateForm(ModelForm):
     }
 
 
-'''
-    STAGE TOUR MATCH CREATE FORM
-'''
-class StageTourForMatchForm(ModelForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
-
-  class Meta:
-    model = StageTournament
-    fields = ['id_fase', 'id_torneo']
-    widgets = {
-      'id_fase': Select(),
-      'id_torneo': Select(),
-    }
-
 
 '''
     PARTICIPATION CREATE FORM
@@ -444,8 +426,6 @@ class ParticipationFormSet(formsets.BaseFormSet):
                 if puntos_equipo:
                     puntos = True
 
-        if (todos_ganadores):
-            form.add_error('ganador','No todos los participantes pueden ser ganadores')
         if ((puntos == True) and (un_ganador == False)):
             form.add_error('puntos_equipo','Si va a colocar puntajes tiene que colocar el o los ganadores del partido')
 

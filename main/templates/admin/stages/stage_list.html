@@ -45,14 +45,14 @@
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-3 col-xl-3 text-right">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_stage">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#stage-{{ stage.id }}">
               Eliminar
             </button>
-            <div class="modal fade" id="delete_modal_stage" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal fade" id="stage-{{ stage.id }}" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar esta fase?</h5>
+                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estás seguro que quieres eliminar esta fase?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -61,11 +61,10 @@
                     Esto eliminará el registro de manera permanente.
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <form action="{% url 'main:delete_stage' stage.id %}" method="POST">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-primary">Si</button>
-                    </form>
+                    <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_stage' stage.id %}">
+                      Sí
+                    </a>
                   </div>
                 </div>
               </div>
