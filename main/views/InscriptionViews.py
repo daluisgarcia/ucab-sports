@@ -36,12 +36,11 @@ def createRegisterTeam(request, pk_torneo):
 
     if request.method == 'POST':
         person_formset = PersonFormSet(request.POST)
-        team_form = PreteamCreateForm(request.POST)
+        team_form = PreteamCreateForm(request.POST, request.FILES)
         team_register_formset = TeamRegisterFormSet(request.POST)
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
             
-            #REVISAR ESTA VALIDACION
             #validar que los roles ingresados cumplan los estándares para este torneo
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
@@ -61,6 +60,27 @@ def createRegisterTeam(request, pk_torneo):
                         'botton_title': 'Inscribirse'
                     }
                     return render(request, 'layouts/inscription/preinscription_form.html', context)
+
+
+            #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
+            for person_form in person_formset:
+                cedula = person_form.cleaned_data.get('cedula')
+                nombre = person_form.cleaned_data.get('nombre')
+                apellido = person_form.cleaned_data.get('apellido')
+                    
+                if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
+                    messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
+
+                    context = {
+                        'person_formset': person_formset,
+                        'team_form': team_form,
+                        'team_register_formset': team_register_formset,
+                        'title': 'Inscribe al equipo y a los participantes',
+                        'botton_title': 'Inscribirse'
+                    }
+
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
+
 
             team_form.save()
             #Obtenemos el último registro del equipo
@@ -87,20 +107,6 @@ def createRegisterTeam(request, pk_torneo):
                     if (PrePerson.objects.filter(cedula=cedula).count() == 0):
                         new_persons.append(PrePerson(cedula=cedula, nombre=nombre, apellido=apellido, correo=correo, nickname=nickname))
                 
-                    #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
-                    if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
-                        messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
-
-                        context = {
-                            'person_formset': person_formset,
-                            'team_form': team_form,
-                            'team_register_formset': team_register_formset,
-                            'title': 'Inscribe al equipo y a los participantes',
-                            'botton_title': 'Inscribirse'
-                        }
-
-                        return render(request, 'layouts/inscription/preinscription_form.html', context)
-
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
             i=0
@@ -265,6 +271,7 @@ def failInscription(request, pk_team, pk_tour):
             person.delete()
 
     team_delete = PreTeam.objects.get(id=pk_team)
+    team_delete.logo.delete(save=True)
     team_delete.delete()
 
     messages.success(request, 'Se ha anulado la solicitud de inscripción')
@@ -274,7 +281,7 @@ def failInscription(request, pk_team, pk_tour):
 #Lista de solicitudes de inscripciones
 def preinscriptionList(request):
     #Lista de las solicitudes pendientes
-    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_equipo','id_torneo','fecha_registro').distinct('id_equipo')
+    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_equipo','id_torneo','fecha_registro').distinct('id_equipo')
 
     solicitudes_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).distinct('id_equipo')
 
@@ -316,6 +323,7 @@ def preinscriptionDetail(request, pk):
 #Lista de inscripciones (Lista de equipos)
 def inscriptionList(request):
     register = HistoryParticipation.objects.values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo__nombre','fecha_registro','fecha_fin').distinct('id_equipo')
+
     cant_pendientes = HistoryParticipation.objects.filter().count()
     print(register)
     print(cant_pendientes)

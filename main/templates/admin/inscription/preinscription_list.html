@@ -36,11 +36,11 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
-            {% if reg.id_equipo__logo %}
             <td>
-              {{ reg.id_equipo__logo }}
-            </td>
+            {% if reg.id_equipo__logo %}
+              <img class="post_images" src={{ reg.id_equipo__logo }}>
             {% endif %}
+            </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
@@ -68,10 +68,10 @@
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-3 col-xl-3 align-middle">
             <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#delete_modal_inscription">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#team-{{reg.id_equipo}}">
             Eliminar
           </button>
-          <div class="modal fade" id="delete_modal_inscription" tabindex="-1" role="dialog" aria-labelledby="delete_modal_inscription_Label" aria-hidden="true">
+          <div class="modal fade" id="team-{{reg.id_equipo}}" tabindex="-1" role="dialog" aria-labelledby="delete_modal_inscription_Label" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -87,16 +87,14 @@
                   <textarea class="form-control" id="specificacion_rechazo" rows="3"></textarea>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                  <form action="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Si</button>
-                  </form>
+                  <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                  <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">
+                    Sí
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-            <!--<a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>-->
             <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:inscription_detail' reg.id_equipo %}">Integrantes</a>
           </div>
         </div> 

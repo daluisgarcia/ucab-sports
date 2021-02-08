@@ -10,7 +10,7 @@
           <section class="col-12">
             <div class="offset-1 col-10 text-center form-container">
               <h2 class="text-center">{{ title }}</h2>
-              <form method="POST" action="">
+              <form method="POST" action="" enctype="multipart/form-data">
                 <div class="card-body text-center">
                   <!--Validación de errores-->
                   {% csrf_token %} 
