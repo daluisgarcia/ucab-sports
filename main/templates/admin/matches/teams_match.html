@@ -17,7 +17,7 @@
       
         <!--Validación de errores-->
         {% csrf_token %} 
-        {% if participacion_formset.errors %}
+        {% if participacion_formset.errors or match_form.errors %}
         <div class="alert alert-danger alert-dismissible">
             <button
             type="button"
@@ -28,6 +28,11 @@
             ×
             </button>
             <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+            
+            {% for error in match_form.non_field_errors %} 
+                <li>{{ error }}</li>
+            {% endfor %}
+
             {% for field in participacion_formset %} 
             {% for error in field.errors %}
                 <li>{{ error }}</li>
@@ -35,7 +40,16 @@
             {% endfor %}
         </div>
         {% endif %}
-    
+        
+        {% for field in match_form.visible_fields %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            <div class="col col-sm-5 col-md-5">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+
         <!--Lista de clasificados-->
         {% if grupos %}
         <div class="container col-6">
