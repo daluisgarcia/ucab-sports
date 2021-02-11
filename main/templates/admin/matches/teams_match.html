@@ -16,7 +16,7 @@
     <id="form-card" class="card-body">
       
         <!--Validación de errores-->
-        {% csrf_token %} 
+        {% csrf_token %}
         {% if participacion_formset.errors or match_form.errors %}
         <div class="alert alert-danger alert-dismissible">
             <button
@@ -29,7 +29,7 @@
             </button>
             <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
             
-            {% for error in match_form.non_field_errors %} 
+            {% for error in match_form.errors %} 
                 <li>{{ error }}</li>
             {% endfor %}
 

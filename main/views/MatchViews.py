@@ -25,16 +25,14 @@ def createMatch(request):
         #Verificar que la fase y el torneo coinciden
         if (StageTournament.objects.filter(id_fase=stage, id_torneo=tournament).count() > 0):
             
-            return redirect('main:teams_match', pk_partido=1, pk_torneo=tour, pk_fase=stg)
+            return redirect('main:teams_match', pk_torneo=tour, pk_fase=stg)
             
         #En caso de que la fase y el torneo no coinciden
         else:
             messages.error(request, 'La Fase y el torneo seleccionados no coinciden')
-            match_form = MatchCreateForm(initial=None)
 
-    else:
-        stg = Stage.objects.all()
-        tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
+    stg = Stage.objects.all()
+    tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
 
     context = {
         'stage': stg, 
@@ -46,7 +44,7 @@ def createMatch(request):
 
 
 #Asociar los equipos al partido
-def createTeams(request, pk_partido, pk_torneo, pk_fase):
+def createTeams(request, pk_torneo, pk_fase):
     print('pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
     
     #Lógica para traerse a los clasificados de la fase
@@ -186,14 +184,14 @@ def updateMatch(request, pk):
 
     #Formset de los equipos que participaron en el partido
     #Creación del formset, especificando el form y el formset a usar. La cantidad de campos está definida por los equipos por partido.
-    PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet, extra=match.id_fase_torneo.equipos_por_partido)
+    PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet)
 
     #participacion_formset = PartFormSet(queryset=participacion, instance=match)
     
 
     if request.method == 'POST':
         match_form = MatchCreateForm(request.POST, instance=match)
-        participacion_formset = PartFormSet(request.POST, instance=match)
+        participacion_formset = PartFormSet(request.POST)
 
         if match_form.is_valid() and participacion_formset.is_valid():
 
@@ -250,7 +248,8 @@ def updateMatch(request, pk):
         Hay que revisar detalladamente
         """
         match_form = MatchCreateForm(instance=match)
-        participacion_formset = PartFormSet(queryset=participacion, instance=match)
+        #participacion_formset = PartFormSet(queryset=participacion, instance=match)
+        participacion_formset = PartFormSet(instance=match)
 
     i = 0
     for part in participacion_formset:
