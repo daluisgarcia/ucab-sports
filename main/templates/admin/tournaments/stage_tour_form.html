@@ -105,6 +105,55 @@
         <div>
       </li>
       {% endfor %}
+
+      {% for stageTourn in stagesTourn %}
+      <li class="list-group-item col-12">
+        <div class="row">
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Fase</h6>
+            <td>
+                <select name="stage-select-0{{ stageTourn.id }}" class="form-control">
+                    {% for stage in stages %}
+                        {% if stageTourn.id_fase.id == stage.id %}
+                            <option value="{{ stage.id }}" selected>{{ stage.nombre }}</option>
+                        {% else %}
+                            <option value="{{ stage.id }}">{{ stage.nombre }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left ml-lg-2 ml-xl-2 mr-lg-3 mr-xl-3 mb-3">
+            <h6 class="d-md-none">Participantes por equipo</h6>
+            <td>
+              <input name="stage-part-0{{ stageTourn.id }}" type="number" value="{{ stageTourn.participantes_por_equipo }}">
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left ml-lg-3 ml-xl-3 mr-lg-3 mr-xl-3 mb-3">
+            <h6 class="d-md-none">Equipos por partido</h6>
+            <td>
+              <input name="stage-part-match-0{{ stageTourn.id }}" type="number" value="{{ stageTourn.equipos_por_partido }}">
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left ml-lg-3 ml-xl-3 mr-lg-3 mr-xl-3 mb-3">
+            <h6 class="d-md-none">Número de grupos</h6>
+            <td>
+              <input name="stage-num-groups-0{{ stageTourn.id }}" type="number" value="{{ stageTourn.num_grupos }}">
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left ml-lg-3 ml-xl-3 mr-lg-2 mr-xl-2">
+            <h6 class="d-md-none">Equipos por grupo</h6>
+            <td>
+              <input name="stage-team-group-0{{ stageTourn.id }}" type="number" value="{{ stageTourn.equipos_por_grupo }}">
+            </td>
+          </div>
+        <div>
+      </li>
+      {% endfor %}
     </ul>
 
 

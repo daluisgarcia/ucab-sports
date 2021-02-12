@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, View
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -336,6 +336,73 @@ def editStageTournament(request, pk):
     }
     return render(request, 'admin/tournaments/stage_tour_form.html', context)
 
+
+''' Update the relation between Stages and Tournament '''
+class UpdateStageTournament(LoginRequiredMixin, View):
+    template_name = 'admin/tournaments/stage_tour_form.html'
+    refuse_url = reverse_lazy('main:tournament_list')
+
+    def get(self, request, pk):
+        tournament = get_object_or_404(Tournament, id=pk)
+        # if not tournament.inscripcion_abierta:
+        #     redirect(self.refuse_url)
+
+        try:
+            stagesTourn = StageTournament.objects.filter(id_torneo=pk).order_by('jerarquia')
+        except StageTournament.DoesNotExist:
+            raise Http404("No StageTournament matches the given query.")
+
+        context = {
+            'stagesTourn': stagesTourn,
+            'stages': Stage.objects.all(),
+            'title': 'Editar fases del torneo '+tournament.nombre,
+            'botton_title': 'Editar fases',
+            'pk': pk
+        }
+        return render(request, self.template_name, context)
+
+    def splitDictionay(self, dict, id):
+        d = []
+        d.append(dict.pop('stage-select-0' + id))
+        d.append(dict.pop('stage-part-0' + id))
+        d.append(dict.pop('stage-part-match-0' + id))
+        d.append(dict.pop('stage-num-groups-0' + id))
+        d.append(dict.pop('stage-team-group-0' + id))
+        return d
+
+    def post(self, request, pk):
+        tournament = get_object_or_404(Tournament, id=pk)
+        # if not tournament.inscripcion_abierta:
+        #     redirect(self.refuse_url)
+
+        items = {key: value for key, value in request.POST.items() if 'stage-' in key.lower()}
+        hierarchy = 0
+        keys = list(items.keys())
+        while (len(keys) > 0):
+            hierarchy = hierarchy + 1
+
+            id = keys[0][-2:]   # Gets two last chars
+            if (id[:1] == '0'): # Validates if the number on str is lower than 10 and avoid after str errors
+                id = id [1:]
+
+            if (id == 'NN'):    # Flag to create a new Stage-Tournament
+                # Crear nueva Fase-Torneo
+                continue
+
+            stageT = get_object_or_404(StageTournament, pk = int(id))
+
+            data = self.splitDictionay(items, id)
+            keys = list(items.keys())
+
+            stageT.id_fase = Stage.objects.get(pk = int(data[0]))
+            stageT.participantes_por_equipo = int(data[1])
+            stageT.equipos_por_partido = int(data[2])
+            stageT.num_grupos = int(data[3]) if data[3] else None
+            stageT.equipos_por_grupo = int(data[4]) if data[4] else None
+            stageT.jerarquia = hierarchy
+            stageT.save()
+
+        return redirect(reverse_lazy('main:tournament_list'))
 
 
 #Eliminar torneo

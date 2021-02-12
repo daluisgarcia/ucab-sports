@@ -33,7 +33,7 @@ urlpatterns = [
     #Editar el torneo
     path('torneo/edit/<int:pk>/', TournamentViews.UpdateTournament.as_view(), name='update_tournament'),
     #Editar sus fases
-    path('torneo/edit/<int:pk>/stages/', TournamentViews.editStageTournament, name='edit_stage_tournament'),
+    path('torneo/edit/<int:pk>/stages/', TournamentViews.UpdateStageTournament.as_view(), name='edit_stage_tournament'),
     path('torneo/delete/<int:pk>/', TournamentViews.DeleteTournament.as_view(), name='delete_tournament'),
 
     #Clasificatorias
