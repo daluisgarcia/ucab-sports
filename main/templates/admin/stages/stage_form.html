@@ -41,16 +41,20 @@
     </div>
     {% endfor %}
   </div>
-  {% if 'next' in request.POST %}
-      <input class="d-none" name="next" value="{{ request.POST.next }}"/>
-  {% endif %}
   <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> Procesar
     </button>
-    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
-      Cancelar
-    </a>
+    {% if 'next' in request.POST %}
+      <a class="btn btn-primary btn-flat float-left admin_buttons" href="{{ request.POST.next }}">
+        Cancelar
+      </a>
+      <input type="hidden" name="next" value="{{ request.POST.next }}"/>
+    {% else %}
+      <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
+        Cancelar
+      </a>
+    {% endif %}
   </div>
   <br>
   <br>

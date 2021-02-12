@@ -10,8 +10,8 @@
 <div class="row mx-4">
   <form action="{% url 'main:create_stage' %}" method="POST">
       {% csrf_token %}
-      <input type="text" class="d-none" name="next" value="{% url 'main:create_stage_tournament' pk %}"/>
-      <input type="text" class="d-none" name="noshow" value="true"/>
+      <input type="hidden" name="next" value="{% url 'main:create_stage_tournament' pk %}"/>
+      <input type="hidden" name="noshow" value="true"/>
       <button class="btn btn-outline-warning">Crear una nueva fase</button>
   </form>
 </div>
