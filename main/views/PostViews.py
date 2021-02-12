@@ -92,7 +92,7 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
         return redirect('main:admin_index') 
 
-    def post(self, request, pk):
+    def post(self, request, pk): 
         post = get_object_or_404(self.model, pk=pk)
         if post.owner != request.user:
             return redirect('main:admin_index')

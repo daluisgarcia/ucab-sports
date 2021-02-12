@@ -3,19 +3,20 @@
 <br>
 <h2 class="text-center">Elija las fases del torneo en la que creará un partido</h2>
 
-<form method="POST" action="">
-
-    <h4>Seleccione el torneo y la fase en la que quiere crear el partido</h4>
+<div class="card-body">
+  <form method="POST" action=""> 
+    <h5>Seleccione el torneo y la fase en la que quiere crear el partido</h5>
     <br>
     {% csrf_token %}
     <div class="row">
-      <div class="col col-sm-5 col-md-3 col-lg-3">
+      <div class="col col-sm-5 col-md-3 col-lg-3 mb-2">
         <select class="form-control" name="tournament">
           {% for t in tour %}
           <option value="{{ t.id }}">{{ t.nombre }}</option>
           {% endfor %}
         </select>
       </div>
+      <div class="w-100 d-block d-sm-none"></div>
       <div class="col col-sm-5 col-md-3 col-lg-3">
         <select class="form-control" name="stage">
           {% for stg in stage %}
@@ -32,4 +33,6 @@
     </div>
 
   </form>
+</div>
+
 {% endblock %}

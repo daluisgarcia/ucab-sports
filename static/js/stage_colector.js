@@ -34,7 +34,8 @@ $(document).ready(function(){
         selector.attr('id', str);
         selector.attr('name', str.slice(3, str.length));
         let divIn = document.createElement('div');
-        divIn.classList.add('col-2', 'text-center');
+        //divIn.classList.add('col-2', 'text-center');
+        divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'mb-3');
         selector.appendTo(divIn);
         div.append(divIn);
 
@@ -44,7 +45,8 @@ $(document).ready(function(){
         input1.attr("id", str);
         input1.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        divIn.classList.add('col-2', 'text-center');
+        //divIn.classList.add('col-2', 'text-center');
+        divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-2', 'ml-xl-2', 'mr-lg-3', 'mr-xl-3', 'mb-3');
         input1.appendTo(divIn);
         div.append(divIn);
 
@@ -54,7 +56,8 @@ $(document).ready(function(){
         input2.attr("id", str);
         input2.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        divIn.classList.add('col-2', 'text-center');
+        //divIn.classList.add('col-2', 'text-center');
+        divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
         input2.appendTo(divIn);
         div.append(divIn);
         
@@ -64,7 +67,8 @@ $(document).ready(function(){
         input3.attr("id", str);
         input3.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        divIn.classList.add('col-2', 'text-center');
+        //divIn.classList.add('col-2', 'text-center');
+        divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
         input3.appendTo(divIn);
         div.append(divIn);
         
@@ -74,7 +78,8 @@ $(document).ready(function(){
         input4.attr("id", str);
         input4.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        divIn.classList.add('col-2', 'text-center');
+        //divIn.classList.add('col-2', 'text-center');
+        divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-2', 'mr-xl-2');
         input4.appendTo(divIn);
         div.append(divIn);
 

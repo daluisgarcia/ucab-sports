@@ -67,15 +67,15 @@
 }
 
 .inscription-img {
-    background-image:url("../images/pelota_wallpaper.jpg");
-    background-repeat: repeat-y;
-    background-size:100%;
+    background-image:url("/images/cancha.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
     height:80rem
 }
 
 .login-img {
-    background-image:url("../images/login_image.jpg");
+    background-image:url("/images/pelota.jpg");
     background-repeat:no-repeat;
-    background-size:100%;
+    background-size:cover;
     height:40rem
 }

@@ -4,23 +4,31 @@
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block content %}
-    <h1>Grupos de la fase</h1>
-
-    <form method="post">
-        {% csrf_token %}
-        {% for num, group in groups.items %}
-            <h2>Grupo {{ num }}</h2>
-            {% for key, value in group.items %}
-                <div class="form-group-inline">
-                    <label>Equipo {{ key }}</label>
-                    <select class="custom-control-inline" name="{{ value }}">
-                        {% for team in classified %}
-                            <option value="{{ team.id_equipo.id }}">{{ team.id_equipo.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+<br>
+<h2 class="text-center">Grupos de la fase</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-12 ml-3">
+            {% for num, group in groups.items %}
+            <h4>Grupo {{ num }}</h4>
+                {% for key, value in group.items %}
+                    <div class="row ml-4">
+                        <div class="form-group-inline">
+                            <label>Equipo {{ key }}</label>
+                            <select class="custom-control-inline" name="{{ value }}">
+                                {% for team in classified %}
+                                    <option value="{{ team.id_equipo.id }}">{{ team.id_equipo.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-        <button type="submit" class="btn btn-success">Asignar grupos</button>
-    </form>
+        </div>
+    </div>
+    <div class="card-footer col-11 ml-4 admin_footer">
+        <button type="submit" class="btn btn-success float-right">Asignar grupos</button>
+        </div>
+</form>
 {% endblock %}

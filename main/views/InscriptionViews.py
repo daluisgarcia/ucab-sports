@@ -155,7 +155,7 @@ def createRegisterTeam(request, pk_torneo):
         'team_register_formset': team_register_formset,
         'title': 'Inscribe al equipo y a los participantes', 
         'botton_title': 'Inscribirse'
-    }
+    } 
 
     return render(request, 'layouts/inscription/preinscription_form.html', context)
 

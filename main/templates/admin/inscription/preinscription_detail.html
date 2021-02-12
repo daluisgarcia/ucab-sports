@@ -7,41 +7,82 @@
     <br>
     <h2 class="text-center">Detalle de inscripción</h2>
     <br>
-    <div class="row">
-        <div class="offset-1 col-10">
-            <table class="table">
-                <thead>
-                    <tr>
-                    <th scope="col">Cedula</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Apellido</th>
-                    <th scope="col">Correo</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Rol</th> 
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for person in persons %}
-                    <tr>
-                        <td>{{ person.id_persona.cedula }}</td>
-                        <td>{{ person.id_persona.nombre }}</td>
-                        <td>{{ person.id_persona.apellido }}</td>
-                        <td>{{ person.id_persona.correo }}</td>
-                        <td>{{ person.id_persona.nickname }}</td>
-                        <td>{{  person.get_rol_display }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="card-body">
+        <div class="row ml-2">
+            <div class="col-1 text-left d-none d-md-block">
+                <h6 class="label label-default list_titles">Cedula</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default list_titles">Nombre</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default list_titles">Apellido</h6>
+            </div>
+            <div class="col-3 text-left d-none d-md-block">
+              <h6 class="label label-default list_titles">Correo</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default list_titles">Username</h6>
+            </div>
+            <div class="col-1 text-left d-none d-md-block">
+                <h6 class="label label-default list_titles">Rol</h6>
+              </div>
+          </div>
+    
+          {% for person in persons %} 
+          <ul class="list-group admin_list_group mr-2">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+                  <h6 class="d-md-none">Cedula</h6>
+                  <td>
+                    {{ person.id_persona.cedula }}
+                  </td>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+                  <h6 class="d-md-none">Nombre</h6>
+                  <td>
+                    {{ person.id_persona.nombre }}
+                  </td>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+                  <h6 class="d-md-none">Apellido</h6>
+                  <td>
+                    {{ person.id_persona.apellido }}
+                  </td>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
+                  <h6 class="d-md-none">Correo</h6>
+                  {{ person.id_persona.correo }}
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+                  <h6 class="d-md-none">Username</h6>
+                  <td>
+                    {{ person.id_persona.nickname }}
+                  </td>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+                    <h6 class="d-md-none">Rol</h6>
+                    <td>
+                        {{  person.get_rol_display }}
+                    </td>
+                  </div>
+              </div>
+            </li>
+          </ul>
+          {% endfor %}
+        <br/>
+    
+        <div class="card-footer col-11 ml-4 admin_footer">
+            <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:inscription_list' %}">
+              Volver
+            </a>
         </div>
-    </div>
-
-    <br/>
-
-    <div class="card-footer col-11 ml-4 admin_footer">
-        <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:inscription_list' %}">
-          Volver
-        </a>
     </div>
     
 {% endblock %}
