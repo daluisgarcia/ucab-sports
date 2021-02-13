@@ -55,7 +55,7 @@ class PostsList(LoginRequiredMixin, ListView):
         return context
 
 # Lista de posts para el publico en general
-class PublicPostList(ListView):
+class PublicPostList(ListView): 
     model = Post
     template_name = 'admin/posts/public_post_list.html'
 
@@ -96,7 +96,7 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
         post = get_object_or_404(self.model, pk=pk)
         if post.owner != request.user:
             return redirect('main:admin_index')
-        form = PostCreateForm(request.POST, instance=post)
+        form = PostCreateForm(request.POST, request.FILES, instance=post)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
             return render(request, self.template_name, ctx)
