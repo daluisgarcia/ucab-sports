@@ -291,7 +291,7 @@ def matchInfo(request, pk):
         return render(request, 'admin/matches/match_detail.html', {'match': match, 'matchTeams': match_teams})
     return redirect('main:admin_index')
 
-
+ 
 
 #Eliminar partido
 def deleteMatch(request, pk):

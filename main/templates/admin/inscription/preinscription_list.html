@@ -38,7 +38,8 @@
           <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
             <td>
             {% if reg.id_equipo__logo %}
-              <img class="post_images" src={{ reg.id_equipo__logo.url }}>
+              <img class="post_images" src={% get_media_prefix %}{{ reg.id_equipo__logo }}>
+              
             {% endif %}
             </td>
           </div>

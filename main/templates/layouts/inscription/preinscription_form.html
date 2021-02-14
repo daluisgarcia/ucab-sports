@@ -79,7 +79,7 @@
                   <br>
 
                   {{ person_formset.management_form }}
-                  <!--<div class="row ml-2">
+                  <div class="row ml-2">
                     <div class="col-2 text-left d-none d-md-block">
                         <h6 class="label label-default list_titles">Cedula</h6>
                     </div>
@@ -99,8 +99,7 @@
                         <h6 class="label label-default list_titles">Rol</h6>
                       </div>
                   </div>
-
-                  {% for person_form in person_formset %}
+                  {% for person_form, team_form in inscription_fields %}
                   <ul class="list-group admin_list_group mr-2">
                     <li class="list-group-item">
                       <div class="row">
@@ -140,66 +139,13 @@
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                             <h6 class="d-md-none">Rol</h6>
                             <td>
-                                
+                              {{ team_form.rol }}
                             </td>
                           </div>
                       </div>
                     </li>
                   </ul>
-                  {% endfor %}-->
-
-
-                  
-                 <div class="row">
-                    <div class="offset-md-1 offset-lg-1 col-10 col-sm-8 col-md-8 col-lg-8">
-                      <table class="table" id="tabla_usuarios">
-                        <thead>
-                          <tr>
-                            <th scope="col">Cedula</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Username</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for person_form in person_formset %}
-                            <tr>
-                              <td>{{ person_form.cedula }}</td>
-                              <td>{{ person_form.nombre }}</td>
-                              <td>{{ person_form.apellido }}</td>
-                              <td>{{ person_form.correo }}</td>
-                              <td>{{ person_form.nickname }}</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="col-2 col-sm-2">
-                      <table class="table" id="tabla_roles">
-                        <thead>
-                          <tr>
-                            <th scope="col">Rol</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for team_form in team_register_formset %}
-                          <tr>
-                            <td>{{ team_form.rol }}</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="offset-md-1 offset-lg-1 col-10 col-sm-10 col-md-8 col-lg-8 text-left">
-                      <label>Comentario (opcional)</label>
-                        {{ team_form.comentario }}
-                    </div>
-                  </div>
-                </div>
+                  {% endfor %}
               
                 <div class="card-footer offset-md-1 offset-lg-1 col-10 admin_footer">
                   <button type="submit" class="btn btn-primary btn-flat float-right">

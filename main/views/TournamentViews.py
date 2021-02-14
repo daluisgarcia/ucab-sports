@@ -150,6 +150,16 @@ class PublicTournamentList(ListView):
     model = Tournament
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
+    def get(self, request):
+        self.object_list = self.model.objects.order_by('-id')
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Torneos'
+        return context
+
 
 ''' 
 Render the detail view or redirect to the main page if user is not the owner
