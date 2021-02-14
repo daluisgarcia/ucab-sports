@@ -373,11 +373,11 @@ class UpdateStageTournament(LoginRequiredMixin, View):
 
     def splitDictionay(self, dict, id):
         d = []
-        d.append(dict.pop('stage-select-0' + id))
-        d.append(dict.pop('stage-part-0' + id))
-        d.append(dict.pop('stage-part-match-0' + id))
-        d.append(dict.pop('stage-num-groups-0' + id))
-        d.append(dict.pop('stage-team-group-0' + id))
+        d.append(dict.pop('stage-select-' + id))
+        d.append(dict.pop('stage-part-' + id))
+        d.append(dict.pop('stage-part-match-' + id))
+        d.append(dict.pop('stage-num-groups-' + id))
+        d.append(dict.pop('stage-team-group-' + id))
         return d
 
     def post(self, request, pk):
@@ -393,18 +393,38 @@ class UpdateStageTournament(LoginRequiredMixin, View):
 
             id = keys[0][-2:]   # Gets two last chars
             if (id[:1] == '0'): # Validates if the number on str is lower than 10 and avoid after str errors
-                id = id [1:]
+                id = id[1:]
 
             if (id == 'NN'):    # Flag to create a new Stage-Tournament
-                # Crear nueva Fase-Torneo
+                # Crear nueva Fase-Torneo (Evaluar antepenultimo numero)
+                data_number = keys[0][-4:-2]
+                if data_number[:1] == '-':  # The number is lower than 10
+                    data_number = keys[0][-3:-2]
+
+                data_number = data_number+'NN'
+                print(data_number)
+                data = self.splitDictionay(items, data_number)
+                keys = list(items.keys())
+
+                stageT = StageTournament(
+                    id_fase = get_object_or_404(Stage, pk = int(data[0])),
+                    id_torneo = tournament,
+                    participantes_por_equipo = int(data[1]),
+                    equipos_por_partido=int(data[2]),
+                    num_grupos=int(data[3]) if data[3] else None,
+                    equipos_por_grupo=int(data[4]) if data[4] else None,
+                    jerarquia=hierarchy
+                )
+                stageT.save()
+
                 continue
 
             stageT = get_object_or_404(StageTournament, pk = int(id))
 
-            data = self.splitDictionay(items, id)
+            data = self.splitDictionay(items, '0'+id)
             keys = list(items.keys())
 
-            stageT.id_fase = Stage.objects.get(pk = int(data[0]))
+            stageT.id_fase = get_object_or_404(Stage, pk = int(data[0]))
             stageT.participantes_por_equipo = int(data[1])
             stageT.equipos_por_partido = int(data[2])
             stageT.num_grupos = int(data[3]) if data[3] else None
