@@ -7,7 +7,7 @@
   <br>
   <h2 class="text-center">Torneo</h2>
 
-  <div class="card-body">
+<div class="card-body">
     <div class="col-8 text-left ml-5">
       <div class="row mb-2">
         <h6 class="label label-default font-weight-bold">Nombre:</h6>
@@ -32,9 +32,11 @@
       <br>
       {% if tournament.inscripcion_abierta == False %}
       <div class="row mb-2">
-        <h6 class="label label-default font-weight-bold">Pasar a la siguiente Clasificatoria - fase actual en progreso: <strong>{{ fase_clasificatoria }}</strong></h6>
-
-        {% if id_fase_clasif != None %}
+        <h6>Fase actual en progreso: <strong>{{ fase_clasificatoria }}</strong></h6>
+      </div>
+      <!--Sólo se muestra la opción de avanzar de fase si la fase actual y la siguiente existen-->      
+      <div class="row mb-2">
+        {% if id_fase_clasif and next_stage %}
           <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:clasificatorias' tournament.id id_fase_clasif  %}">
             Pasar a la siguiente fase
           </a>
@@ -60,5 +62,6 @@
       Volver
     </a>
   </div>
+</div>
     
 {% endblock %}

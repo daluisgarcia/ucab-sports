@@ -6,8 +6,66 @@ from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified
+from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified, Match, Participation
 from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
+
+
+#Función que devuelve en un array la tabla de clasificatorias
+def tabla_clasificatoria(stage_tournament, datos_tabla):
+
+    clasificados = Classified.objects.filter(id_fase_torneo=stage_tournament)
+    #Partidos de la fase del torneo
+    matches = Match.objects.filter(id_fase_torneo=stage_tournament)
+
+    #Lógica de la tabla de clasificatoria
+    tabla_clasificatoria = []
+
+    for team in clasificados:
+        #Participaciones de ese equipo
+        participacion = Participation.objects.filter(id_partido__in=matches, id_equipo=team.id_equipo)
+
+        puntos_totales = 0
+        partidos_empatados = 0
+        partidos_ganados = 0
+        partidos_perdidos = 0
+        for p in participacion:
+            #Suma de los puntos totales
+            if p.puntos_equipo:
+                puntos_totales += int(p.puntos_equipo)
+            
+            ganadores = Participation.objects.filter(id_partido=p.id_partido, ganador=True).count()
+            participantes = Participation.objects.filter(id_partido=p.id_partido).count()
+
+            #Si todos ganaron, se cuenta como empate
+            if((ganadores == participantes)):
+                partidos_empatados += 1
+            #Si hay al menos un ganador, se cuenta la victoria
+            elif(p.ganador == True):
+                partidos_ganados += 1
+            else:
+                partidos_perdidos += 1
+
+        #Equipo
+        datos_tabla['equipo'] = team.id_equipo
+
+        #Puntos totales
+        datos_tabla['puntos_totales'] = puntos_totales
+
+        #Partidos jugados
+        datos_tabla['partidos_jugados'] = Participation.objects.filter(id_partido__in=matches, id_equipo=team.id_equipo).count()
+
+        #Partidos ganados
+        datos_tabla['partidos_ganados'] = partidos_ganados
+
+        #Partidos perdidos
+        datos_tabla['partidos_perdidos'] = partidos_perdidos
+
+        #Partidos empatados
+        datos_tabla['partidos_empatados'] = partidos_empatados
+
+        tabla_clasificatoria.append(datos_tabla.copy())
+
+    return tabla_clasificatoria
 
 
 ''' Redirect to the tournament list or render the form
@@ -196,19 +254,34 @@ def tournamentInfo(request, pk):
             if(not anterior_fase):
                 id_fase_clasificados = None
                 fase_clasificados = None
+                fase_torneo = None
             else:
                 id_fase_clasificados = anterior_fase.first().id_fase.id
                 fase_clasificados = anterior_fase.first().id_fase
+                fase_torneo = anterior_fase
         else:
             id_fase_clasificados = None
             fase_clasificados = None
+            fase_torneo = None
 
-        print(tourStage)
+        print(fase_torneo)
+        #Verificar que exista una siguiente fase
+        if(not fase_torneo):
+            next_stage = None
+        else:
+            try:
+                next_stage = StageTournament.objects.get(id_torneo=tournament, jerarquia=fase_torneo[0].jerarquia + 1)
+            except StageTournament.DoesNotExist:
+                next_stage = None
+        
+        print(next_stage)
+
         context = {
             'tournament': tournament, 
             'tourStage': tourStage,
             'fase_clasificatoria': fase_clasificados,
-            'id_fase_clasif': id_fase_clasificados
+            'id_fase_clasif': id_fase_clasificados,
+            'next_stage': next_stage
         }
 
         return render(request, 'admin/tournaments/tournament_detail.html', context)
@@ -452,6 +525,59 @@ def deleteTournament(request, pk):
 
 #Tabla de clasificatoria
 def clasificatorias(request, pk_torneo, pk_fase):
+    tournament = Tournament.objects.get(id=pk_torneo)
+    stage = Stage.objects.get(id=pk_fase)
+    stage_tour = StageTournament.objects.get(id_torneo=pk_torneo, id_fase=pk_fase)
 
-    print('Torneo eliminado')
-    return redirect(reverse_lazy('main:tournament_list'))
+    #Siguiente fase
+    next_stage = StageTournament.objects.get(id_torneo=pk_torneo, jerarquia=stage_tour.jerarquia + 1)
+    print(next_stage)
+    
+    datos_tabla = {
+        'equipo': None,
+        'puntos_totales': None,
+        'partidos_jugados': None,
+        'partidos_ganados': None,
+        'partidos_perdidos': None,
+        'partidos_empatados': None,
+        'valor': None
+    }
+
+    tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
+    
+    i = 0
+    for part in tabla_clasif:
+        part['valor'] = i
+        i = i + 1
+    
+    print(tabla_clasif)
+
+    if request.method == 'POST':
+        
+        i = 0
+        for equipo in tabla_clasif:
+            num_equipo = 'equipo-' + str(i)
+            i = i + 1
+            team = request.POST.get(num_equipo, None)
+            if(team):
+                print(equipo['equipo'])
+
+                nuevo_clasificado = Classified(
+                   id_equipo = equipo['equipo'],
+                  id_fase_torneo = next_stage
+                )
+                nuevo_clasificado.save()
+
+        messages.success(request, 'Los equipos han avanzado a la siguiente fase')
+        return redirect('main:tournament_detail', pk=tournament.id)
+
+
+    context = {
+        'torneo': tournament,
+        'fase': stage,
+        'tabla_clasificatoria': tabla_clasif
+    }
+
+    return render(request, 'admin/tournaments/clasificatorias.html', context)
+
+    #return redirect(reverse_lazy('main:tournament_list'))

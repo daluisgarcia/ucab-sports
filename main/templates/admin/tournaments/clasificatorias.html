@@ -6,51 +6,86 @@
 {% block content %}
   <br>
   <h2 class="text-center">Clasificatoria</h2>
-  <h2 class="text-center">Partido tal - Fase tal</h2>
+  <h2 class="text-center">{{ torneo }} - {{ fase }}</h2>
+
+  <h6>Seleccione a los equipos que pasarán a la siguiente fase</h6>
 
   <div class="card-body">
     <div class="row ml-2">
-      <div class="col-1 text-center">
+      <div class="col-2"></div>
+      <div class="col-2 text-center">
           <h6 class="label label-default list_titles">Equipo</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default list_titles">Puntos Totales</h6>
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">PT</h6>
       </div>
       <div class="col-1 text-center">
-        <h6 class="label label-default list_titles">Partidos Jugados</h6>
+        <h6 class="label label-default list_titles">PJ</h6>
       </div>
       <div class="col-1 text-center">
-        <h6 class="label label-default list_titles">Partidos Ganados</h6>
+        <h6 class="label label-default list_titles">PG</h6>
       </div>
       <div class="col-1 text-center">
-        <h6 class="label label-default list_titles">Partidos Perdidos</h6>
+        <h6 class="label label-default list_titles">PP</h6>
       </div>
-      <div class="col-6 text-center">
+      <div class="col-1 text-center">
+        <h6 class="label label-default list_titles">PE</h6>
       </div>
+      <div class="col-1"></div>
     </div>
   
-  {% for equipo in tabla_clasificatoria %}
-  <ul class="list-group admin_list_group">
-    <li class="list-group-item">
-      <div class="row">
-        <div class="col-1 text-center">
-          {{ equipo.equipo }}
+  <form method="POST" action="">
+    {% csrf_token %}
+    {% for equipo in tabla_clasificatoria %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-1"></div>
+          <div class="col-1 text-center">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="equipo-{{ equipo.valor }}" value="{{ equipo.valor }}">
+            </div>
+          </div>
+          <div class="col-2 text-center">
+            {{ equipo.equipo }}
+          </div>
+          <div class="col-1 text-center">
+            {{ equipo.puntos_totales }}
+          </div>
+          <div class="col-1 text-center">
+            {{ equipo.partidos_jugados }}
+          </div>
+          <div class="col-1 text-center">
+            {{ equipo.partidos_ganados }}
+          </div>
+          <div class="col-1 text-center">
+            {{ equipo.partidos_perdidos }}
+          </div>
+          <div class="col-1 text-center">
+            {{ equipo.partidos_empatados }}
+          </div>
+          <div class="col-1"></div>
         </div>
-        <div class="col-2 text-center">
-          {{ equipo.puntos_totales }}
-        </div>
-        <div class="col-1 text-center">
-          {{ equipo.partidos_jugados }}
-        </div>
-        <div class="col-1 text-center">
-          {{ equipo.partidos_ganados }}
-        </div>
-        <div class="col-1 text-center">
-          {{ equipo.partidos_perdidos }}
-        </div>
-      </div>
-    </li>
+      </li>
+    </ul>
+    {% endfor %}
+
+    <div class="card-footer col-11 ml-4 admin_footer">
+      <button type="submit" class="btn btn-primary btn-flat float-right">
+        <i class="fas fa-save"></i> Pasar equipos a la siguiente fase
+      </button>
+    </div>
+
+  </form>
+  <br>
+  <br>
+ 
+  <ul class="list-group">
+    <li class="list-group-item">PT: Puntos Totales</li>
+    <li class="list-group-item">PJ: Partidos Jugados</li>
+    <li class="list-group-item">PG: Partidos Ganados</li>
+    <li class="list-group-item">PP: Partidos Perdidos</li>
+    <li class="list-group-item">PE: Partidos Empatados</li>
   </ul>
-  {% endfor %}
 </div>
 {% endblock %}
