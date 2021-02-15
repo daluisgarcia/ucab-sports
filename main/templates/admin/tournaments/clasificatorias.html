@@ -1,37 +1,44 @@
 {% extends 'admin/adminMain.html' %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href={% static "css/styles.css" %}>
+<link rel="stylesheet" href={% static "css/styles.css" %}> 
 {% endblock %}
 {% block content %}
   <br>
   <h2 class="text-center">Clasificatoria</h2>
   <h2 class="text-center">{{ torneo }} - {{ fase }}</h2>
 
-  <h6>Seleccione a los equipos que pasarán a la siguiente fase</h6>
-
   <div class="card-body">
+    <h6 class="text-left">Seleccione a los equipos que pasarán a la siguiente fase</h6>
+    <ul>
+      <li>PT: Puntos Totales</li>
+      <li>PJ: Partidos Jugados</li>
+      <li>PG: Partidos Ganados</li>
+      <li>PP: Partidos Perdidos</li>
+      <li>PE: Partidos Empatados</li>
+    </ul>
     <div class="row ml-2">
-      <div class="col-2"></div>
-      <div class="col-2 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">Avanzar</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-2 col-xl-2 text-left d-none d-md-block">
           <h6 class="label label-default list_titles">Equipo</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PT</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PJ</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PG</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PP</h6>
       </div>
-      <div class="col-1 text-center">
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PE</h6>
       </div>
-      <div class="col-1"></div>
     </div>
   
   <form method="POST" action="">
@@ -40,37 +47,60 @@
     <ul class="list-group admin_list_group">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-1"></div>
-          <div class="col-1 text-center">
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">Avanzar</h6>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="equipo-{{ equipo.valor }}" value="{{ equipo.valor }}">
             </div>
           </div>
-          <div class="col-2 text-center">
-            {{ equipo.equipo }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3 mt-1">
+            <h6 class="d-md-none">Equipo</h6>
+            <td>
+              {{ equipo.equipo }}
+            </td>
           </div>
-          <div class="col-1 text-center">
-            {{ equipo.puntos_totales }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PT</h6>
+            <td>
+              {{ equipo.puntos_totales }}
+            </td>
           </div>
-          <div class="col-1 text-center">
-            {{ equipo.partidos_jugados }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PJ</h6>
+            <td>
+              {{ equipo.partidos_jugados }}
+            </td>
           </div>
-          <div class="col-1 text-center">
-            {{ equipo.partidos_ganados }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PG</h6>
+            <td>
+              {{ equipo.partidos_ganados }}
+            </td>
           </div>
-          <div class="col-1 text-center">
-            {{ equipo.partidos_perdidos }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PP</h6>
+            <td>
+              {{ equipo.partidos_perdidos }}
+            </td>
           </div>
-          <div class="col-1 text-center">
-            {{ equipo.partidos_empatados }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PE</h6>
+            <td>
+              {{ equipo.partidos_empatados }}
+            </td>
           </div>
-          <div class="col-1"></div>
         </div>
       </li>
     </ul>
     {% endfor %}
 
-    <div class="card-footer col-11 ml-4 admin_footer">
+    <div class="card-footer col-12 mr-4 admin_footer">
       <button type="submit" class="btn btn-primary btn-flat float-right">
         <i class="fas fa-save"></i> Pasar equipos a la siguiente fase
       </button>
@@ -79,13 +109,5 @@
   </form>
   <br>
   <br>
- 
-  <ul class="list-group">
-    <li class="list-group-item">PT: Puntos Totales</li>
-    <li class="list-group-item">PJ: Partidos Jugados</li>
-    <li class="list-group-item">PG: Partidos Ganados</li>
-    <li class="list-group-item">PP: Partidos Perdidos</li>
-    <li class="list-group-item">PE: Partidos Empatados</li>
-  </ul>
 </div>
 {% endblock %}

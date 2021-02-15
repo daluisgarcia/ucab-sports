@@ -43,7 +43,7 @@
         {% endif %}
         
         {% for field in match_form.visible_fields %}
-        <div class="form-group">
+        <div class="form-group"> 
             <label class="ml-3 mr-3">{{ field.label }}</label>
             <div class="ml-3 mr-3 col col-sm col-md-4 col-lg-4">
                 {{ field }}
@@ -53,47 +53,56 @@
 
         <!--Lista de clasificados-->
         {% if grupos %}
-        <div class="container col-6">
-            <h6>Lista de equipos por grupo</h6>
-            <div class="row">
-                <div class="col-3 text-left">
-                    <h6 class="label label-default">Equipo</h6>
-                </div>
-                <div class="col-3 text-left">
+        <div class="col col-sm col-md-6 col-lg-6">
+            <h6 class="ml-3">Lista de equipos por grupo</h6>
+        <div class="row ml-2">
+            <div class="col-6 text-left">
+                <h6 class="label label-default">Equipo</h6>
+            </div>
+            <div class="col-6 text-left">
                 <h6 class="label label-default">Grupo</h6>
-                </div>
-                <div class="col-6 text-right"></div>
             </div>
         </div>
         {% for equipo in equipos %}
         <ul class="list-group admin_list_group">
-            <li class="list-group-item col-6">
+            <li class="list-group-item">
                 <div class="row">
-                    <div class="col-3 text-left">
+                    <div class="col-6 text-left">
                     {{ equipo.id_equipo }}
                     </div>
-                    <div class="col-3 text-left">
+                    <div class="col-6 text-left">
                     {{ equipo.grupo }}
                     </div>
-                    <div class="col-6 text-right"></div>
                 </div>
             </li>
         </ul>
         {% endfor %}
+        </div>
         {% endif %}
 
         </br>
 
         {{ participacion_formset.management_form }}
         {% for participacion in participacion_formset %}
-            <div>
-                <select class="ml-3" name="equipo-{{ participacion.valor }}">
-                    {% for equipo in equipos %}
-                    <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
-                    {% endfor %}
-                </select>
-                {{ participacion.ganador }}
-                {{ participacion.puntos_equipo }}
+            <div class="row ml-2">
+                <div class="ml-2 mb-2">
+                    <select class="ml-3" name="equipo-{{ participacion.valor }}">
+                        {% for equipo in equipos %}
+                        <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.puntos_equipo }}
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.ganador }}
+                </div>
+                <div class="ml-2 mb-3">
+                    Ganador
+                </div>
             </div>
         {% endfor %}
     </div>

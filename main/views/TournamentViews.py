@@ -209,7 +209,7 @@ class PublicTournamentList(ListView):
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
     def get(self, request):
-        self.object_list = self.model.objects.order_by('-id')
+        self.object_list = self.model.objects.order_by('-inscripcion_abierta')
         context = self.get_context_data()
         return render(request, self.template_name, context)
 
