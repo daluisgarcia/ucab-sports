@@ -1,0 +1,48 @@
+{% extends 'layouts/head.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block head %}
+<div class="general_background">
+    <img class="header_img" style="background-image: url(https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80)">
+</div>
+<div class="card-body general_background">
+    {% for stage in stages %}
+        {% for stg in stage_with_match %}
+            {% if stg.id_fase_torneo.id == stage.id %}
+            <h2 class="text-center">{{ stage.id_fase }}</h2>
+            {% endif %}
+        {% endfor %}
+        {% for match in match_list %}
+            {% if stage.id == match.id_fase_torneo.id %}
+            <h4 class="text-center">Partido</h4>
+            <div class="col-8 text-left ml-5 mb-3">
+                <div class="row mb-2">
+                    <h6 class="label label-default font-weight-bold">Fecha:</h6>
+                    <div class="label label-default ml-2">{{ match.fecha }}</div>
+                </div>
+                {% if match.direccion %}
+                <div class="row mb-2">
+                    <h6 class="label label-default font-weight-bold">Dirección:</h6>
+                    <div class="label label-default ml-2">{{ match.direccion }}</div>
+                </div>
+                {% endif %}
+                <div class="row mb-2">
+                    <h6 class="label label-default font-weight-bold">Equipos:</h6>
+                </div>
+                <ul>
+                    {% for part in participation %}
+                        {% if match.id == part.id_partido.id %}
+                        <li class="mb-1">
+                            <span class="label label-default">{{ part.id_equipo }} {% if part.ganador and not tied %}(equipo ganador){% endif %}, puntos obtenidos: {{ part.puntos_equipo }}</span>
+                        </li>  
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

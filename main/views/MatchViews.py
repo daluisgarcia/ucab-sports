@@ -43,45 +43,38 @@ def createMatch(request):
 
 
 
-#Asociar los equipos al partido
+#Associate the teams to the match
 def createTeams(request, pk_torneo, pk_fase):
     print('pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
     
-    #Lógica para traerse a los clasificados de la fase
-    #Fase del torneo
     fase_torneo = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
     #print(fase_torneo.equipos_por_partido)
 
-    #clasificados de esta fase del torneo
+    #clasified in this stage
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo")
-    #Equipos
-    #print(clasificados)
 
     if(clasificados.first().grupo):
         groups = True
     else:
         groups = False
 
-
-    #Formset de los equipos que participaron en el partido
-    #Creación del formset, especificando el form y el formset a usar. La cantidad de campos está definida por los equipos por partido.
+    #Teams formset that participate in the match
+    #Formset creation, 
+    #Creación del formset, specifying the form and formset to use. The number of fields is defined by the teams per game.
     PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet, extra=fase_torneo.equipos_por_partido)
 
-    #Manejar la lógica de los formularios
+    #Manage the form logic
     if request.method == 'POST':
         match_form = MatchCreateForm(request.POST)
         participacion_formset = PartFormSet(request.POST)
-        #print(participacion_formset)
 
         if participacion_formset.is_valid() and match_form.is_valid():
 
-            #REVISAR
-
-            #Validar que, si la fase es por grupos, los equipos seleccionados sean del mismo grupo
+            #Validate if the stage is by groups, selected teams are in the same group
             if groups:
                 print('hay grupos')
 
-                #variables necesarias para manejar la lógica de las validaciones
+                #necessary variables for manage the validation logic
                 i = 0
                 lista_grupos = []
                 grupo_anterior = None
@@ -92,12 +85,12 @@ def createTeams(request, pk_torneo, pk_fase):
                     i = i + 1
                     equipo = request.POST.get(num_equipo, None)
                     
-                    #Buscamos el número del grupo de este equipo y lo comparamos con el anterior
+                    #Searching the group number of this teams and comparing with the previous
                     for clas in clasificados:
                         if(clas.id_equipo.id == int(equipo)):
                             grupo_actual = clas.grupo
 
-                    #Validamos que no hayan equipos repetidos y que los equipos sean del mismo grupo
+                    #Validate that teams aren't repeated and the selected teams are in the same group
                     if ((equipo not in lista_grupos) and ((grupo_anterior == None) or (grupo_actual == grupo_anterior))):
                         lista_grupos.append(equipo)
                         print(lista_grupos)
@@ -111,7 +104,7 @@ def createTeams(request, pk_torneo, pk_fase):
                             i = i + 1
 
                         context = {
-                            'equipos': Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo"),
+                            'equipos': clasificados,
                             'match_form': match_form,
                             'participacion_formset': participacion_formset,
                             'grupos': groups
@@ -119,16 +112,45 @@ def createTeams(request, pk_torneo, pk_fase):
 
                         return render(request, 'admin/matches/teams_match.html', context)
             
-            #Objeto del partido
+            #Validate if teams are the same
+            i = 0
+            teams = []
+            for part in participacion_formset:
+                num_equipo = 'equipo-' + str(i)
+                
+                equipo = request.POST.get(num_equipo, None)
+                
+                if(equipo in teams):
+                    #returns error
+                    messages.error(request, 'Los equipos no se pueden repetir.')
+                                            
+                    i = 0
+                    for part in participacion_formset:
+                        part.valor = i
+                        i = i + 1
+
+                    context = {
+                        'equipos': clasificados,
+                        'match_form': match_form,
+                        'participacion_formset': participacion_formset,
+                        'grupos': groups
+                    }
+
+                    return render(request, 'admin/matches/teams_match.html', context)
+
+                teams.append(equipo)
+                i = i + 1    
+
+            #team object
             print(match_form['fecha'].value())
             match = Match(
                 fecha=match_form['fecha'].value(), 
                 direccion=match_form['direccion'].value(), id_fase_torneo=fase_torneo
             )
-            #Guardamos el partido
+            #save match
             match.save()
 
-            #Guardar registro de las participaciones del partido
+            #save participations of the match
             i = 0
             for part in participacion_formset:
                 num_equipo = 'equipo-' + str(i)
@@ -267,16 +289,41 @@ def updateMatch(request, pk):
 
 
 
-#Lista de solicitudes de inscripciones
+#Lista de partidos
 def matchList(request):
     print(request.user)
-    matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase')
+    matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
 
     context = {
         'match_list': matches
     }
     return render(request, 'admin/matches/match_list.html', context)
 
+
+
+#Match list for the common users
+def publicMatchList(request, pk_torneo):
+
+    stages = StageTournament.objects.filter(id_torneo=pk_torneo)
+    matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase', '-fecha')
+    participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by('id_partido')
+
+    #Fases que tengan al menos un partido
+    stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
+    print(stage_with_match)
+
+    #Lógica para manejar los partidos empatados
+    #ganadores = Participation.objects.filter(id_partido=pk, ganador=True).count()
+    #participantes = Participation.objects.filter(id_partido=pk).count()
+
+
+    context = {
+        'stages': stages,
+        'match_list': matches,
+        'participation': participation,
+        'stage_with_match': stage_with_match
+    }
+    return render(request, 'layouts/matches/public_matches.html', context)
 
 
 ''' 
@@ -288,7 +335,23 @@ def matchInfo(request, pk):
     match = Match.objects.get(id=pk)
     if match.id_fase_torneo.id_torneo.owner == request.user:
         match_teams = Participation.objects.filter(id_partido=pk)
-        return render(request, 'admin/matches/match_detail.html', {'match': match, 'matchTeams': match_teams})
+        print(match_teams)
+
+        ganadores = Participation.objects.filter(id_partido=pk, ganador=True).count()
+        participantes = Participation.objects.filter(id_partido=pk).count()
+
+        #Tied case
+        tied = False
+        if(ganadores == participantes):
+            tied = True
+
+        context = {
+            'match': match,
+            'matchTeams': match_teams,
+            'tied': tied
+        }
+
+        return render(request, 'admin/matches/match_detail.html', context)
     return redirect('main:admin_index')
 
  
@@ -300,4 +363,5 @@ def deleteMatch(request, pk):
     match.delete()
     print('Torneo eliminado')
     return redirect(reverse_lazy('main:match_list'))
+
 

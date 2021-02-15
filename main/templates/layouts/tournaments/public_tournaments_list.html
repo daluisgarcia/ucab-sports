@@ -33,7 +33,7 @@
             </div>
             {% endif %}
             <div class="row mb-2">
-                <a class="btn btn-secondary btn-flat admin_buttons"> <!-- hay que ponerle href a la lista de partidos de torneo -->
+                <a class="btn btn-secondary btn-flat admin_buttons" href="{% url 'main:matches_public_list' c.id %}"> 
                     ver más
                 </a>
             </div>
