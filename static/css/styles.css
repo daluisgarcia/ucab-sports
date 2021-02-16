@@ -79,3 +79,8 @@
     background-size:cover;
     height:40rem
 }
+
+.vertical_line {
+    border-left: 3px solid black;
+    height: 100%;
+  }

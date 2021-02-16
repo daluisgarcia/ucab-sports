@@ -288,15 +288,6 @@ def tournamentInfo(request, pk):
     return redirect('main:admin_index')
 
 
-''' 
-Bracket del torneo
-'''
-class TournamentBracket(ListView):
-    model = Tournament
-    template_name = 'layouts/tournaments/tournament_bracket.html'
-
-
-
 #Editar Torneo
 class UpdateTournament(LoginRequiredMixin, UpdateView):
     model = Tournament

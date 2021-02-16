@@ -19,12 +19,12 @@ class PostCreateForm(ModelForm):
     widgets = {
       'titulo': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un título'
+          'placeholder': 'Título'
         }
       ),
       'cuerpo': Textarea(
         attrs = {
-          'placeholder': 'Ingrese el cuerpo del post',
+          'placeholder': 'Cuerpo',
           'rows': 5
         }
       )
@@ -48,7 +48,7 @@ class TournamentCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un nombre'
+          'placeholder': 'Nombre'
         }
       ),
       'fecha_inicio': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
@@ -87,7 +87,7 @@ class InitialStageTournamentForm(ModelForm):
     widgets = {
       'participantes_por_equipo': NumberInput(
         attrs = {
-          'placeholder': 'Ingrese los participantes del equipo'
+          'placeholder': 'Participantes por equipo'
         }
       )
     }
@@ -115,17 +115,17 @@ class StageTournamentCreateForm(forms.Form):
       ),
       'equipos_por_partido': NumberInput(
         attrs = {
-          'placeholder': 'número de equipos'
+          'placeholder': 'Número de equipos'
         }
       ),
       'num_grupos': NumberInput(
         attrs = {
-          'placeholder': 'número de grupos'
+          'placeholder': 'Número de grupos'
         }
       ),
       'equipos_por_grupo': NumberInput(
         attrs = {
-          'placeholder': 'número de equipos por grupo'
+          'placeholder': 'Equipos por grupo'
         }
       )
     }
@@ -147,12 +147,12 @@ class StageCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un título'
+          'placeholder': 'Título'
         }
       ),
       'descripcion': Textarea(
         attrs = {
-          'placeholder': 'Ingrese una descripción breve de la fase',
+          'placeholder': 'Descripción breve de la fase',
           'rows': 5
         }
       ),
@@ -175,7 +175,7 @@ class GameCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del juego'
+          'placeholder': 'Nombre'
         }
       )
     }
@@ -197,7 +197,7 @@ class PreteamCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del equipo'
+          'placeholder': 'Nombre'
         }
       ),
       'comentario': Textarea(
@@ -224,27 +224,27 @@ class PrePersonCreateForm(ModelForm):
     widgets = {
       'cedula': NumberInput(
         attrs = {
-          'placeholder': 'Ingrese la cédula'
+          'placeholder': 'Cédula'
         }
       ),
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del participante'
+          'placeholder': 'Nombre'
         }
       ),
       'apellido': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el apellido del participante'
+          'placeholder': 'Apellido'
         }
       ),
       'correo': EmailInput(
         attrs = {
-          'placeholder': 'Ingrese el correo del participante',
+          'placeholder': 'Correo',
         }
       ),
       'nickname': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nickname del participante (opcional)'
+          'placeholder': 'Username (opcional)'
         }
       ),
     }
@@ -373,7 +373,7 @@ class MatchCreateForm(ModelForm):
       'fecha': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
       'direccion': TextInput(
         attrs = {
-          'placeholder': 'Ingrese la dirección del partido (opcional)'
+          'placeholder': 'Lugar del partido (opcional)'
         }
       ),
     }
@@ -394,7 +394,7 @@ class ParticipationCreateForm(ModelForm):
       'ganador': CheckboxInput(),
       'puntos_equipo': NumberInput(
         attrs = {
-          'placeholder': 'Puntos que obtuvo el equipo'
+          'placeholder': 'Puntos'
         }
       )
     }
