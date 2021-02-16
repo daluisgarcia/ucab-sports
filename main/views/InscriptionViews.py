@@ -16,15 +16,23 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 #Inscribir a los participantes del torneo
 def createRegisterTeam(request, pk_torneo):
 
+    #Obtenemos el torneo
+    try:
+        tournament = Tournament.objects.get(id=pk_torneo)
+    except Tournament.DoesNotExist:
+        tournament = None
+
+    #Si el torneo fue eliminado o la inscripción fue cerrada, entonces mandar al usuario a la vista de torneos
+    if((not tournament) or (tournament.inscripcion_abierta == False)):
+        messages.error(request, 'El torneo al que ha tratado de acceder ha cerrado su inscripción o ha sido eliminado del sistema')
+        return redirect('/torneos/abiertos/')
+
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
     person_number = StageTournament.objects.get(jerarquia=0, id_torneo=pk_torneo, id_fase__isnull=True).participantes_por_equipo
 
     #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
     if(Tournament.objects.get(id=pk_torneo).tipo_delegado == 'd'):
         person_number = person_number + 1
-
-    #Obtenemos el torneo
-    tournament = Tournament.objects.get(id=pk_torneo)
 
     #Formset de los participantes
     # Creación del formset, especificando el form y el formset a usar
@@ -53,9 +61,10 @@ def createRegisterTeam(request, pk_torneo):
                     messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
 
                     context = {
+                        'inscription_fields': zip(person_formset, team_register_formset),
                         'person_formset': person_formset,
+                        'tipo_delegado': tournament.tipo_delegado,
                         'team_form': team_form,
-                        'team_register_formset': team_register_formset,
                         'title': 'Inscribe al equipo y a los participantes', 
                         'botton_title': 'Inscribirse'
                     }
@@ -72,9 +81,10 @@ def createRegisterTeam(request, pk_torneo):
                     messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
 
                     context = {
+                        'inscription_fields': zip(person_formset, team_register_formset),
                         'person_formset': person_formset,
+                        'tipo_delegado': tournament.tipo_delegado,
                         'team_form': team_form,
-                        'team_register_formset': team_register_formset,
                         'title': 'Inscribe al equipo y a los participantes',
                         'botton_title': 'Inscribirse'
                     }

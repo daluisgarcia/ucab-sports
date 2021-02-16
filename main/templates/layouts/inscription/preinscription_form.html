@@ -11,11 +11,10 @@
             <div class="offset-1 col-10 text-center form-container">
               <h2 class="text-center">{{ title }}</h2>
               <form method="POST" action="" enctype="multipart/form-data">
-                <div class="card-body text-center">
+                <div class="card-body text-left">
                   <!--Validación de errores-->
                   {% csrf_token %} 
                   {% if person_formset.errors or team_register_formset.errors %}
-                  {{ person_formset.cedula.errors }}
                   <div class="alert alert-danger alert-dismissible">
                     <button
                       type="button"
@@ -25,15 +24,15 @@
                     >
                       ×
                     </button>
-                    <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4> 
+                    <h4><i class="text-center icon fa fa-ban"></i> Ha ocurrido un error</h4> 
                     {% for dict in team_register_formset.errors %}
-                      {{ dict }}
+                      <li>{{ dict }}</li>
                     {% endfor %}
                     
                     {% for dict in person_formset.errors %}
-                      {{ dict }}
+                      <li>{{ dict }}</li>
                     {% endfor %}
-                    
+
                     {% if person_formset.cedula.errors %}
                       {% for error in person_formset.cedula.errors %}
                         {{ error }}
@@ -41,16 +40,18 @@
                     {% endif %}
                   </div>
                   {% endif %}
-              
+                </div>
+
+                <div class="card-body text-center">
                   <div class="row">
                     {% if tipo_delegado == 'd' %}
-                    <div class="offset-md-1 offset-lg-1 col-8">
-                      <li>En este torneo uno de los participantes debe ser solo delegado.</li>
+                    <div class="offset-md-1 offset-lg-1 col-10">
+                      <li>En este torneo uno de los participantes debe ser solo <strong>delegado</strong>.</li>
                     </div>
                     {% endif %}
                     {% if tipo_delegado == 'jd' %}
-                    <div class="offset-md-1 offset-lg-1 col-8">
-                      <li>En este torneo uno de los participantes debe ser un jugador delegado.</li>
+                    <div class="offset-md-1 offset-lg-1 col-10">
+                      <li>En este torneo uno de los participantes debe ser un <strong>jugador delegado</strong>.</li>
                     </div>
                     {% endif %}
                   </div>
@@ -96,8 +97,8 @@
                       <h6 class="label label-default list_titles">Username</h6>
                     </div>
                     <div class="col-2 text-left d-none d-md-block">
-                        <h6 class="label label-default list_titles">Rol</h6>
-                      </div>
+                      <h6 class="label label-default list_titles">Rol</h6>
+                    </div>
                   </div>
                   {% for person_form, team_form in inscription_fields %}
                   <ul class="list-group admin_list_group mr-2">
@@ -147,13 +148,24 @@
                   </ul>
                   {% endfor %}
               
-                <div class="card-footer offset-md-1 offset-lg-1 col-10 admin_footer">
-                  <button type="submit" class="btn btn-primary btn-flat float-right">
-                    <i class="fas fa-save"></i> {{ botton_title }}
-                  </button>
+                  <div class="row">
+                    <div class="col-12">
+                      <label>Comentario</label>
+                      {{ team_form.comentario }}
+                    </div>
+                  </div>
+
+                  <br>
+
+                  <div class="card-footer offset-md-1 offset-lg-1 col-10 admin_footer">
+                    <button type="submit" class="btn btn-primary btn-flat float-right">
+                      <i class="fas fa-save"></i> {{ botton_title }}
+                    </button>
+                  </div>
+
+                  <br>
+                  <br>
                 </div>
-                <br>
-                <br>
               </form>
             </div>
           </section>

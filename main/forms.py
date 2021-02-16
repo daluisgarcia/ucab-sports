@@ -352,8 +352,8 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                     form.add_error('rol','Sólo puede existir un delegado por equipo.')
                     duplicate_rol = True
 
-            if(not hay_delegado):
-                form.add_error('rol','Tiene que existir un delegado.')
+        if(not hay_delegado):
+            form.add_error('rol','Tiene que existir un delegado.')
 
 
 '''
