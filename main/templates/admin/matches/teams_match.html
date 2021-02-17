@@ -7,9 +7,9 @@
 
     <h6>Tome en cuenta lo siguiente</h6>
     <ul>
-        <li>Si el partido todavía no ha ocurrido, no es necesario que llene los campos de ganadores y puntos por equipo. Estos campos los podrá modificar luego.</li>
-        <li>Si el partido finalizó como un <strong>empate</strong>, entonces debe colocar que todos los equipos ganaron.</li>
-        <li>Si el partido ya ocurrió, entonces recuerde llenar los campos de los ganadores y los puntos</li>
+        <li>Si el partido <strong>todavía no ha ocurrido</strong>, no es necesario que llene los campos de ganadores, scores ni puntos por equipo. Estos campos los podrá modificar luego.</li>
+        <li>Si el partido finalizó como un <strong>empate</strong>, entonces NO llene los campos de ganadores. Los partidos empatados ocurren cuando los scores son iguales.</li>
+        <li>Si el partido <strong>ya ocurrió</strong>, entonces recuerde llenar los campos de los ganadores, scores y los puntos.</li>
     </ul>
 </div>
 <form method="POST" action="">
@@ -91,6 +91,10 @@
                         <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
                         {% endfor %}
                     </select>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.score }}
                 </div>
                 <div class="w-100 d-block d-sm-none"></div>
                 <div class="ml-2 mb-2">

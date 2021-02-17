@@ -41,7 +41,7 @@
                 <div>{{ user.username }}</div>
               </a>
               <ul class="dropdown-menu p-1">
-                <li class="p-1"><a href="{% url 'main:admin_index' %}">Vista de control</a></li>
+                <li class="p-1"><a href="{% url 'main:tournament_list' %}">Vista de control</a></li>
                 <li class="p-1"><a href="{% url 'logout' %}?next={% url 'main:posts' %}">Cerrar sesión</a></li>
               </ul>
             </li>

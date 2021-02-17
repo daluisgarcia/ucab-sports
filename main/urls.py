@@ -42,6 +42,7 @@ urlpatterns = [
     #Vistas públicas
     path('torneos/abiertos/', TournamentViews.PublicTournamentList.as_view(), name='tournaments_public_list'),
     path('partidos/torneo/<int:pk_torneo>/', MatchViews.publicMatchList, name='matches_public_list'),
+    path('clasificatorias/torneo/fase/<int:pk_fase_torneo>/', TournamentViews.publicClasified, name='public_classified'),
     
     #Stages
     path('fases/', StageViews.StageList.as_view(), name='stage_list'),

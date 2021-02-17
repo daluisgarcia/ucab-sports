@@ -389,12 +389,17 @@ class ParticipationCreateForm(ModelForm):
 
   class Meta:
     model = Participation
-    fields = ['ganador','puntos_equipo']
+    fields = ['ganador','puntos_equipo', 'score']
     widgets = {
       'ganador': CheckboxInput(),
       'puntos_equipo': NumberInput(
         attrs = {
           'placeholder': 'Puntos'
+        }
+      ),
+      'score': NumberInput(
+        attrs = {
+          'placeholder': 'Scores'
         }
       )
     }
@@ -410,8 +415,6 @@ class ParticipationFormSet(formsets.BaseFormSet):
             return
 
         todos_ganadores = True
-        puntos = False
-        un_ganador = False
 
         for form in self.forms:
             
@@ -419,14 +422,10 @@ class ParticipationFormSet(formsets.BaseFormSet):
                 ganador = form.cleaned_data['ganador']
                 puntos_equipo = form.cleaned_data['puntos_equipo']
 
-                if ganador == True:
-                    un_ganador = True
                 if ganador == False:
                     todos_ganadores = False
-                if puntos_equipo:
-                    puntos = True
 
-        if ((puntos == True) and (un_ganador == False)):
-            form.add_error('puntos_equipo','Si va a colocar puntajes tiene que colocar el o los ganadores del partido')
+        if (todos_ganadores):
+            form.add_error('ganador','No todos los equipos pueden resultar ganadores.')
 
         

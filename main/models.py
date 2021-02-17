@@ -56,6 +56,7 @@ class Stage(models.Model):
 '''
 class Game(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
+  esport = models.BooleanField(default=False)
 
   def __str__(self):
     return self.nombre
@@ -164,6 +165,7 @@ class Participation(models.Model):
   id_partido = models.ForeignKey(Match, on_delete=models.CASCADE)
   ganador = models.BooleanField(null=True, blank=True)
   puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo', null=True, blank=True)
+  score = models.IntegerField(verbose_name='Scores', null=True, blank=True)
 
   def __str__(self):
     return 'Puntaje del equipo %s: %s' % (self.id_equipo.nombre,self.puntos_equipo)

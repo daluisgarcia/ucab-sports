@@ -13,7 +13,7 @@ from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialS
 #Función que devuelve en un array la tabla de clasificatorias
 def tabla_clasificatoria(stage_tournament, datos_tabla):
 
-    clasificados = Classified.objects.filter(id_fase_torneo=stage_tournament)
+    clasificados = Classified.objects.filter(id_fase_torneo=stage_tournament).order_by('grupo')
     #Partidos de la fase del torneo
     matches = Match.objects.filter(id_fase_torneo=stage_tournament)
 
@@ -25,34 +25,47 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         participacion = Participation.objects.filter(id_partido__in=matches, id_equipo=team.id_equipo)
 
         puntos_totales = 0
+        puntos_ganados = 0
+        puntos_empatados = 0
+        partidos_jugados = 0
         partidos_empatados = 0
         partidos_ganados = 0
         partidos_perdidos = 0
         for p in participacion:
-            #Suma de los puntos totales
-            if p.puntos_equipo:
-                puntos_totales += int(p.puntos_equipo)
-            
-            ganadores = Participation.objects.filter(id_partido=p.id_partido, ganador=True).count()
-            participantes = Participation.objects.filter(id_partido=p.id_partido).count()
+            #Si alguno de estos campos está lleno, entonces el partido sí ocurrió
+            if((p.ganador != None) or (p.puntos_equipo != None) or (p.score != None)):
+                #Se cuenta la participación
+                partidos_jugados += 1
+                #Si hay al menos un ganador, se cuenta la victoria
+                if(p.ganador == True):
+                    partidos_ganados += 1
+                    #Sumamos los puntos del partido
+                    puntos_ganados += p.puntos_equipo
+                #Verificamos si hay empate
+                #Obtenemos el score actual y contamos si todos los otros equipos lo tienen igual
+                elif(p.score != None):
+                    cant_equipos = Participation.objects.filter(id_partido=p.id_partido).count()
+                    cant_equipos_score = Participation.objects.filter(id_partido=p.id_partido, score=p.score).count()
+                    #Si la cantidad de equipos = cantidad de equipos que tienen el mismo score, entonces sí hubo empate
+                    if(cant_equipos == cant_equipos_score):
+                        partidos_empatados += 1
+                        #Sumamos los puntos del partido
+                        puntos_empatados += p.puntos_equipo
+                    #Si no ganó, ni empató, entonces perdió
+                    else:
+                        partidos_perdidos += 1
+                #Si no ganó, ni empató, entonces perdió
+                else:
+                    partidos_perdidos += 1
 
-            #Si todos ganaron, se cuenta como empate
-            if((ganadores == participantes)):
-                partidos_empatados += 1
-            #Si hay al menos un ganador, se cuenta la victoria
-            elif(p.ganador == True):
-                partidos_ganados += 1
-            else:
-                partidos_perdidos += 1
+        #Suma de los puntos totales
+        puntos_totales = (partidos_ganados * puntos_ganados) + (partidos_empatados * puntos_empatados)
 
         #Equipo
-        datos_tabla['equipo'] = team.id_equipo
-
-        #Puntos totales
-        datos_tabla['puntos_totales'] = puntos_totales
+        datos_tabla['equipo'] = team
 
         #Partidos jugados
-        datos_tabla['partidos_jugados'] = Participation.objects.filter(id_partido__in=matches, id_equipo=team.id_equipo).count()
+        datos_tabla['partidos_jugados'] = partidos_jugados
 
         #Partidos ganados
         datos_tabla['partidos_ganados'] = partidos_ganados
@@ -62,6 +75,9 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
 
         #Partidos empatados
         datos_tabla['partidos_empatados'] = partidos_empatados
+
+        #Puntos totales
+        datos_tabla['puntos_totales'] = puntos_totales
 
         tabla_clasificatoria.append(datos_tabla.copy())
 
@@ -83,6 +99,15 @@ class CreateTournament(LoginRequiredMixin, CreateView):
 
         self.object = None
         if form.is_valid() and initial_form.is_valid():
+            #Validate if delegate is jd and participants are only 1
+            print(form['tipo_delegado'].value())
+            print(initial_form['participantes_por_equipo'].value())
+            if((form['tipo_delegado'].value() == 'd') and (int(initial_form['participantes_por_equipo'].value()) == 1)):
+                messages.error(request, 'Si el torneo es de un único participante, entonces el tipo de delegado tiene que ser Jugador Delegado.')
+                context = self.get_context_data()
+                context['form'] = form
+                return render(request, self.template_name, context)
+
             object = form.save(commit=False)
             object.owner = self.request.user
             object.save()
@@ -541,7 +566,7 @@ def clasificatorias(request, pk_torneo, pk_fase):
         part['valor'] = i
         i = i + 1
     
-    print(tabla_clasif)
+    #print(tabla_clasif)
 
     if request.method == 'POST':
         
@@ -554,8 +579,8 @@ def clasificatorias(request, pk_torneo, pk_fase):
                 print(equipo['equipo'])
 
                 nuevo_clasificado = Classified(
-                   id_equipo = equipo['equipo'],
-                  id_fase_torneo = next_stage
+                    id_equipo = equipo['equipo'],
+                    id_fase_torneo = next_stage
                 )
                 nuevo_clasificado.save()
 
@@ -571,4 +596,30 @@ def clasificatorias(request, pk_torneo, pk_fase):
 
     return render(request, 'admin/tournaments/clasificatorias.html', context)
 
-    #return redirect(reverse_lazy('main:tournament_list'))
+
+#Vista pública de la tabla de clasificatoria
+def publicClasified(request, pk_fase_torneo):
+    stage_tour = StageTournament.objects.get(id=pk_fase_torneo)
+
+    datos_tabla = {
+        'equipo': None,
+        'puntos_totales': None,
+        'partidos_jugados': None,
+        'partidos_ganados': None,
+        'partidos_perdidos': None,
+        'partidos_empatados': None
+    }
+
+    tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
+    
+    #print(tabla_clasif)
+
+    context = {
+        'torneo': stage_tour.id_torneo.nombre,
+        'fase': stage_tour.id_fase.nombre,
+        'tabla_clasificatoria': tabla_clasif,
+        'id_torneo': stage_tour.id_torneo.id
+    }
+
+    return render(request, 'layouts/tournaments/public_clasified.html', context)
+
