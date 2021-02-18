@@ -25,40 +25,59 @@ $(document).ready(function(){
         let str = `stage-select-${(++selectorCont).toString()}NN`;
         selector.attr('name', str);
         let divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'mb-3');
+        let label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Fase';
+        divIn.append(label);
         selector.appendTo(divIn);
+        div.append(divIn);
+
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
         div.append(divIn);
 
         str = `stage-part-${(++input1Cont).toString()}NN`;
         input1.attr('name', str);
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-2', 'ml-xl-2', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Participantes por equipo';
+        divIn.append(label);
         input1.appendTo(divIn);
         div.append(divIn);
 
         str = `stage-part-match-${(++input2Cont).toString()}NN`;
         input2.attr('name', str);
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Equipos por partido';
+        divIn.append(label);
         input2.appendTo(divIn);
         div.append(divIn);
 
         str = `stage-num-groups-${(++input3Cont).toString()}NN`;
         input3.attr('name', str);
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Número de grupos';
+        divIn.append(label);
         input3.appendTo(divIn);
         div.append(divIn);
 
         str = `stage-team-group-${(++input4Cont).toString()}NN`;
         input4.attr('name', str);
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-2', 'mr-xl-2');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Equipos por grupo';
+        divIn.append(label);
         input4.appendTo(divIn);
         div.append(divIn);
 
@@ -68,5 +87,7 @@ $(document).ready(function(){
 
         $('#form-list').append(li);
     });
+
+
 
 });

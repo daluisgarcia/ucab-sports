@@ -34,9 +34,16 @@ $(document).ready(function(){
         selector.attr('id', str);
         selector.attr('name', str.slice(3, str.length));
         let divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'mb-3');
+        let label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Fase';
+        divIn.append(label);
         selector.appendTo(divIn);
+        div.append(divIn);
+
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
         div.append(divIn);
 
         obj = {'cont': input1Cont};
@@ -45,8 +52,11 @@ $(document).ready(function(){
         input1.attr("id", str);
         input1.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-2', 'ml-xl-2', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Participantes por equipo';
+        divIn.append(label);
         input1.appendTo(divIn);
         div.append(divIn);
 
@@ -56,8 +66,11 @@ $(document).ready(function(){
         input2.attr("id", str);
         input2.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Equipos por partido';
+        divIn.append(label);
         input2.appendTo(divIn);
         div.append(divIn);
         
@@ -67,8 +80,11 @@ $(document).ready(function(){
         input3.attr("id", str);
         input3.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-3', 'mr-xl-3', 'mb-3');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Número de grupos';
+        divIn.append(label);
         input3.appendTo(divIn);
         div.append(divIn);
         
@@ -78,8 +94,11 @@ $(document).ready(function(){
         input4.attr("id", str);
         input4.attr('name', str.slice(3, str.length));
         divIn = document.createElement('div');
-        //divIn.classList.add('col-2', 'text-center');
         divIn.classList.add('col', 'col-sm', 'col-md', 'col-lg-2', 'col-xl-2', 'text-left', 'ml-lg-3', 'ml-xl-3', 'mr-lg-2', 'mr-xl-2');
+        label = document.createElement('h6');
+        label.classList.add('d-md-none');
+        label.innerText = 'Equipos por grupo';
+        divIn.append(label);
         input4.appendTo(divIn);
         div.append(divIn);
 
@@ -93,52 +112,6 @@ $(document).ready(function(){
         $('#form-list').append(li);
     });
 
-});
 
-
-//Código por si meto la pata
-/*
-$(document).ready(function(){
-    const stage_selector_id = 'id_stagetournament_set-0-id_fase';
-    const stage_input_id = 'id_stagetournament_set-0-jerarquia';
-    const forms_num_id = 'id_stagetournament_set-TOTAL_FORMS';
-
-    let selectorCont = 0;
-    let inputCont = 0;
-    */
-    /*Function to change the id number*/
-    /*
-    function changeIdNumber(idName, obj) {
-        return idName.replace('0', (++obj.cont).toString());
-    }
-    */
-    /*Add a new input to the form*/
-    /*
-    $("#addBtn").click(function(){
-        let div = document.createElement('div');
-
-        let selector = $(`#${stage_selector_id}`).clone();
-        let input = $(`#${stage_input_id}`).clone();
-
-        let obj = {'cont': selectorCont};
-        let str = changeIdNumber(stage_selector_id, obj);
-        selectorCont = obj.cont;
-        selector.attr('id', str);
-        selector.attr('name', str.slice(3, str.length));
-        selector.appendTo(div);
-
-        obj = {'cont': inputCont};
-        str = changeIdNumber(stage_input_id, obj);
-        inputCont = obj.cont;
-        input.attr("id", str);
-        input.attr('name', str.slice(3, str.length));
-        input.appendTo(div);
-
-        form_num = $(`#${forms_num_id}`);
-        form_num.val(parseInt(form_num.val()) + 1);
-
-        $('#form-card').append(div);
-    });
 
 });
-*/

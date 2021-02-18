@@ -49,7 +49,9 @@
         {% for result in tourStage %}
           <li class="mb-1">
             <span class="label label-default ml-2">{{ result.id_fase }}</span>
-            <a href="{% url 'main:stage_groups' tournament.id result.id_fase.id%}" class="btn btn-primary mb-1">Gestionar grupos</a>
+            {% if result.num_grupos != None or result.num_grupos > 1 %}
+              <a href="{% url 'main:stage_groups' tournament.id result.jerarquia%}" class="btn btn-primary mb-1">Gestionar grupos</a>
+            {% endif %}
             <a href="#" class="btn btn-secondary mb-1">Gestionar partidos</a>
           </li>          
         {% endfor %}
