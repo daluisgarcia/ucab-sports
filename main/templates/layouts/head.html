@@ -36,13 +36,13 @@
 
         <ul class="nav ml-auto mr-1">
           {% if user.is_authenticated %}
-            <li class="dropdown p-1" style="width: 5rem;">
+            <li class="dropdown p-1" style="width: 4rem;">
               <a href="#" data-toggle="dropdown" class="dropdown-toggle text-white">
                 <div>{{ user.username }}</div>
               </a>
-              <ul class="dropdown-menu p-1">
-                <li class="p-1"><a class="text-white" href="{% url 'main:tournament_list' %}">Vista de control</a></li>
-                <li class="p-1"><a class="text-white" href="{% url 'logout' %}?next={% url 'main:posts' %}">Cerrar sesión</a></li>
+              <ul class="dropdown-menu p-1 dropdown-menu-right">
+                <li class="p-1"><a class="text-black" href="{% url 'main:tournament_list' %}">Vista de control</a></li>
+                <li class="p-1"><a class="text-black" href="{% url 'logout' %}?next={% url 'main:posts' %}">Cerrar sesión</a></li>
               </ul>
             </li>
           {% else %}

@@ -8,20 +8,20 @@
     <img class="header_img" style="background-image: url(/images/esports.jpg)">
 </div>
 <div class="card-body general_background">
-<a class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" >Generar PDF</a>
-<br>
-<br>
+    <a class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" >Generar PDF</a>
+    {% if stage_clasified_table %}
+    <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:public_classified' stage_clasified_table.id %}">
+    Ver tabla de clasificación
+    </a>
+    {% endif %}
+    <br>
+    <br>
     {% for stage in stages %}
         {% for stg in stage_with_match %}
             {% if stg.id_fase_torneo.id == stage.id %}
             <div class="row">
                 <div class="col text-center ml-5 mb-3">
                     <h2 class="text-center">{{ stage.id_fase }}</h2>
-                </div>
-                <div class="col-11 text-center ml-5 mb-3">
-                    <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:public_classified' stg.id_fase_torneo.id %}">
-                    Ver tabla de clasificación
-                    </a>
                 </div>
             </div>
             {% endif %}

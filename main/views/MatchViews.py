@@ -324,11 +324,18 @@ def publicMatchList(request, pk_torneo):
     stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
     print(stage_with_match)
 
+    #Fase para la tabla clasificatoria
+    try:
+        stage_clasified_table = StageTournament.objects.get(id_torneo=pk_torneo, jerarquia=1)
+    except StageTournament.DoesNotExist:
+        stage_clasified_table = None
+
     context = {
         'stages': stages,
         'match_list': matches,
         'participation': participation,
-        'stage_with_match': stage_with_match
+        'stage_with_match': stage_with_match,
+        'stage_clasified_table': stage_clasified_table
     }
     return render(request, 'layouts/matches/public_matches.html', context)
 

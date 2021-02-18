@@ -62,7 +62,7 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         puntos_totales = (partidos_ganados * puntos_ganados) + (partidos_empatados * puntos_empatados)
 
         #Equipo
-        datos_tabla['equipo'] = team
+        datos_tabla['equipo'] = team.id_equipo
 
         #Partidos jugados
         datos_tabla['partidos_jugados'] = partidos_jugados
@@ -100,8 +100,6 @@ class CreateTournament(LoginRequiredMixin, CreateView):
         self.object = None
         if form.is_valid() and initial_form.is_valid():
             #Validate if delegate is jd and participants are only 1
-            print(form['tipo_delegado'].value())
-            print(initial_form['participantes_por_equipo'].value())
             if((form['tipo_delegado'].value() == 'd') and (int(initial_form['participantes_por_equipo'].value()) == 1)):
                 messages.error(request, 'Si el torneo es de un único participante, entonces el tipo de delegado tiene que ser Jugador Delegado.')
                 context = self.get_context_data()
