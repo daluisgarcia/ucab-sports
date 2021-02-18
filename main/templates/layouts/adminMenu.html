@@ -1,10 +1,16 @@
 <ul class="list-group" >
     <li class="list-group-item">
         <a href="{% url 'main:tournament_list' %}" >
-            <img src="/static/icons/first-place-trophy.svg" class="nav-icon " width="30" style="margin-top: 8px;">
-            <span>
-                Torneos
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/first-place-trophy.svg" class="nav-icon " width="30" style="margin-top: 8px;">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Torneos
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
 {#    <button type="button" style="border: none; background-color:#A9A9A9; outline: none; box-shadow: none;">#}
@@ -12,59 +18,101 @@
 {#    </button>#}
     <li class="list-group-item">
         <a href="{% url 'main:inscription_list' %}">
-            <img src="/static/icons/clipboard.svg" class="nav-icon " width="30">
-            <span>
-                Inscripciones
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/clipboard.svg" class="nav-icon " width="30">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Inscripciones
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
     <li class="list-group-item">
         <a href="{% url 'main:post_list' %}">
-            <img src="/static/icons/sticky-notes.svg" class="nav-icon " width="30">
-            <span>
-                Posts
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/sticky-notes.svg" class="nav-icon " width="30">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Posts
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
     <li class="list-group-item">
         <a href="{% url 'main:match_list' %}">
-            <img src="/static/icons/soccer-field.svg" class="nav-icon " width="30">
-            <span>
-                Partidos
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/soccer-field.svg" class="nav-icon " width="30">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Partidos
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
     <li class="list-group-item">
         <a href="{% url 'main:stage_list' %}">
-            <img src="/static/icons/phases.svg" class="nav-icon " width="30">
-            <span>
-                Fases
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/phases.svg" class="nav-icon " width="30">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Fases
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
     <li class="list-group-item">
         <a href="{% url 'main:game_list' %}">
-            <img src="/static/icons/gamepad-controller.svg" class="nav-icon " width="30">
-            <span>
-                Juegos
-            </span>
+            <div class="row">
+                <div class="col-3 text-right">
+                    <img src="/static/icons/gamepad-controller.svg" class="nav-icon " width="30">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="d-none d-md-block">
+                        Juegos
+                    </span>
+                </div>
+            </div>
         </a>
     </li>
     {% if user.is_superuser %}
         <li class="list-group-item">
             <a href="{% url 'admin:auth_user_add' %}" >
-                <img src="/static/icons/user.svg" class="nav-icon " width="30">
-                <span>
-                    Usuarios
-                </span>
+                <div class="row">
+                    <div class="col-3 text-right">
+                        <img src="/static/icons/user.svg" class="nav-icon " width="30">
+                    </div>
+                    <div class="col-9 text-left">
+                        <span class="d-none d-md-block">
+                            Usuarios
+                        </span>
+                    </div>
+                </div>
             </a>
         </li>
         <li class="list-group-item">
             <a href="{% url 'admin:auth_group_add' %}">
-                <img src="/static/icons/role.svg" class="nav-icon " width="30">
-                <span>
-                    Roles
-                </span>
+                <div class="row">
+                    <div class="col-3 text-right">
+                        <img src="/static/icons/role.svg" class="nav-icon " width="30">
+                    </div>
+                    <div class="col-9 text-left">
+                        <span class="d-none d-md-block">
+                            Roles
+                        </span>
+                    </div>
+                </div>
             </a>
         </li>
         <li class="list-group-item">

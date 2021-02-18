@@ -44,7 +44,7 @@
                                                 {{ part.id_equipo }}
                                             </span>
                                             {% if part.score is not None %}
-                                            <span class="text-right">
+                                            <span class="text-right font-weight-bold">
                                                 {{ part.score }}
                                             </span> 
                                             {% endif %}
@@ -53,12 +53,12 @@
                                 {% endfor %}
                             </div>
                             <div class="col-5 vertical_line">
-                                <div class="row mb-2">
+                                <div class="row mb-2 ml-2">
                                     <h6 class="label label-default font-weight-bold">Fecha:</h6>
                                     <div class="label label-default ml-2">{{ match.fecha }}</div>
                                 </div>
                                 {% if match.direccion %}
-                                <div class="row mb-2">
+                                <div class="row mb-2 ml-2">
                                     <h6 class="label label-default font-weight-bold">Dirección:</h6>
                                     <div class="label label-default ml-2">{{ match.direccion }}</div>
                                 </div>

@@ -275,7 +275,7 @@ def updateMatch(request, pk):
             participacion_formset.save()
 
             return redirect('main:match_list')
-        
+         
     else:
         """
         El problema del participation_formset creo que tiene que ver con el campo checkbox en el form
