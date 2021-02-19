@@ -21,16 +21,26 @@
                       class="close"
                       data-dismiss="alert"
                       aria-hidden="true"
-                    >
+                    > 
                       ×
                     </button>
                     <h4><i class="text-center icon fa fa-ban"></i> Ha ocurrido un error</h4> 
                     {% for dict in team_register_formset.errors %}
-                      <li>{{ dict }}</li>
+                      {% for error in dict.values %}
+                        <li>{{ error }}</li>
+                      {% endfor %}
+                    {% endfor %}
+
+                    {% for dict in team_register_formset.role_form.errors %}
+                      {% for error in dict.values %}
+                        <li>{{ error }}</li>
+                      {% endfor %}
                     {% endfor %}
                     
                     {% for dict in person_formset.errors %}
-                      <li>{{ dict }}</li>
+                      {% for error in dict.values %}
+                        <li>{{ error }}</li>
+                      {% endfor %}
                     {% endfor %}
 
                     {% if person_formset.cedula.errors %}

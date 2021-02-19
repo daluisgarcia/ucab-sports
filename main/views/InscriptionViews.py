@@ -83,6 +83,7 @@ def createRegisterTeam(request, pk_torneo):
                     context = {
                         'inscription_fields': zip(person_formset, team_register_formset),
                         'person_formset': person_formset,
+                        'team_register_formset': team_register_formset,
                         'tipo_delegado': tournament.tipo_delegado,
                         'team_form': team_form,
                         'title': 'Inscribe al equipo y a los participantes',
@@ -151,7 +152,7 @@ def createRegisterTeam(request, pk_torneo):
                     messages.error(request, 'Debe llenar los campos de los datos de los participantes')
                     break
             
-    else:
+    else: 
         #Formset inicial vacío
         person_formset = PersonFormSet(initial=None)
         team_register_formset = TeamRegisterFormSet(initial=None)
