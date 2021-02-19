@@ -1,19 +1,72 @@
 {% extends 'admin/adminMain.html' %}
-{% block head %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %} 
 
-  <h1>Históricos de Equipos</h1>
+<br>
+<h2 class="text-center">Historial de participaciones</h2>
 
-  {% if cant_pendientes > 0 %}
+  <div class="card-body">
+    <br>
+    <div class="container col-12">
+      <div class="row">
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Cédula</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Nombre</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Apellido</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Correo</h6>
+        </div>
+      </div>
+    </div>
+
     {% for reg in register %}
-      {{ reg.id_equipo__nombre }}
-      {{ reg.id_torneo__nombre }}
-      {{ reg.fecha_registro }}
-      {{ reg.fecha_fin }}
-      <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:team_detail' reg.id_equipo %}">Ver integrantes</a>
-      <br/>
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item col-12">
+        <div class="row">
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Cédula</h6>
+            <td>
+              {{ reg.id_persona.cedula }}
+            </td>
+          </div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Nombre</h6>
+            <td>
+              {{ reg.id_persona.nombre }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Apellido</h6>
+            <td>
+              {{ reg.id_persona.apellido }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Correo</h6>
+            <td>
+              {{ reg.id_persona.correo }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-right mb-3">
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:person_detail' reg.id_persona.id %}">
+              Detalle
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
     {% endfor %}
-  {% else %}
-    <h4>¡No tienes Solicitudes pendientes por aprobar!</h4>
-  {% endif %}
-    
+  </div>
+
 {% endblock %}

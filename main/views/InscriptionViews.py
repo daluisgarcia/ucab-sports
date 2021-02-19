@@ -331,27 +331,25 @@ def preinscriptionDetail(request, pk):
     return render(request, 'admin/inscription/preinscription_detail.html', context)
 
 
-#Lista de inscripciones (Lista de equipos)
+#Lista de inscripciones (Lista de usuarios)
 def inscriptionList(request):
-    register = HistoryParticipation.objects.values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo__nombre','fecha_registro','fecha_fin').distinct('id_equipo')
+    register = HistoryParticipation.objects.order_by('id_persona', 'id_torneo','fecha_registro').distinct('id_persona')
 
-    cant_pendientes = HistoryParticipation.objects.filter().count()
-    print(register)
-    print(cant_pendientes)
     context = {
-        'register': register,
-        'cant_pendientes': cant_pendientes
+        'register': register
     }
 
     return render(request, 'admin/inscription/inscription_list.html', context)
 
 
-#Detalle de inscripcion (detalle de equipo)
+#Detalle de inscripcion (detalle del usuario)
 def inscriptionDetail(request, pk):
-    persons = HistoryParticipation.objects.filter(id_equipo=pk)
+    person = Person.objects.get(id=pk)
+    teams = HistoryParticipation.objects.filter(id_persona=person).order_by('-fecha_registro')
     
     context = {
-        'persons': persons
+        'person': person,
+        'teams': teams
     }
 
     return render(request, 'admin/inscription/inscription_detail.html', context)
