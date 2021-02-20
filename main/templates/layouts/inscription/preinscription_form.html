@@ -28,7 +28,7 @@
                     {% for dict in team_register_formset.errors %}
                       {% for error in dict.values %}
                         <li>{{ error }}</li>
-                      {% endfor %}
+                      {% endfor %} 
                     {% endfor %}
 
                     {% for dict in team_register_formset.role_form.errors %}

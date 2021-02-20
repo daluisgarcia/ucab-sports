@@ -54,7 +54,7 @@ def createRegisterTeam(request, pk_torneo):
                 role = role_form.cleaned_data['rol']
                 print('Role Form: ', role)
 
-                if((tournament.tipo_delegado == 'd' and role == 'jd') or(tournament.tipo_delegado == 'jd' and role == 'd')):
+                if((tournament.tipo_delegado == 'd' and role == 'jd') or (tournament.tipo_delegado == 'jd' and role == 'd')):
                     
                     #REVISAR
                     #Salen el error corto y el de "Ha ocurrido un error"
