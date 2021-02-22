@@ -17,6 +17,40 @@ $(document).ready(function(){
         return idName.replace('0', (++obj.cont).toString());
     }
 
+    function updateIds(numberDeleted) {
+        let str = '';
+        while (numberDeleted < input4Cont) {
+            let selectorAux = document.getElementById(`${changeIdNumber(stage_selector_id, {'cont': numberDeleted})}`);
+            str = changeIdNumber(stage_selector_id, {'cont': numberDeleted - 1});
+            selectorAux.id = str;
+            selectorAux.name = str.slice(3, str.length);
+            let input1Aux = document.getElementById(`${changeIdNumber(stage_participante_equipo_id, {'cont': numberDeleted})}`);
+            str = changeIdNumber(stage_participante_equipo_id, {'cont': numberDeleted - 1});
+            input1Aux.id = str;
+            input1Aux.name = str.slice(3, str.length);
+            let input2Aux = document.getElementById(`${changeIdNumber(stage_equipo_partido_id, {'cont': numberDeleted})}`);
+            str = changeIdNumber(stage_equipo_partido_id, {'cont': numberDeleted - 1});
+            input2Aux.id = str;
+            input2Aux.name = str.slice(3, str.length);
+            let input3Aux = document.getElementById(`${changeIdNumber(stage_num_grupos_id, {'cont': numberDeleted})}`);
+            str = changeIdNumber(stage_num_grupos_id, {'cont': numberDeleted - 1});
+            input3Aux.id = str;
+            input3Aux.name = str.slice(3, str.length);
+            let input4Aux = document.getElementById(`${changeIdNumber(stage_equipos_grupo_id, {'cont': numberDeleted})}`);
+            str = changeIdNumber(stage_equipos_grupo_id, {'cont': numberDeleted - 1});
+            input4Aux.id = str;
+            input4Aux.name = str.slice(3, str.length);
+            numberDeleted++;
+        }
+        selectorCont--;
+        input1Cont--;
+        input2Cont--;
+        input3Cont--;
+        input4Cont--;
+        form_num = $(`#${forms_num_id}`);
+        form_num.val(parseInt(form_num.val()) - 1);
+    }
+
     /*Add a new input to the form*/
     $("#addBtn").click(function(){
         let div = document.createElement('div');
@@ -60,6 +94,10 @@ $(document).ready(function(){
         input1.appendTo(divIn);
         div.append(divIn);
 
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
+        div.append(divIn);
+
         obj = {'cont': input2Cont};
         str = changeIdNumber(stage_equipo_partido_id, obj);
         input2Cont = obj.cont;
@@ -72,6 +110,10 @@ $(document).ready(function(){
         label.innerText = 'Equipos por partido';
         divIn.append(label);
         input2.appendTo(divIn);
+        div.append(divIn);
+
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
         div.append(divIn);
         
         obj = {'cont': input3Cont};
@@ -86,6 +128,10 @@ $(document).ready(function(){
         label.innerText = 'Número de grupos';
         divIn.append(label);
         input3.appendTo(divIn);
+        div.append(divIn);
+
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
         div.append(divIn);
         
         obj = {'cont': input4Cont};
@@ -102,6 +148,26 @@ $(document).ready(function(){
         input4.appendTo(divIn);
         div.append(divIn);
 
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
+        div.append(divIn);
+
+        btn = document.createElement('button')
+        btn.classList.add('btn', 'btn-danger', 'deleteRow')
+        btn.type = 'button'
+        btn.innerText = 'X'
+        btn.id = input4Cont;
+        btn.addEventListener("click", function () {
+            id = this.id
+            updateIds(parseInt(id))
+            object = this.parentElement.parentElement.parentElement
+            object.remove()
+        });
+        divIn = document.createElement('div');
+        divIn.classList.add('col');
+        divIn.append(btn)
+        div.append(divIn);
+
         form_num = $(`#${forms_num_id}`);
         form_num.val(parseInt(form_num.val()) + 1);
 
@@ -111,7 +177,5 @@ $(document).ready(function(){
 
         $('#form-list').append(li);
     });
-
-
 
 });

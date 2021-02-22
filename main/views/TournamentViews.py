@@ -450,6 +450,7 @@ class UpdateStageTournament(LoginRequiredMixin, View):
             raise Http404("No StageTournament matches the given query.")
 
         context = {
+            'stageTournNum': len(stagesTourn),
             'stagesTourn': stagesTourn,
             'stages': Stage.objects.all(),
             'title': 'Editar fases del torneo '+tournament.nombre,
@@ -476,11 +477,16 @@ class UpdateStageTournament(LoginRequiredMixin, View):
         hierarchy = 0
         keys = list(items.keys())
         while (len(keys) > 0):
-            hierarchy = hierarchy + 1
+            hierarchy += 1
 
-            id = keys[0][-2:]   # Gets two last chars
-            if (id[:1] == '0'): # Validates if the number on str is lower than 10 and avoid after str errors
-                id = id[1:]
+            cont = 2
+            id = keys[0][-cont:]   # Gets two last chars
+            while True: # Validates if the number on str is lower than 10 and avoid after str errors
+                if id[:1] == '-':
+                    id = id[2:]
+                    break
+                cont += 1
+                id = keys[0][-cont:]   # Gets two last chars
 
             if (id == 'NN'):    # Flag to create a new Stage-Tournament
                 # Crear nueva Fase-Torneo (Evaluar antepenultimo numero)
@@ -520,6 +526,12 @@ class UpdateStageTournament(LoginRequiredMixin, View):
             stageT.save()
 
         return redirect(reverse_lazy('main:tournament_list'))
+
+
+def deleteStageTournament(request, id):
+    stage = get_object_or_404(StageTournament, pk=id)
+    stage.delete()
+    return HttpResponse(status=200)
 
 
 #Eliminar torneo

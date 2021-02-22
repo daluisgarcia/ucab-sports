@@ -48,6 +48,10 @@ $(document).ready(function(){
         input1.appendTo(divIn);
         div.append(divIn);
 
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
+        div.append(divIn);
+
         str = `stage-part-match-${(++input2Cont).toString()}NN`;
         input2.attr('name', str);
         divIn = document.createElement('div');
@@ -57,6 +61,10 @@ $(document).ready(function(){
         label.innerText = 'Equipos por partido';
         divIn.append(label);
         input2.appendTo(divIn);
+        div.append(divIn);
+
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
         div.append(divIn);
 
         str = `stage-num-groups-${(++input3Cont).toString()}NN`;
@@ -70,6 +78,10 @@ $(document).ready(function(){
         input3.appendTo(divIn);
         div.append(divIn);
 
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
+        div.append(divIn);
+
         str = `stage-team-group-${(++input4Cont).toString()}NN`;
         input4.attr('name', str);
         divIn = document.createElement('div');
@@ -81,13 +93,57 @@ $(document).ready(function(){
         input4.appendTo(divIn);
         div.append(divIn);
 
+        divIn = document.createElement('div');  // Separation block
+        divIn.classList.add('w-100', 'd-block', 'd-sm-none');
+        div.append(divIn);
+
+        btn = document.createElement('button')
+        btn.classList.add('btn', 'btn-danger', 'deleteRow')
+        btn.type = 'button'
+        btn.innerText = 'X'
+        btn.addEventListener("click", function() {
+            let numObject = $('#stageTournNum');
+            let num = parseInt(numObject.text());
+            if ( num > 1 ) {
+                object = this.parentElement.parentElement.parentElement
+                object.remove();
+                numObject.text( num - 1 );
+            }else {
+                alert('No puedes borrar todas las fases');
+            }
+        });
+        divIn = document.createElement('div');
+        divIn.classList.add('col');
+        divIn.append(btn)
+        div.append(divIn);
+
+        divIn = $('#stageTournNum'); //Rows counter
+        let num = parseInt(divIn.text());
+        divIn.text( num + 1 )
+
         let li = document.createElement('li');
         li.classList.add('list-group-item', 'col-12');
+        li.id = 'NN'
         li.append(div);
 
         $('#form-list').append(li);
     });
 
-
-
+    $(".deleteRow").click(function() {
+        let numObject = $('#stageTournNum');
+        let num = parseInt(numObject.text());
+        if ( num > 1 ) {
+            object = this.parentElement.parentElement.parentElement;
+            $.get(object.id, function(data, status){
+                if (status !== 'success') {
+                    alert('Hay un problema tratando de eliminar la fase, recargue la pagina he intentelo de nuevo')
+                } else {
+                    object.remove();
+                    numObject.text( num - 1 );
+                }
+            })
+        }else {
+            alert('No puedes borrar todas las fases');
+        }
+    });
 });

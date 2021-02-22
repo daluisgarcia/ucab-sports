@@ -106,8 +106,12 @@
       </li>
       {% endfor %}
 
+      {% if stagesTourn %}
+          <div id="stageTournNum" class="d-none">{{ stageTournNum }}</div>
+      {% endif %}
+
       {% for stageTourn in stagesTourn %}
-      <li class="list-group-item col-12">
+      <li id="{% url 'main:delete_stage_tournament' stageTourn.id %}" class="list-group-item col-12">
         <div class="row">
           <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
             <h6 class="d-md-none">Fase</h6>
@@ -151,6 +155,10 @@
               <input id="team-group" name="stage-team-group-0{{ stageTourn.id }}" type="number" value="{{ stageTourn.equipos_por_grupo }}">
             </td>
           </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col">
+              <button type="button" class="btn btn-danger deleteRow">X</button>
+          </div>
         <div>
       </li>
       {% endfor %}
@@ -168,6 +176,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
-    {% if stagesTourn %}<script src={% static 'js/stage_colector_update.js' %}></script>{% endif %}
-    {% if stage_formset %}<script src={% static 'js/stage_colector.js' %}></script>{% endif %}
+    {% if stagesTourn %}<script type="text/javascript" src={% static 'js/stage_colector_update.js' %}></script>{% endif %}
+    {% if stage_formset %}<script type="text/javascript" src={% static 'js/stage_colector.js' %}></script>{% endif %}
 {% endblock %}
