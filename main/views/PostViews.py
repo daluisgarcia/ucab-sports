@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
@@ -114,6 +115,7 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
 
 
 #Eliminar post
+@login_required
 def deletePost(request, pk):
     post = Post.objects.get(id=pk)
     post.delete()

@@ -9,6 +9,7 @@
 </div>
   <div class="card-body general_background">
     {% for c in object_list %}
+    {% if tipo == 'esport' and c.id_juego.esport == True %}
         <h2 class="text-center">{{ c.nombre }}</h2>
         <div class="col-8 text-left ml-5 mb-3">
             <div class="row mb-2">
@@ -49,6 +50,52 @@
         <br>
         <br>
         {% endif %}
+    {% endif %}
+    {% endfor %}
+
+    {% for c in object_list %}
+    {% if tipo == 'varios' and c.id_juego.esport == False %}
+        <h2 class="text-center">{{ c.nombre }}</h2>
+        <div class="col-8 text-left ml-5 mb-3">
+            <div class="row mb-2">
+                <h6 class="label label-default font-weight-bold">Juego:</h6>
+                <div class="label label-default ml-2">{{ c.id_juego }}</div>
+            </div>
+            <div class="row mb-2">
+                <h6 class="label label-default font-weight-bold">Edicion:</h6>
+                <div class="label label-default ml-2">{{ c.edicion }}</div>
+            </div>
+            <div class="row mb-2">
+                <h6 class="label label-default font-weight-bold">Fecha de inicio:</h6>
+                <div class="label label-default ml-2">{{ c.fecha_inicio }}</div>
+            </div>
+            <div class="row mb-2">
+                <h6 class="label label-default font-weight-bold">Fecha de fin:</h6>
+                <div class="label label-default ml-2">{{ c.fecha_fin }}</div>
+            </div>
+            {% if c.inscripcion_abierta == False %}
+            <div class="row mb-2">
+                <h6 class="label label-default font-weight-bold">Inscripción cerrada</h6>
+            </div>
+            {% endif %}
+            <div class="row mb-2">
+                <a class="btn btn-secondary btn-flat admin_buttons" href="{% url 'main:matches_public_list' c.id %}"> 
+                    ver más
+                </a>
+            </div>
+        </div>
+        {% if c.inscripcion_abierta %}
+        <div class="row">
+            <div class="col-12 text-center">
+                <a class="btn btn-primary btn-flat admin_buttons" href="{% url 'main:create_inscription' c.id %}">
+                    Inscribirse
+                </a>
+            </div>
+        </div>
+        <br>
+        <br>
+        {% endif %}
+    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}

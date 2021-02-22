@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from main.models import Stage, Tournament, Classified, StageTournament
@@ -83,6 +84,7 @@ class UpdateStage(LoginRequiredMixin, UpdateView):
 
 
 #Eliminar fase
+@login_required
 def deleteStage(request, pk):
     stage = Stage.objects.get(id=pk)
     stage.delete()

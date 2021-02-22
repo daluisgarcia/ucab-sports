@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified, Match, Participation
 from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
@@ -136,6 +137,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
 
 
 #Asociar las fases al torneo (mediante un método)
+@login_required
 def createStageTournament(request, pk):
     # Obtenemos el torneo y se instancia el formset al torneo
     tournament = Tournament.objects.get(id=pk)
@@ -231,9 +233,11 @@ class PublicTournamentList(ListView):
     model = Tournament
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
-    def get(self, request):
+    def get(self, request, tipo):
+        print(tipo)
         self.object_list = self.model.objects.order_by('-inscripcion_abierta')
         context = self.get_context_data()
+        context['tipo'] = tipo
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
@@ -354,7 +358,7 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
 
 
 #Editar las fases del torneo
-
+@login_required
 def editStageTournament(request, pk):
     #Traemos las fases del torneo
     cantidad_fases = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False).count()
@@ -528,6 +532,7 @@ class UpdateStageTournament(LoginRequiredMixin, View):
         return redirect(reverse_lazy('main:tournament_list'))
 
 
+@login_required
 def deleteStageTournament(request, id):
     stage = get_object_or_404(StageTournament, pk=id)
     stage.delete()
@@ -541,6 +546,7 @@ class DeleteTournament(LoginRequiredMixin, DeleteView):
     template_name = 'admin/tournaments/tournament_confirm_delete.html'
 
 
+@login_required
 def deleteTournament(request, pk):
     print(pk)
     tournament = Tournament.objects.get(id=pk)

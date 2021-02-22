@@ -6,11 +6,13 @@ from django.forms import formset_factory
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from main.models import Tournament, Match, StageTournament, Stage, Participation, Team, Classified
 from main.forms import MatchCreateForm, ParticipationCreateForm, ParticipationFormSet
 
 #Falta filtrar los torneos de acuerdo al id del organizador
+@login_required
 def createMatch(request):
 
     if request.method == 'POST':
@@ -38,8 +40,6 @@ def createMatch(request):
         else:
             messages.error(request, 'No hay equipos clasificados en esta fase')
 
-        
-
 
     stg = Stage.objects.all()
     tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
@@ -54,6 +54,7 @@ def createMatch(request):
 
 
 #Associate the teams to the match
+@login_required
 def createTeams(request, pk_torneo, pk_fase):
     print('pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
     
@@ -202,6 +203,7 @@ def createTeams(request, pk_torneo, pk_fase):
 
 
 #Actualizar partido
+@login_required
 def updateMatch(request, pk):
    
     #partido y los clasificados
@@ -302,6 +304,7 @@ def updateMatch(request, pk):
 
 
 #Lista de partidos
+@login_required
 def matchList(request):
     print(request.user)
     matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
@@ -362,6 +365,7 @@ def matchInfo(request, pk):
  
 
 #Eliminar partido
+@login_required
 def deleteMatch(request, pk):
     print(pk)
     match = Match.objects.get(id=pk)

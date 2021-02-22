@@ -171,13 +171,14 @@ class GameCreateForm(ModelForm):
 
   class Meta:
     model = Game
-    fields = ['nombre']
+    fields = ['nombre', 'esport']
     widgets = {
       'nombre': TextInput(
         attrs = {
           'placeholder': 'Nombre'
         }
-      )
+      ),
+      'esport': CheckboxInput(),
     }
 
 
@@ -312,7 +313,7 @@ class TeamRegisterCreateForm(ModelForm):
 
   class Meta:
     model = PreTeamRegister
-    fields = ('rol',)
+    fields = ['rol']
     widgets = {
       'rol': Select()
     }
