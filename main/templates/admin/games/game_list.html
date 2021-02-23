@@ -15,10 +15,10 @@
     </div>
     <br>
     <div class="row ml-2">
-      <div class="col-4 text-left d-none d-md-block">
+      <div class="col-3 text-left d-none d-md-block">
           <h6 class="label label-default">Nombre</h6>
       </div>
-      <div class="col-4 text-left d-none d-md-block">
+      <div class="col-3 text-left d-none d-md-block">
           <h6 class="label label-default">e-Sport</h6>
       </div>
     </div>
@@ -27,13 +27,13 @@
     <ul class="list-group admin_list_group col-11">
       <li class="list-group-item">
         <div class="row">
-          <div class="col col-sm col-md col-lg-4 col-xl-5 text-left mb-3">
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
             <h6 class="d-md-none">Nombre</h6>
             <td>
               {{ c.nombre }}
             </td>
           </div>
-          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-1">
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-1">
             <h6 class="d-md-none">e-Sport</h6>
             <td>
               {% if c.esport %}
@@ -44,7 +44,7 @@
             </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
-          <div class="offset-lg-4 offset-xl-4 col col-sm col-md col-lg-4 col-xl-4 text-center">
+          <div class="col col-sm col-md col-lg-6 col-xl-6 text-center">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#game-{{ c.id }}">
               Eliminar
             </button>
