@@ -355,6 +355,28 @@ def inscriptionList(request):
 def inscriptionDetail(request, pk):
     person = Person.objects.get(id=pk)
     teams = HistoryParticipation.objects.filter(id_persona=person).order_by('-fecha_registro')
+
+    print(teams)
+
+    for team in teams:
+
+        places = Classified.objects.filter(id_equipo=team.id_equipo, id_fase_torneo__id_torneo=team.id_torneo)
+        print(places)
+
+        max_position = 0
+        last_stage = None
+        #Validate if the team is in stage with hierarchy 0
+        if(places.first().id_fase_torneo.jerarquia != 0):
+            for place in places:
+                if(place.id_fase_torneo.jerarquia > max_position):
+                    max_position = place.id_fase_torneo.jerarquia
+                    last_stage = place.id_fase_torneo.id_fase
+
+        print('Resultado final:')
+        print(max_position)
+        print(last_stage)
+
+        team.last_stage = last_stage
     
     context = {
         'person': person,

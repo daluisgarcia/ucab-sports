@@ -57,6 +57,9 @@
         <div class="col-2 text-left d-none d-md-block">
           <h6 class="label label-default">Rol en el equipo</h6>
         </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Fase final de participación</h6>
+        </div>
       </div>
     </div>
 
@@ -107,9 +110,13 @@
             </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
-          <div class="col col-sm col-md col-lg-2 col-xl-2 text-right mb-3">
-
-
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Rol en el equipo</h6>
+            <td>
+              {% if team.last_stage %}
+                {{ team.last_stage }}
+              {% endif %}
+            </td>
           </div>
         </div>
       </li>
