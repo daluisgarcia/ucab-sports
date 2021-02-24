@@ -22,8 +22,6 @@ class CreateStage(LoginRequiredMixin, CreateView):
         form = StageCreateForm(request.POST)
         if form.is_valid():
             form.save()
-            if 'next' in request.POST:
-                return redirect(request.POST['next'])
             return HttpResponseRedirect(self.success_url)
         self.object = None
         context = self.get_context_data(**kwargs)

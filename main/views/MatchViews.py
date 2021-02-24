@@ -217,7 +217,6 @@ def updateMatch(request, pk):
     else:
         groups = False
 
-
     #Formset de los equipos que participaron en el partido
     #Creación del formset, especificando el form y el formset a usar. La cantidad de campos está definida por los equipos por partido.
     PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet)

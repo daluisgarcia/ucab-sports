@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.forms.utils import ErrorList
 from django.views.generic import DetailView
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -32,7 +33,7 @@ def createRegisterTeam(request, pk_torneo):
     person_number = StageTournament.objects.get(jerarquia=0, id_torneo=pk_torneo, id_fase__isnull=True).participantes_por_equipo
 
     #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
-    if(Tournament.objects.get(id=pk_torneo).tipo_delegado == 'd'):
+    if(tournament.tipo_delegado == 'd'):
         person_number = person_number + 1
 
     #Formset de los participantes
@@ -49,7 +50,6 @@ def createRegisterTeam(request, pk_torneo):
         team_register_formset = TeamRegisterFormSet(request.POST)
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
-
             #validar que los roles ingresados cumplan los estándares para este torneo
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
@@ -93,8 +93,6 @@ def createRegisterTeam(request, pk_torneo):
             team_form.save()
             #Obtenemos el último registro del equipo
             pk_team = PreTeam.objects.order_by('-id')[0]
-            #Obtenemos el registro del torneo
-            pk_tournament = Tournament.objects.get(id=pk_torneo)
             
             #Guardar la data por cada form del formset
             new_persons = []
@@ -118,19 +116,33 @@ def createRegisterTeam(request, pk_torneo):
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
             i=0
-            
+
+            person_email = None
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
 
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
+                if (role == 'd' or role == 'jd'):
+                    person_email = pk_persona.correo
+
                 if role:
-                    new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=pk_tournament))
+                    new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=tournament))
                 i=i+1
 
             PreTeamRegister.objects.bulk_create(new_team_register)
 
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
+
+            send_mail('Nueva solicitud de participacion',
+                      'Tienes una nueva solicitud de participacion para el torneo '+tournament.nombre,
+                      tournament.owner.email,
+                      [tournament.owner.email])
+
+            send_mail('Solicitud de participacion enviada',
+                      'Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion',
+                      tournament.owner.email,
+                      [person_email])
 
             #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
             return redirect('main:posts')
@@ -260,8 +272,14 @@ def approveInscription(request, pk_team, pk_tour):
 
     #Se verifica si la persona ha solicitado inscripcion en otro torneo, si no es asi Se borran los registros de las tablas PrePerson. Siempre se borran los datos de PreTeamRegister
     i=0
+    email_person = None
+    tournament = None
     for reg in preteamregister:    
         person_delete = PrePerson.objects.get(cedula=ci[i])
+        # Se obtiene el delegado o jugador delegado para el envio de correo
+        if reg.rol == 'd' or reg.rol == 'jd':
+            email_person = reg.id_persona
+        tournament = reg.id_torneo
         #Si tiene solamente una solicitud de inscripcion pendiente, se borra
         if (PreTeamRegister.objects.filter(id_persona=person_delete).count() == 1):
             print('paso')
@@ -270,8 +288,13 @@ def approveInscription(request, pk_team, pk_tour):
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()
 
+    send_mail('Participacion aprobada',
+              'Tu solicitud de participacion fue aprobada',
+              tournament.owner.email,
+              [email_person.correo])
+
     messages.success(request, 'Se ha registrado al equipo en el torneo exitosamente')
-    return redirect('/inscripciones/pendientes/')
+    return redirect('main:inscription_list')
 
 
 #Anular inscripción
@@ -280,19 +303,31 @@ def failInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister
     preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
 
+    email_person = None
+    tournament = None
     #Se borran los registros de las tablas PrePerson y a su vez de PreTeamRegister
     for reg in preteamregister:
         person = PrePerson.objects.get(id=reg.id_persona.id)
+        # Se obtiene el delegado o jugador delegado para el envio de correo
+        if reg.rol == 'd' or reg.rol == 'jd':
+            email_person = reg.id_persona
+        tournament = reg.id_torneo
         #Se borra a la persona unicamente si aparece una sola vez en las solicitudes de inscripcion
         if (PreTeamRegister.objects.filter(id_persona=person).count() == 1):
             person.delete()
 
     team_delete = PreTeam.objects.get(id=pk_team)
+    message = team_delete.comentario
     team_delete.logo.delete(save=True)
     team_delete.delete()
 
+    send_mail('Participacion rechazada',
+              'Tu solicitud de participacion fue rechazada: '+str(message),
+              tournament.owner.email,
+              [email_person.correo])
+
     messages.success(request, 'Se ha anulado la solicitud de inscripción')
-    return redirect('/inscripciones/pendientes/')
+    return redirect('main:inscription_list')
 
 
 #Lista de solicitudes de inscripciones

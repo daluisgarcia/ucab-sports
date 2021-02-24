@@ -45,16 +45,9 @@
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> Procesar
     </button>
-    {% if 'next' in request.POST %}
-      <a class="btn btn-primary btn-flat float-left admin_buttons" href="{{ request.POST.next }}">
-        Cancelar
-      </a>
-      <input type="hidden" name="next" value="{{ request.POST.next }}"/>
-    {% else %}
-      <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
-        Cancelar
-      </a>
-    {% endif %}
+    <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:stage_list' %}">
+      Cancelar
+    </a>
   </div>
   <br>
   <br>
