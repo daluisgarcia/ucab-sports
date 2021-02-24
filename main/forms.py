@@ -165,9 +165,6 @@ class StageCreateForm(ModelForm):
 class GameCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
     model = Game
@@ -175,7 +172,9 @@ class GameCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Nombre'
+          'placeholder': 'Nombre',
+          'class': 'form-control',
+          'autocomplete': 'off'
         }
       ),
       'esport': CheckboxInput(),
