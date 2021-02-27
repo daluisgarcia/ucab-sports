@@ -87,7 +87,11 @@
                 <div class="ml-2 mb-2">
                     <select class="ml-3" name="equipo-{{ participacion.valor }}">
                         {% for equipo in equipos %}
-                        <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
+                            {% if participacion.equipo == equipo.id_equipo.id %}
+                                <option value="{{ equipo.id_equipo.id }}" selected>{{ equipo.id_equipo.nombre }}</option>
+                            {% else %}
+                                <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -112,7 +116,12 @@
   
     <div class="card-footer col-11 ml-4 admin_footer">
         <button type="submit" class="btn btn-primary btn-flat float-right">
-            <i class="fas fa-save"></i> Crear partido
+            <i class="fas fa-save"></i>
+            {% if update %}
+                Actualizar partido
+            {% else %}
+                Crear partido
+            {% endif %}
         </button>
     </div>
   

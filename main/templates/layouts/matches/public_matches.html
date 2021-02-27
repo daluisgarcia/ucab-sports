@@ -1,14 +1,14 @@
 {% extends 'layouts/head.html' %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href={% static "css/styles.css" %}> 
+<link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block head %}
 <div class="general_background">
     <img class="header_img" style="background-image: url(/images/esports.jpg)">
 </div>
 <div class="card-body general_background">
-    <a class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" >Generar PDF</a>
+    <a href="{% url 'main:matches_public_list_pdf' pk_tour %}" class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" target="_blank">Generar PDF</a>
     {% if stage_clasified_table %}
     <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:public_classified' stage_clasified_table.id %}">
     Ver tabla de clasificación

@@ -6,3 +6,4 @@ psycopg2==2.8.6
 pytz==2020.4
 six==1.15.0
 sqlparse==0.4.1
+xhtml2pdf==0.2.5

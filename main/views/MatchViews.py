@@ -1,12 +1,18 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+import os
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
+from django.forms import model_to_dict
 
 from main.models import Tournament, Match, StageTournament, Stage, Participation, Team, Classified
 from main.forms import MatchCreateForm, ParticipationCreateForm, ParticipationFormSet
@@ -207,7 +213,8 @@ def createTeams(request, pk_torneo, pk_fase):
 def updateMatch(request, pk):
    
     #partido y los clasificados
-    match = Match.objects.get(id=pk)
+    #match = Match.objects.get(id=pk)
+    match = get_object_or_404(Match, pk=pk)
     participacion = Participation.objects.filter(id_partido=pk)
     #buscamos a los equipos en la tabla de clasificados
     clasificados = Classified.objects.filter(id_fase_torneo=match.id_fase_torneo).order_by("grupo")
@@ -221,19 +228,15 @@ def updateMatch(request, pk):
     #Creación del formset, especificando el form y el formset a usar. La cantidad de campos está definida por los equipos por partido.
     PartFormSet = formset_factory(ParticipationCreateForm, formset=ParticipationFormSet)
 
-    #participacion_formset = PartFormSet(queryset=participacion, instance=match)
-    
-
     if request.method == 'POST':
         match_form = MatchCreateForm(request.POST, instance=match)
         participacion_formset = PartFormSet(request.POST)
 
         if match_form.is_valid() and participacion_formset.is_valid():
 
+            to_update = []
             #Validar que, si la fase es por grupos, los equipos seleccionados sean del mismo grupo
             if groups:
-                print('hay grupos')
-
                 #variables necesarias para manejar la lógica de las validaciones
                 i = 0
                 lista_grupos = []
@@ -242,7 +245,6 @@ def updateMatch(request, pk):
 
                 for part in participacion_formset:
                     num_equipo = 'equipo-' + str(i)
-                    i = i + 1
                     equipo = request.POST.get(num_equipo, None)
                     
                     #Buscamos el número del grupo de este equipo y lo comparamos con el anterior
@@ -253,8 +255,17 @@ def updateMatch(request, pk):
                     #Validamos que no hayan equipos repetidos y que los equipos sean del mismo grupo
                     if ((equipo not in lista_grupos) and ((grupo_anterior == None) or (grupo_actual == grupo_anterior))):
                         lista_grupos.append(equipo)
-                        print(lista_grupos)
                         grupo_anterior = grupo_actual
+
+                        # Se asignan los datos para actualizar
+                        p = participacion[i]
+                        p.ganador = part.cleaned_data.get('ganador')
+                        p.puntos_equipo = part.cleaned_data.get('puntos_equipo')
+                        p.score = part.cleaned_data.get('score')
+                        p.id_equipo = get_object_or_404(Team, pk=equipo)
+
+                        to_update.append(p)
+                        i = i + 1
                     else:
                         messages.error(request, 'Los equipos no se pueden repetir y tiene que elegir equipos que pertenezcan al mismo grupo.')
                                             
@@ -271,31 +282,81 @@ def updateMatch(request, pk):
                         }
 
                         return render(request, 'admin/matches/teams_match.html', context)
+            else:
+                # No existen grupos
+                i = 0
+                lista_grupos = []
 
+                for part in participacion_formset:
+                    num_equipo = 'equipo-' + str(i)
+                    equipo = request.POST.get(num_equipo, None)
+
+                    # Validamos que no hayan equipos repetidos y que los equipos sean del mismo grupo
+                    if (equipo not in lista_grupos):
+                        lista_grupos.append(equipo)
+
+                        # Se asignan los datos para actualizar
+                        p = participacion[i]
+                        p.ganador = part.cleaned_data.get('ganador')
+                        p.puntos_equipo = part.cleaned_data.get('puntos_equipo')
+                        p.score = part.cleaned_data.get('score')
+                        p.id_equipo = get_object_or_404(Team, pk=equipo)
+
+                        to_update.append(p)
+                        i = i + 1
+                    else:
+                        messages.error(request, 'Los equipos no se pueden repetir')
+
+                        i = 0
+                        for part in participacion_formset:
+                            part.valor = i
+                            i = i + 1
+
+                        context = {
+                            'equipos': clasificados,
+                            'match_form': match_form,
+                            'participacion_formset': participacion_formset,
+                            'grupos': groups,
+                            'update': True
+                        }
+
+                        return render(request, 'admin/matches/teams_match.html', context)
+                #Falta este codigo, en caso de que no haya grupos
             match_form.save()
-            participacion_formset.save()
+            # Se actualizan los registros de participacion
+            for part in to_update:
+                part.save()
 
             return redirect('main:match_list')
          
     else:
-        """
-        El problema del participation_formset creo que tiene que ver con el campo checkbox en el form
-        Hay que revisar detalladamente
-        """
         match_form = MatchCreateForm(instance=match)
-        #participacion_formset = PartFormSet(queryset=participacion, instance=match)
-        participacion_formset = PartFormSet(instance=match)
+
+        part_array = {}
+        part_array['form-INITIAL_FORMS'] = str(0)
+        cont = 0
+        for part in participacion:
+            dict = model_to_dict(part)
+            #part_array['form-' + str(cont) + '-id'] = dict['id']
+            part_array['form-' + str(cont) + '-ganador'] = dict['ganador']
+            part_array['form-' + str(cont) + '-puntos_equipo'] = dict['puntos_equipo']
+            part_array['form-' + str(cont) + '-score'] = dict['score']
+            cont += 1
+        part_array['form-TOTAL_FORMS'] = str(cont)
+        participacion_formset = PartFormSet(part_array)
 
     i = 0
     for part in participacion_formset:
         part.valor = i
+        part.equipo = participacion[i].id_equipo.id
         i = i + 1
 
     context = {
         'equipos': clasificados,
         'match_form': match_form,
         'participacion_formset': participacion_formset,
-        'grupos': groups
+        'grupos': groups,
+        'update': True
     }
 
     return render(request, 'admin/matches/teams_match.html', context)
@@ -333,6 +394,7 @@ def publicMatchList(request, pk_torneo):
         stage_clasified_table = None
 
     context = {
+        'pk_tour': pk_torneo,
         'stages': stages,
         'match_list': matches,
         'participation': participation,
@@ -340,6 +402,78 @@ def publicMatchList(request, pk_torneo):
         'stage_clasified_table': stage_clasified_table
     }
     return render(request, 'layouts/matches/public_matches.html', context)
+
+
+class publicMatchListPDF(View):
+    template_url = 'layouts/matches/public_matches.html'
+
+    def link_callback(self, uri, rel):
+        """
+        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+        resources
+        """
+        result = finders.find(uri)
+        if result:
+            if not isinstance(result, (list, tuple)):
+                result = [result]
+            result = list(os.path.realpath(path) for path in result)
+            path = result[0]
+        else:
+            sUrl = settings.STATIC_URL  # Typically /static/
+            sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+            mUrl = settings.MEDIA_URL  # Typically /media/
+            mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
+
+            if uri.startswith(mUrl):
+                path = os.path.join(mRoot, uri.replace(mUrl, ""))
+            elif uri.startswith(sUrl):
+                path = os.path.join(sRoot, uri.replace(sUrl, ""))
+            else:
+                return uri
+
+        # make sure that file exists
+        if not os.path.isfile(path):
+            raise Exception(
+                'media URI must start with %s or %s' % (sUrl, mUrl)
+            )
+        return path
+
+    def get(self, request, pk_torneo):
+        stages = StageTournament.objects.filter(id_torneo=pk_torneo)
+        matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase',
+                                                                                     '-fecha')
+        participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by(
+            'id_partido')
+
+        # Fases que tengan al menos un partido
+        stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
+        print(stage_with_match)
+
+        # Fase para la tabla clasificatoria
+        try:
+            stage_clasified_table = StageTournament.objects.get(id_torneo=pk_torneo, jerarquia=1)
+        except StageTournament.DoesNotExist:
+            stage_clasified_table = None
+
+        template = get_template(self.template_url)
+
+        context = {
+            'pk_tour': pk_torneo,
+            'stages': stages,
+            'match_list': matches,
+            'participation': participation,
+            'stage_with_match': stage_with_match,
+            'stage_clasified_table': stage_clasified_table
+        }
+
+        html = template.render(context)
+        response = HttpResponse(content_type = 'application/pdf')
+        #response['Content-Disposition'] = 'attachment; filename="report.pdf"'  # Code for direct download
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=self.link_callback)
+        # if error then show some funny view
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
 
 
 ''' 
