@@ -46,9 +46,21 @@ def createMatch(request):
         else:
             messages.error(request, 'No hay equipos clasificados en esta fase')
 
+    else:
+        #Validar que existan al menos 1 torneo y 1 fase en el sistema
+        try:
+            stg = Stage.objects.all()
+        except Stage.DoesNotExist:
+            stg = None
 
-    stg = Stage.objects.all()
-    tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
+        try:
+            tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
+        except Tournament.DoesNotExist:
+            tour = None
+        
+        if((not stg) or (not tour)):
+            messages.error(request, 'Debe existir al menos una fase y un torneo dentro del sistema')
+            return redirect(reverse_lazy('main:match_list'))
 
     context = {
         'stage': stg, 
@@ -270,13 +282,16 @@ def updateMatch(request, pk):
                         i = 0
                         for part in participacion_formset:
                             part.valor = i
+                            part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
                         context = {
                             'equipos': clasificados,
                             'match_form': match_form,
                             'participacion_formset': participacion_formset,
-                            'grupos': groups
+                            'grupos': groups,
+                            'update': True,
+                            'get_request': False
                         }
 
                         return render(request, 'admin/matches/teams_match.html', context)
@@ -308,6 +323,7 @@ def updateMatch(request, pk):
                         i = 0
                         for part in participacion_formset:
                             part.valor = i
+                            part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
                         context = {
@@ -315,11 +331,12 @@ def updateMatch(request, pk):
                             'match_form': match_form,
                             'participacion_formset': participacion_formset,
                             'grupos': groups,
-                            'update': True
+                            'update': True,
+                            'get_request': False
                         }
 
                         return render(request, 'admin/matches/teams_match.html', context)
-                #Falta este codigo, en caso de que no haya grupos
+                        
             match_form.save()
             # Se actualizan los registros de participacion
             for part in to_update:
@@ -354,7 +371,8 @@ def updateMatch(request, pk):
         'match_form': match_form,
         'participacion_formset': participacion_formset,
         'grupos': groups,
-        'update': True
+        'update': True,
+        'get_request': True
     }
 
     return render(request, 'admin/matches/teams_match.html', context)

@@ -35,8 +35,8 @@
         {% for team in matchTeams %}
           <li class="mb-1">
             <span class="label label-default">{{ team.id_equipo }}
-              {% if team.ganador %} (equipo ganador){% endif %}, 
-              {% if team.score is not None %}scores: {{ team.score }},{% endif %}
+              {% if team.ganador %} (equipo ganador){% endif %}
+              {% if team.score is not None %}- scores: {{ team.score }},{% endif %}
               {% if team.puntos_equipo is not None %}puntos obtenidos: {{ team.puntos_equipo }}{% endif %}</span>
           </li>
         {% endfor %}
