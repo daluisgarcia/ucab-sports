@@ -82,7 +82,8 @@ urlpatterns = [
     #Primero mostramos la lista de torneos y la lista de fases de cada torneo
     path('partido/fases/', MatchViews.createMatch, name='create_match'),
     #Form del partido
-    path('partido/torneo/<str:pk_torneo>/fase/<str:pk_fase>/', MatchViews.createTeams, name='teams_match'),
+    path('partido/torneo/<int:pkt>/fase/<int:pks>/', MatchViews.MatchListSpecific.as_view(), name='match_list_specific'),
+    path('partido/torneo/<str:pk_torneo>/fase/<str:pk_fase>/create', MatchViews.createTeams, name='teams_match'),
     path('partido/<int:pk>/', MatchViews.matchInfo, name='match_detail'),
     path('partido/edit/<int:pk>', MatchViews.updateMatch, name='update_match'),
     path('partido/delete/<int:pk>/', MatchViews.deleteMatch, name='delete_match'),

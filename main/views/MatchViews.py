@@ -206,8 +206,6 @@ def createTeams(request, pk_torneo, pk_fase):
 
     return render(request, 'admin/matches/teams_match.html', context)
 
-
-
 #Actualizar partido
 @login_required
 def updateMatch(request, pk):
@@ -374,6 +372,19 @@ def matchList(request):
     }
     return render(request, 'admin/matches/match_list.html', context)
 
+
+''' List of match that belongs to a tournament's stage '''
+class MatchListSpecific(LoginRequiredMixin, View):
+    template = 'admin/matches/match_list.html'
+
+    def get(self, request, pkt, pks):
+        stage_tournament = StageTournament.objects.filter(id_fase = pks, id_torneo = pkt)
+        matches = Match.objects.filter(id_fase_torneo = stage_tournament[0].id)
+
+        context = {
+            'match_list': matches
+        }
+        return render(request, self.template, context)
 
 
 #Match list for the common users
