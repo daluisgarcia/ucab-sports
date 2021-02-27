@@ -10,21 +10,26 @@
     {% csrf_token %}
     <div class="row">
         <div class="col-12 ml-3">
-            {% for num, group in groups.items %}
-            <h4>Grupo {{ num }}</h4>
-                {% for key, value in group.items %}
-                    <div class="row ml-4">
-                        <div class="form-group-inline">
-                            <label>Equipo {{ key }}</label>
-                            <select class="custom-control-inline" name="{{ value }}">
-                                {% for team in classified %}
-                                    <option value="{{ team.id_equipo.id }}">{{ team.id_equipo.nombre }}</option>
-                                {% endfor %}
-                            </select>
+            {% if str_groups %}
+                <p>- Tenga en cuenta que si modifica los grupos y tiene partidos creados, deberá también modificar dichos partidos</p>
+                {{ str_groups|safe }}
+            {% else %}
+                {% for num, group in groups.items %}
+                <h4>Grupo {{ num }}</h4>
+                    {% for key, value in group.items %}
+                        <div class="row ml-4">
+                            <div class="form-group-inline">
+                                <label>Equipo {{ key }}</label>
+                                <select class="custom-control-inline" name="{{ value }}">
+                                    {% for team in classified %}
+                                        <option value="{{ team.id_equipo.id }}">{{ team.id_equipo.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
     <div class="card-footer col-11 ml-4 admin_footer">

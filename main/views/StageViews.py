@@ -123,10 +123,48 @@ class StageGroups(LoginRequiredMixin, View):
         # Getting the teams of the tournament
         classified = Classified.objects.filter(id_fase_torneo=stageTourn.id)
 
+        groups_assigned = {}
+
+        for c in classified:
+            if (c.grupo):
+                if c.grupo in groups_assigned.keys():
+                    groups_assigned[c.grupo][c.id_equipo.id] = True
+                else:
+                    groups_assigned[c.grupo] = {}
+                    groups_assigned[c.grupo][c.id_equipo.id] = True
+
+        str_groups = ''
+        if groups_assigned:
+            # Creacion de codigo HTML de los selects, iterar sobre los equipos y grupos antes definidos para poder adaptarse a cualquier cambio
+            for letter, group in groups.items():
+                str_groups = str_groups + '<h4>Grupo '+letter+'</h4>'
+                print(group)
+                for key, value in group.items():
+                    str_groups = str_groups + '<div class="row ml-4">'
+                    str_groups = str_groups + ' <div class="form-group-inline">'
+                    str_groups = str_groups + '<label>Equipo '+str(key)+'</label>'
+                    str_groups = str_groups + '<select class="custom-control-inline" name="'+str(value)+'">'
+                    already_added = False
+                    for team in classified:
+                        if (letter in groups_assigned.keys()) and (team.id_equipo.id in groups_assigned[letter].keys()) and not already_added:
+                            str_groups = str_groups + '<option value = "' + str(team.id_equipo.id) + '" selected >' + team.id_equipo.nombre + ' </option>'
+                            groups_assigned[letter].pop(team.id_equipo.id)
+
+                            already_added = True
+
+                            if (len(groups_assigned[letter]) == 0):
+                                groups_assigned.pop(letter)
+                        else:
+                            str_groups = str_groups + '<option value = "'+str(team.id_equipo.id)+'" >'+team.id_equipo.nombre+' </option>'
+                    str_groups = str_groups + '</select>'
+                    str_groups = str_groups + '</div>'
+                    str_groups = str_groups + '</div>'
+
         # Context data
         ctx = {}
         ctx['groups'] = groups
         ctx['classified'] = classified
+        ctx['str_groups'] = str_groups
 
         return render(request, self.template_name, ctx)
 
