@@ -26,6 +26,7 @@ urlpatterns = [
 
     #Tournaments
     path('torneo/create/', TournamentViews.CreateTournament.as_view(), name='create_tournament'),
+    path('torneo/<int:pk_torneo>/fase/<int:pk_fase>/teams/', TournamentViews.teamsTournament, name='teams_tournament'),
     #Asociar fases al torneo
     path('torneo/<int:pk>/stages/', TournamentViews.createStageTournament, name='create_stage_tournament'),
     path('torneos/', TournamentViews.TournamentList.as_view(), name='tournament_list'),
@@ -44,7 +45,7 @@ urlpatterns = [
     path('partidos/torneo/<int:pk_torneo>/', MatchViews.publicMatchList, name='matches_public_list'),
     path('partidos/torneo/<int:pk_torneo>/pdf', MatchViews.publicMatchListPDF.as_view(), name='matches_public_list_pdf'),
     path('clasificatorias/torneo/fase/<int:pk_fase_torneo>/', TournamentViews.publicClasified, name='public_classified'),
-
+    
 
     path('fase/torneo/<int:id>', TournamentViews.deleteStageTournament, name='delete_stage_tournament'),
 

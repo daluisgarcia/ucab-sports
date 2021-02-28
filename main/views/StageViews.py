@@ -110,7 +110,8 @@ class StageGroups(LoginRequiredMixin, View):
         except StageTournament.DoesNotExist:
             raise Http404("No StageTournament matches the given query.")
 
-        if stageTourn.num_grupos == None or stageTourn.num_grupos <= 1:
+        if stageTourn.num_grupos == None or stageTourn.num_grupos < 1:
+            messages.error(request, 'Esta fase no es por grupos.')
             return redirect(self.success_url, pk=pkt)
 
         # Array of possible groups
@@ -183,4 +184,5 @@ class StageGroups(LoginRequiredMixin, View):
                 classified.grupo = self.numberToLetter(i)
                 classified.save()
 
+        messages.success(request, 'Los grupos han sido formados satisfactoriamente.')
         return redirect(self.success_url, pk=pkt)

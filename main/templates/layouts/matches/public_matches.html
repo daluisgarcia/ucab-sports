@@ -16,6 +16,20 @@
     {% endif %}
     <br>
     <br>
+    <div class="row">
+        <div class="col text-center ml-5 mb-3">
+            <h1 class="text-center">{{ tournament }}</h1>
+        </div>
+    </div>
+    {% if not stage_with_match %}
+    <br>
+    <br>
+    <div class="row">
+        <div class="col text-center ml-5 mb-3">
+            <h1 class="text-center">Todavía no hay partidos disponibles :(</h1>
+        </div>
+    </div>
+    {% else %}
     {% for stage in stages %}
         {% for stg in stage_with_match %}
             {% if stg.id_fase_torneo.id == stage.id %}
@@ -72,5 +86,6 @@
                 {% endfor %}
               </div>
     {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

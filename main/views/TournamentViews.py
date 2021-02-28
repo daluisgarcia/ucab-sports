@@ -41,7 +41,8 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
                 if(p.ganador == True):
                     partidos_ganados += 1
                     #Sumamos los puntos del partido
-                    puntos_ganados += p.puntos_equipo
+                    if(p.puntos_equipo):
+                        puntos_ganados += p.puntos_equipo
                 #Verificamos si hay empate
                 #Obtenemos el score actual y contamos si todos los otros equipos lo tienen igual
                 elif(p.score != None):
@@ -51,7 +52,8 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
                     if(cant_equipos == cant_equipos_score):
                         partidos_empatados += 1
                         #Sumamos los puntos del partido
-                        puntos_empatados += p.puntos_equipo
+                        if(p.puntos_equipo):
+                            puntos_empatados += p.puntos_equipo
                     #Si no ganó, ni empató, entonces perdió
                     else:
                         partidos_perdidos += 1
@@ -63,7 +65,7 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         puntos_totales = (partidos_ganados * puntos_ganados) + (partidos_empatados * puntos_empatados)
 
         #Equipo
-        datos_tabla['equipo'] = team.id_equipo
+        datos_tabla['equipo'] = team
 
         #Partidos jugados
         datos_tabla['partidos_jugados'] = partidos_jugados
@@ -134,6 +136,23 @@ class CreateTournament(LoginRequiredMixin, CreateView):
         context['botton_title'] = 'Crear torneo'
         context['action'] = 'add'
         return context
+
+
+#Teams 
+@login_required
+def teamsTournament(request, pk_torneo, pk_fase):
+    tournament = Tournament.objects.get(id=pk_torneo)
+    stage = Stage.objects.get(id=pk_fase)
+    clasified = Classified.objects.filter(id_fase_torneo__id_torneo=tournament,id_fase_torneo__id_fase=stage).order_by('grupo')
+
+    context = {
+        'tournament': tournament,
+        'stage': stage,
+        'clasified': clasified
+    }
+    return render(request, 'admin/tournaments/tournament_teams.html', context)
+
+
 
 
 #Asociar las fases al torneo (mediante un método)
@@ -216,7 +235,7 @@ class TournamentList(LoginRequiredMixin, ListView):
 
     def get(self, request):
         if request.user.is_authenticated:
-            self.object_list = self.model.objects.filter(owner=request.user)
+            self.object_list = self.model.objects.filter(owner=request.user).order_by('id')
             context = self.get_context_data()
             return render(request, self.template_name, context)
 
@@ -357,87 +376,6 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
         return context
 
 
-#Editar las fases del torneo
-@login_required
-def editStageTournament(request, pk):
-    #Traemos las fases del torneo
-    cantidad_fases = StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False).count()
-    #Cantidad de filas que tendrá el formset
-    if(cantidad_fases == 0):
-        filas = 1
-    else:
-        filas = cantidad_fases
-
-    #Se define formset de la fase
-    StageFormSet = inlineformset_factory(
-        Tournament,
-        StageTournament,
-        fields=('id_fase','participantes_por_equipo','equipos_por_partido','num_grupos','equipos_por_grupo'),
-        extra=0
-    )
-
-    #Obtenemos el torneo y se instancia el formset al torneo
-    tournament = Tournament.objects.get(id=pk)
-
-    if(cantidad_fases == 0):
-        formset = StageFormSet(queryset=StageTournament.objects.none(), instance=tournament)
-    else:
-        formset = StageFormSet(queryset=StageTournament.objects.filter(id_torneo=pk, id_fase__isnull=False), instance=tournament)
-
-    if request.method == 'POST':
-        formset = StageFormSet(request.POST, instance=tournament)
-        #print(request.POST)
-        if formset.is_valid():
-            #Creamos las jerarquías en el orden en como llegan las fases en el formset
-            jerarquia = 1
-            for form in formset:
-                stage = Stage.objects.get(id=form['id_fase'].value())
-
-                if(not form['num_grupos'].value()):
-                    num_grupos = None
-                else:
-                    num_grupos = form['num_grupos'].value()
-
-                if(not form['equipos_por_grupo'].value()):
-                    eq_grupo = None
-                else:
-                    eq_grupo = form['equipos_por_grupo'].value()
-
-                #Comprobamos si la fase está ya creada o si hay que crear una nueva
-                if(not StageTournament.objects.get(id_fase=stage, id_torneo=tournament, jerarquia=jerarquia)):
-                    #Se crea la nueva fase
-                    stage_tournament = StageTournament(
-                        id_fase=stage,
-                        id_torneo=tournament,
-                        jerarquia=jerarquia,
-                        participantes_por_equipo=form['participantes_por_equipo'].value(),
-                        equipos_por_partido=form['equipos_por_partido'].value(),
-                        num_grupos=num_grupos,
-                        equipos_por_grupo=eq_grupo
-                    )
-                    stage_tournament.save()
-                else:
-                    StageTournament.objects.get(id_fase=stage, id_torneo=tournament, jerarquia=jerarquia).update(
-                        participantes_por_equipo=form['participantes_por_equipo'].value(),
-                        equipos_por_partido=form['equipos_por_partido'].value(),
-                        num_grupos=num_grupos,
-                        equipos_por_grupo=eq_grupo
-                    )
-                
-                jerarquia = jerarquia + 1
-
-            messages.success(request, 'El torneo ha sido modificado satisfactoriamente')
-            return redirect(reverse_lazy('main:tournament_list'))
-        
-    context = {
-        'stage_formset': formset, 
-        'title': 'Asociar fases al torneo', 
-        'botton_title': 'Asociar fases',
-        'pk': pk
-    }
-    return render(request, 'admin/tournaments/stage_tour_form.html', context)
-
-
 ''' Update the relation between Stages and Tournament '''
 class UpdateStageTournament(LoginRequiredMixin, View):
     template_name = 'admin/tournaments/stage_tour_form.html'
@@ -529,6 +467,7 @@ class UpdateStageTournament(LoginRequiredMixin, View):
             stageT.jerarquia = hierarchy
             stageT.save()
 
+        messages.success(request, 'Se ha modificado el torneo satisfactoriamente')
         return redirect(reverse_lazy('main:tournament_list'))
 
 
@@ -581,8 +520,6 @@ def clasificatorias(request, pk_torneo, pk_fase):
     for part in tabla_clasif:
         part['valor'] = i
         i = i + 1
-    
-    #print(tabla_clasif)
 
     if request.method == 'POST':
         
@@ -595,7 +532,7 @@ def clasificatorias(request, pk_torneo, pk_fase):
                 print(equipo['equipo'])
 
                 nuevo_clasificado = Classified(
-                    id_equipo = equipo['equipo'],
+                    id_equipo = equipo['equipo'].id_equipo,
                     id_fase_torneo = next_stage
                 )
                 nuevo_clasificado.save()
@@ -627,8 +564,6 @@ def publicClasified(request, pk_fase_torneo):
     }
 
     tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
-    
-    #print(tabla_clasif)
 
     context = {
         'torneo': stage_tour.id_torneo.nombre,

@@ -4,11 +4,12 @@
 <br>
 <div class="container">
     <h3 class="text-center">Seleccione a los equipos que participaron o que van a participar en el partido</h3>
-
+    
     <h6>Tome en cuenta lo siguiente</h6>
     <ul>
         <li>Si el partido <strong>todavía no ha ocurrido</strong>, no es necesario que llene los campos de ganadores, scores ni puntos por equipo. Estos campos los podrá modificar luego.</li>
         <li>Si el partido finalizó como un <strong>empate</strong>, entonces NO llene los campos de ganadores. Los partidos empatados ocurren cuando los scores son iguales.</li>
+        <li>NO puede seleccionar que todos los equipos son ganadores.</li>
     </ul>
 </div>
 <form method="POST" action="">
@@ -17,8 +18,8 @@
       
         <!--Validación de errores-->
         {% csrf_token %}
-        {% if not get_request %}
-            {% if participacion_formset.errors or match_form.errors %}
+        {% if participacion_formset.errors or match_form.errors %}
+            {% if not get_request %}
             <div class="alert alert-danger alert-dismissible">
                 <button
                 type="button"

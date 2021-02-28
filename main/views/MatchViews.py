@@ -341,6 +341,8 @@ def updateMatch(request, pk):
             # Se actualizan los registros de participacion
             for part in to_update:
                 part.save()
+            
+            messages.success(request, 'Se han actualizado los partidos correctamente.')
 
             return redirect('main:match_list')
          
@@ -398,6 +400,12 @@ class MatchListSpecific(LoginRequiredMixin, View):
     def get(self, request, pkt, pks):
         stage_tournament = StageTournament.objects.filter(id_fase = pks, id_torneo = pkt)
         matches = Match.objects.filter(id_fase_torneo = stage_tournament[0].id)
+        #Searching if there are groups
+        clasified = Classified.objects.filter(id_fase_torneo = stage_tournament[0].id).first()
+
+        if((stage_tournament[0].num_grupos) and (not clasified.grupo)):
+            messages.error(request, 'Antes de gestionar partidos tiene que asociar los grupos de esta fase')
+            return redirect('main:tournament_detail',  pk=pkt)
 
         context = {
             'match_list': matches
@@ -408,13 +416,13 @@ class MatchListSpecific(LoginRequiredMixin, View):
 #Match list for the common users
 def publicMatchList(request, pk_torneo):
 
+    tournament = Tournament.objects.get(id=pk_torneo)
     stages = StageTournament.objects.filter(id_torneo=pk_torneo)
     matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase', '-fecha')
     participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by('id_partido')
 
     #Fases que tengan al menos un partido
     stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
-    print(stage_with_match)
 
     #Fase para la tabla clasificatoria
     try:
@@ -423,6 +431,7 @@ def publicMatchList(request, pk_torneo):
         stage_clasified_table = None
 
     context = {
+        'tournament': tournament,
         'pk_tour': pk_torneo,
         'stages': stages,
         'match_list': matches,
@@ -510,6 +519,7 @@ Render the detail view or redirect to the main page if user is not the owner
 
 Shows the detail for a match
 '''
+@login_required
 def matchInfo(request, pk):
     match = Match.objects.get(id=pk)
     if match.id_fase_torneo.id_torneo.owner == request.user:

@@ -1,0 +1,29 @@
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}> 
+{% endblock %}
+{% block content %}
+<br>
+<h2 class="text-center">Equipos</h2>
+<h2 class="text-center">{{ tournament }} - {{ stage }}</h2>
+
+<div class="card-body">
+  <a class="btn btn-primary btn-flat float-left btn-sm admin_buttons mb-1" href="{% url 'main:tournament_detail' tournament.id %}">Regresar</a>
+  <br>
+  <br>
+  {% if clasified %}
+  <ul>
+    {% for clas in clasified %}
+    <li class="mb-1">{{ clas.id_equipo }}
+      {% if clas.grupo %}
+        - {{ clas.grupo }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <h5 class="text-center">¡Todavía no ha registrado equipos para esta fase!</h5>
+  {% endif %}
+</div>
+{% endblock %}
