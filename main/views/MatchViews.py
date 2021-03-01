@@ -27,8 +27,6 @@ def createMatch(request):
         tour = request.POST.get('tournament', None)
         stage = Stage.objects.get(id=stg)
         tournament = Tournament.objects.get(id=tour)
-    
-        print('stage:'+ stg +' torneo:'+ tour)
 
         #Verificar que hayan clasificados en esta fase de este torneo
         if (Classified.objects.filter(id_fase_torneo__id_fase=stage, id_fase_torneo__id_torneo=tournament).count() != 0):
@@ -74,10 +72,7 @@ def createMatch(request):
 #Associate the teams to the match
 @login_required
 def createTeams(request, pk_torneo, pk_fase):
-    print('pk_torneo: '+ pk_torneo +' pk_fase: '+ pk_fase)
-    
     fase_torneo = StageTournament.objects.get(id_fase=pk_fase, id_torneo=pk_torneo)
-    #print(fase_torneo.equipos_por_partido)
 
     #clasified in this stage
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo")
@@ -101,7 +96,6 @@ def createTeams(request, pk_torneo, pk_fase):
 
             #Validate if the stage is by groups, selected teams are in the same group
             if groups:
-                print('hay grupos')
 
                 #necessary variables for manage the validation logic
                 i = 0
@@ -122,7 +116,6 @@ def createTeams(request, pk_torneo, pk_fase):
                     #Validate that teams aren't repeated and the selected teams are in the same group
                     if ((equipo not in lista_grupos) and ((grupo_anterior == None) or (grupo_actual == grupo_anterior))):
                         lista_grupos.append(equipo)
-                        print(lista_grupos)
                         grupo_anterior = grupo_actual
                     else:
                         messages.error(request, 'Los equipos seleccionados no pertenecen al mismo grupo.')
@@ -171,7 +164,6 @@ def createTeams(request, pk_torneo, pk_fase):
                 i = i + 1    
 
             #team object
-            print(match_form['fecha'].value())
             match = Match(
                 fecha=match_form['fecha'].value(), 
                 direccion=match_form['direccion'].value(), id_fase_torneo=fase_torneo
@@ -185,7 +177,6 @@ def createTeams(request, pk_torneo, pk_fase):
                 num_equipo = 'equipo-' + str(i)
                 i = i + 1
                 equipo = request.POST.get(num_equipo, None)
-                print(equipo)
                 equipo_object = Team.objects.get(id=equipo)
 
                 participacion = Participation(
@@ -384,7 +375,6 @@ def updateMatch(request, pk):
 #Lista de partidos
 @login_required
 def matchList(request):
-    print(request.user)
     matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
 
     context = {
@@ -443,38 +433,7 @@ def publicMatchList(request, pk_torneo):
 
 
 class publicMatchListPDF(View):
-    template_url = 'layouts/matches/public_matches.html'
-
-    def link_callback(self, uri, rel):
-        """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-        resources
-        """
-        result = finders.find(uri)
-        if result:
-            if not isinstance(result, (list, tuple)):
-                result = [result]
-            result = list(os.path.realpath(path) for path in result)
-            path = result[0]
-        else:
-            sUrl = settings.STATIC_URL  # Typically /static/
-            sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
-            mUrl = settings.MEDIA_URL  # Typically /media/
-            mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
-
-            if uri.startswith(mUrl):
-                path = os.path.join(mRoot, uri.replace(mUrl, ""))
-            elif uri.startswith(sUrl):
-                path = os.path.join(sRoot, uri.replace(sUrl, ""))
-            else:
-                return uri
-
-        # make sure that file exists
-        if not os.path.isfile(path):
-            raise Exception(
-                'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
-        return path
+    template_url = 'reports/tournament_matches.html'
 
     def get(self, request, pk_torneo):
         stages = StageTournament.objects.filter(id_torneo=pk_torneo)
@@ -485,7 +444,6 @@ class publicMatchListPDF(View):
 
         # Fases que tengan al menos un partido
         stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
-        print(stage_with_match)
 
         # Fase para la tabla clasificatoria
         try:
@@ -495,7 +453,10 @@ class publicMatchListPDF(View):
 
         template = get_template(self.template_url)
 
+        tournament = Tournament.objects.get(id=pk_torneo)
+
         context = {
+            'tournament': tournament,
             'pk_tour': pk_torneo,
             'stages': stages,
             'match_list': matches,
@@ -507,7 +468,7 @@ class publicMatchListPDF(View):
         html = template.render(context)
         response = HttpResponse(content_type = 'application/pdf')
         #response['Content-Disposition'] = 'attachment; filename="report.pdf"'  # Code for direct download
-        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=self.link_callback)
+        pisa_status = pisa.CreatePDF(html, dest=response)
         # if error then show some funny view
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
@@ -524,7 +485,6 @@ def matchInfo(request, pk):
     match = Match.objects.get(id=pk)
     if match.id_fase_torneo.id_torneo.owner == request.user:
         match_teams = Participation.objects.filter(id_partido=pk)
-        print(match_teams)
 
         context = {
             'match': match,
@@ -539,10 +499,8 @@ def matchInfo(request, pk):
 #Eliminar partido
 @login_required
 def deleteMatch(request, pk):
-    print(pk)
     match = Match.objects.get(id=pk)
     match.delete()
-    print('Torneo eliminado')
     return redirect(reverse_lazy('main:match_list'))
 
 

@@ -140,7 +140,8 @@ def createRegisterTeam(request, pk_torneo):
                       [tournament.owner.email])
 
             send_mail('Solicitud de participacion enviada',
-                      'Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion',
+                      '<p>Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion</p>'+
+                      '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
                       tournament.owner.email,
                       [person_email])
 
@@ -289,7 +290,8 @@ def approveInscription(request, pk_team, pk_tour):
     team_delete.delete()
 
     send_mail('Participacion aprobada',
-              'Tu solicitud de participacion fue aprobada',
+              '<p>Tu solicitud de participacion al torneo '+tournament.nombre+' fue aprobada por el organizador</p>'+
+              '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
               tournament.owner.email,
               [email_person.correo])
 
@@ -322,7 +324,8 @@ def failInscription(request, pk_team, pk_tour):
     team_delete.delete()
 
     send_mail('Participacion rechazada',
-              'Tu solicitud de participacion fue rechazada: '+str(message),
+              '<p>Tu solicitud de participacion al torneo '+tournament.nombre+' fue rechazada por el organizador. Motivo: '+str(message)+'</p>'+
+              '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
               tournament.owner.email,
               [email_person.correo])
 
