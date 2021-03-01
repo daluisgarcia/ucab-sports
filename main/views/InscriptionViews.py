@@ -7,6 +7,7 @@ from django.forms.utils import ErrorList
 from django.views.generic import DetailView
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from smtplib import SMTPDataError
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -132,19 +133,22 @@ def createRegisterTeam(request, pk_torneo):
 
             PreTeamRegister.objects.bulk_create(new_team_register)
 
+            try:
+                send_mail('Nueva solicitud de participacion',
+                          'Tienes una nueva solicitud de participacion para el torneo '+tournament.nombre,
+                          tournament.owner.email,
+                          [tournament.owner.email])
+
+                send_mail('Solicitud de participacion enviada',
+                          'Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion\n'+
+                          'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                          tournament.owner.email,
+                          [person_email])
+            except SMTPDataError:
+                messages.success(request, 'Tu solicitud fue procesada pero hubo un error en el envio de correos, ponte en contacto con el organizador')
+                return redirect('main:posts')
+
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
-
-            send_mail('Nueva solicitud de participacion',
-                      'Tienes una nueva solicitud de participacion para el torneo '+tournament.nombre,
-                      tournament.owner.email,
-                      [tournament.owner.email])
-
-            send_mail('Solicitud de participacion enviada',
-                      '<p>Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion</p>'+
-                      '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
-                      tournament.owner.email,
-                      [person_email])
-
             #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
             return redirect('main:posts')
         
@@ -288,12 +292,15 @@ def approveInscription(request, pk_team, pk_tour):
         i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()
-
-    send_mail('Participacion aprobada',
-              '<p>Tu solicitud de participacion al torneo '+tournament.nombre+' fue aprobada por el organizador</p>'+
-              '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
-              tournament.owner.email,
-              [email_person.correo])
+    try:
+        send_mail('Participacion aprobada',
+                  'Tu solicitud de participacion al torneo '+tournament.nombre+' fue aprobada por el organizador\n'+
+                  'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                  tournament.owner.email,
+                  [email_person.correo])
+    except SMTPDataError:
+        messages.success(request, 'No se pudo enviar el correo al delegado pero se ha registrado al equipo en el torneo')
+        return redirect('main:inscription_list')
 
     messages.success(request, 'Se ha registrado al equipo en el torneo exitosamente')
     return redirect('main:inscription_list')
@@ -323,11 +330,15 @@ def failInscription(request, pk_team, pk_tour):
     team_delete.logo.delete(save=True)
     team_delete.delete()
 
-    send_mail('Participacion rechazada',
-              '<p>Tu solicitud de participacion al torneo '+tournament.nombre+' fue rechazada por el organizador. Motivo: '+str(message)+'</p>'+
-              '<p>Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email+'</p>',
-              tournament.owner.email,
-              [email_person.correo])
+    try:
+        send_mail('Participacion rechazada',
+                  'Tu solicitud de participacion al torneo '+tournament.nombre+' fue rechazada por el organizador. Motivo: '+str(message)+'\n'+
+                  'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                  tournament.owner.email,
+                  [email_person.correo])
+    except SMTPDataError:
+        messages.success(request, 'No se pudo enviar el correo al delegado pero se ha anulado la solicitud de inscripción')
+        return redirect('main:inscription_list')
 
     messages.success(request, 'Se ha anulado la solicitud de inscripción')
     return redirect('main:inscription_list')

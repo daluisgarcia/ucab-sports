@@ -18,7 +18,6 @@ class CreateStage(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('main:stage_list')
 
     def post(self, request, *args, **kwargs):
-        # print(request.POST)
         form = StageCreateForm(request.POST)
         if form.is_valid():
             form.save()
@@ -86,10 +85,8 @@ class UpdateStage(LoginRequiredMixin, UpdateView):
 def deleteStage(request, pk):
     stage = Stage.objects.get(id=pk)
     stage.delete()
-    print('Fase eliminada')
     messages.success(request, 'La fase se ha eliminado satisfactoriamente')
     return redirect(reverse_lazy('main:stage_list'))
-
 
 '''
     Assign groups to teams on a stage
@@ -114,15 +111,18 @@ class StageGroups(LoginRequiredMixin, View):
             messages.error(request, 'Esta fase no es por grupos.')
             return redirect(self.success_url, pk=pkt)
 
+        # Getting the teams of the tournament
+        classified = Classified.objects.filter(id_fase_torneo=stageTourn.id)
+        if not classified:
+            messages.error(request, 'No hay equipos clasificados a esta fase, debes avanzar equipos de fase')
+            return redirect(self.success_url, pk=pkt)
+
         # Array of possible groups
         groups = {}
         for i in range(1, stageTourn.num_grupos+1):
             groups[self.numberToLetter(i)] = {}
             for j in range(1, stageTourn.equipos_por_grupo+1):
                 groups[self.numberToLetter(i)][j] = 'grupo-'+self.numberToLetter(i)+'-equipo'+str(j)
-
-        # Getting the teams of the tournament
-        classified = Classified.objects.filter(id_fase_torneo=stageTourn.id)
 
         groups_assigned = {}
 
@@ -139,7 +139,6 @@ class StageGroups(LoginRequiredMixin, View):
             # Creacion de codigo HTML de los selects, iterar sobre los equipos y grupos antes definidos para poder adaptarse a cualquier cambio
             for letter, group in groups.items():
                 str_groups = str_groups + '<h4>Grupo '+letter+'</h4>'
-                print(group)
                 for key, value in group.items():
                     str_groups = str_groups + '<div class="row ml-4">'
                     str_groups = str_groups + ' <div class="form-group-inline">'
@@ -176,13 +175,19 @@ class StageGroups(LoginRequiredMixin, View):
         except StageTournament.DoesNotExist:
             raise Http404("No StageTournament matches the given query.")
 
+        teams_added = []
         # Iterate over the selects input of the request searching for a certain group number and assigning it
         for i in range(1, stageTourn.num_grupos+1):
             teams = [value for key, value in request.POST.items() if 'grupo-'+self.numberToLetter(i) in key]
             for team in teams:
-                classified = Classified.objects.get(id_fase_torneo=stageTourn.id, id_equipo=team)
-                classified.grupo = self.numberToLetter(i)
-                classified.save()
+                if team not in teams_added:
+                    classified = Classified.objects.get(id_fase_torneo=stageTourn.id, id_equipo=team)
+                    classified.grupo = self.numberToLetter(i)
+                    teams_added.append(team)
+                    classified.save()
+                else:
+                    messages.error(request, 'No se puede asignar un equipo dos veces')
+                    return self.get(request, pkt, hierarchy)
 
         messages.success(request, 'Los grupos han sido formados satisfactoriamente.')
         return redirect(self.success_url, pk=pkt)
