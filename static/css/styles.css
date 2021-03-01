@@ -52,7 +52,7 @@
 }
 
 .general_background {
-    background-color: #E3E1F9;
+    background-color: #F2F2F2;
 }
 
 .form-container{
@@ -83,4 +83,10 @@
 .vertical_line {
     border-left: 3px solid black;
     height: 100%;
+  }
+
+  .bottom_line {
+    border-bottom: 3px solid black;
+    height: 30px;
+    width: 80%
   }
