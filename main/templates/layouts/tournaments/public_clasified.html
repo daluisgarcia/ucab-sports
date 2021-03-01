@@ -1,0 +1,101 @@
+{% extends 'layouts/head.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+{% endblock %}
+{% block head %}
+<div class="general_background">
+    <img class="header_img" style="background-image: url(/images/esports.jpg)">
+</div>
+<div class="card-body general_background">
+  <a class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" href="{% url 'main:matches_public_list' id_torneo %}">Volver a la vista de partidos</a>
+  <br>
+  <br>
+  <h2 class="text-center">Clasificatoria</h2>
+  <h2 class="text-center">{{ torneo }} - {{ fase }}</h2>
+
+  <div class="card-body">
+    <h6 class="text-left">Seleccione a los equipos que pasarán a la siguiente fase</h6>
+    <ul>
+      <li>PT: Puntos Totales</li>
+      <li>PJ: Partidos Jugados</li>
+      <li>PG: Partidos Ganados</li>
+      <li>PP: Partidos Perdidos</li>
+      <li>PE: Partidos Empatados</li>
+    </ul>
+    <div class="row ml-2">
+      <div class="col col-sm col-md col-lg-4 col-xl-4 text-left d-none d-md-block">
+          <h6 class="label label-default list_titles">Equipo</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PT</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PJ</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PG</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PP</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PE</h6>
+      </div>
+    </div>
+  
+    {% for equipo in tabla_clasificatoria %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-left mb-3 mt-1">
+            <h6 class="d-md-none">Equipo</h6>
+            <td>
+              {{ equipo.equipo.id_equipo }} {% if equipo.equipo.grupo %} (grupo {{ equipo.equipo.grupo }}) {% endif %}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PT</h6>
+            <td>
+              {{ equipo.puntos_totales }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PJ</h6>
+            <td>
+              {{ equipo.partidos_jugados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PG</h6>
+            <td>
+              {{ equipo.partidos_ganados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PP</h6>
+            <td>
+              {{ equipo.partidos_perdidos }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PE</h6>
+            <td>
+              {{ equipo.partidos_empatados }}
+            </td>
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+  <br>
+  <br>
+  </div>
+</div>
+{% endblock %}

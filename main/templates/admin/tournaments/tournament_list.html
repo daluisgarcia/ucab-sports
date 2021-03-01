@@ -6,31 +6,29 @@
 {% block content %}
   <br>
   <h2 class="text-center">{{ title }}</h2>
-
+ 
   <div class="card-body">
     <div>
       <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_tournament' %}">
         Agregar
       </a>
     </div>
-    <br>
+    <br> 
     <div class="row ml-2">
-      <div class="col-1 text-center">
-          <h6 class="label label-default">Nombre</h6>
+      <div class="col-1 text-left d-none d-md-block">
+          <h6 class="label label-default list_titles">Nombre</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Juego</h6>
+      <div class="col-2 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">Juego</h6>
       </div>
-      <div class="col-1 text-center">
-        <h6 class="label label-default">Edicion</h6>
+      <div class="col-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">Edicion</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Fecha inicio</h6>
+      <div class="col-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">Inicio</h6>
       </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Fecha fin</h6>
-      </div>
-      <div class="col-4 text-center">
+      <div class="col-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">Fin</h6>
       </div>
     </div>
   
@@ -38,30 +36,55 @@
   <ul class="list-group admin_list_group">
     <li class="list-group-item">
       <div class="row">
-        <div class="col-1 text-center">
-          {{ c.nombre }}
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Nombre</h6>
+          <td>
+            {{ c.nombre }}
+          </td>
         </div>
-        <div class="col-2 text-center">
-          {{ c.id_juego }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+          <h6 class="d-md-none">Juego</h6>
+          <td>
+            {{ c.id_juego }}
+          </td>
         </div>
-        <div class="col-1 text-center">
-          {{ c.edicion }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Edición</h6>
+          <td>
+            {{ c.edicion }}
+          </td>
         </div>
-        <div class="col-2 text-center">
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Inicio</h6>
           {{ c.fecha_inicio }}
         </div>
-        <div class="col-2 text-center">
-          {{ c.fecha_fin }}
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <h6 class="d-md-none">Fin</h6>
+          <td>
+            {{ c.fecha_fin }}
+          </td>
         </div>
-        <div class="col-4 text-center">
-          <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_tournament">
+        <div class="w-100 d-block d-sm-none"></div>
+        <div class="col col-sm col-md col-lg-6 col-xl-6 text-center">
+          {% if c.inscripcion_abierta %}
+              <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:create_stage_tournament' c.id %}">
+                Cerrar inscripcion
+              </a>
+          {% else %}
+              <!-- Boton a gestionar torneo, para agregar patidos, establecer ganadores, etc. -->
+          {% endif %}
+          <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#tournament-{{ c.id }}">
             Eliminar
           </button>
-          <div class="modal fade" id="delete_modal_tournament" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+          <div class="modal fade" id="tournament-{{ c.id }}" role="dialog" aria-labelledby="delete_modal_tournament_Label" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este torneo?</h5>
+                  <h5 class="modal-title" id="delete_modal_tournament_Label">¿Estas seguro que quieres eliminar este torneo?</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -71,18 +94,22 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_tournament' c.id %}">
+                    Sí (prueba)
+                  </a>
                   <form action="{% url 'main:delete_tournament' c.id %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Si</button>
                   </form>
+
                 </div>
               </div>
             </div>
           </div>
-          <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_tournament' c.id %}">
+          <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_tournament' c.id %}">
             Modificar
           </a>
-          <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:tournament_detail' c.id %}">
+          <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:tournament_detail' c.id %}">
             Detalle
           </a>
         </div>

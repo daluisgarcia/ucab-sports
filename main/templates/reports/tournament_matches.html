@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de partidos para torneo</title>
+    <style>
+        table {
+            border-style: ridge;
+            border-width: 0.5px;
+            border-color: #323232;
+            background-color: #f6f6f6;
+        }
+        th {
+            padding: 0.5rem;
+            border: 0.5px solid #323232;
+        }
+        td {
+            padding: 0.5rem;
+            border: 0.5px groove #323232;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <center>
+            <h1 style="font-size: 2rem">Partidos para el torneo {{ tournament }}</h1>
+        </center>
+    </div>
+    {% if not stage_with_match %}
+        <center>
+            <h1>Todavía no hay partidos disponibles</h1>
+        </center>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Fase</th>
+                    <th>Equipos a participar</th>
+                    <th>Fecha</th>
+                    <th>Dirección</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stage in stages %}
+                    {% for match in match_list %}
+                        {% if stage.id == match.id_fase_torneo.id %}
+                            <tr>
+                                <td>
+                                    {% for stg in stage_with_match %}
+                                        {% if stg.id_fase_torneo.id == stage.id %}
+                                                <center><b>{{ stage.id_fase }}</b></center>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <ul>
+                                        {% for part in participation %}
+                                            {% if match.id == part.id_partido.id %}
+                                                <li>
+                                                    <span>
+                                                        {{ part.id_equipo }}
+                                                    </span>
+                                                    {% if part.score is not None %}
+                                                        <b>
+                                                           → {{ part.score }}
+                                                        </b>
+                                                    {% endif %}
+                                                    {% if part.ganador %}
+                                                        <span style="color: gold">Ganador</span>
+                                                    {% endif %}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    {{ match.fecha }}
+                                </td>
+                                {% if match.direccion %}
+                                    <td>
+                                        {{ match.direccion }}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

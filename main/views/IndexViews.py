@@ -1,11 +1,10 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, View
+from django.views.generic import ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.models import Post, Tournament, Stage, Game
-from main.forms import PostCreateForm
+from main.models import Game
 
 
 class AdminIndex(LoginRequiredMixin, View):

@@ -3,21 +3,23 @@
 {% block extra_css %}
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
-
 {% block head %}
-<br>
-<div class="card-body">
+<div class="general_background">
+  <img class="header_img" style="background-image: url(/images/system/futbol_mesa.jpg)">
+</div>
+<div class="card-body general_background">
   {% for c in object_list %}
-      <h2 class="text-center">{{ c.titulo }}</h2>
+      <h2 class="text-center">{{ c.titulo }}</h2> 
       <br>
-      <div class="col-11">
+      <div class="container">
         <div class="row">
-          <div class="col-3">
+          <div class="col col-sm col-md-3 col-lg-3 col-xl-3 mb-3">
             {% if c.imagen %}
               <img class="main_post_images" src={{ c.imagen.url }}>
             {% endif %}
           </div>
-          <div class="col-8 text-left">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md-8 col-lg-8 col-xl-8 text-left">
             <p>
               {{ c.cuerpo }}
             </p>

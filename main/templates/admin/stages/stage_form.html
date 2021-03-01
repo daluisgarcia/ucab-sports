@@ -33,15 +33,14 @@
     {% endif %}
 
     {% for field in form.visible_fields %}
-    <div class="form-group">
+    <div class="form-group col-11">
       <label>{{ field.label }}</label>
-      {{ field }}
+      <div class="col col-sm col-md-5">
+        {{ field }}
+      </div>
     </div>
     {% endfor %}
   </div>
-  {% if 'next' in request.POST %}
-      <input class="d-none" name="next" value="{{ request.POST.next }}"/>
-  {% endif %}
   <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
       <i class="fas fa-save"></i> Procesar

@@ -130,4 +130,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 ucabSports/db.py
-*.jpg
+/static/images/post_images/
+/static/images/team_logos/

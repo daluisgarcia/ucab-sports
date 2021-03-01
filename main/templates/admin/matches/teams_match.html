@@ -1,63 +1,130 @@
 {% extends 'admin/adminMain.html' %}
-{% block head %}
-
-<h3>Seleccione a los equipos que participaron en el partido</h3>
-<h4>cantidad de campos de equipos a poner</h4>
-    {{ cant_equipos }}
-</br>
-<h4>Equipos</h4>
-<select name="select">
-    {% for equipo in equipos %}
-    <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
-    {% endfor %}
-</select>
-</br>
-{% for equipo in equipos %}
-    {{ equipo.id_equipo.nombre }}
-    {{ equipo.id_equipo.id }}
-    </br>
-{% endfor %}
-
-
-
+{% load static %}
+{% block content %}
+<br>
+<div class="container">
+    <h3 class="text-center">Seleccione a los equipos que participaron o que van a participar en el partido</h3>
+    
+    <h6>Tome en cuenta lo siguiente</h6>
+    <ul>
+        <li>Si el partido <strong>todavía no ha ocurrido</strong>, no es necesario que llene los campos de ganadores, scores ni puntos por equipo. Estos campos los podrá modificar luego.</li>
+        <li>Si el partido finalizó como un <strong>empate</strong>, entonces NO llene los campos de ganadores. Los partidos empatados ocurren cuando los scores son iguales.</li>
+        <li>NO puede seleccionar que todos los equipos son ganadores.</li>
+    </ul>
+</div>
 <form method="POST" action="">
 
-    <div id="form-card" class="card-body">
+    <div class="card-body">
       
         <!--Validación de errores-->
-        {% csrf_token %} 
-        {% if participacion_formset.errors %}
-        <div class="alert alert-danger alert-dismissible">
-            <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-hidden="true"
-            >
-            ×
-            </button>
-            <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-            {% for field in participacion_formset %} 
-            {% for error in field.errors %}
-                <li>{{ error }}</li>
-            {% endfor %} 
-            {% endfor %}
+        {% csrf_token %}
+        {% if participacion_formset.errors or match_form.errors %}
+            {% if not get_request %}
+            <div class="alert alert-danger alert-dismissible">
+                <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-hidden="true"
+                >
+                ×
+                </button>
+                <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
+                
+                {% for error in match_form.errors %} 
+                    <li>{{ error }}</li>
+                {% endfor %}
+
+                {% for field in participacion_formset %} 
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %} 
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        
+        {% for field in match_form.visible_fields %}
+        <div class="form-group"> 
+            <label class="ml-3 mr-3">{{ field.label }}</label>
+            <div class="ml-3 mr-3 col col-sm col-md-4 col-lg-4">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!--Lista de clasificados-->
+        {% if grupos %}
+        <div class="col col-sm col-md-6 col-lg-6">
+            <h6 class="ml-3">Lista de equipos por grupo</h6>
+        <div class="row ml-2">
+            <div class="col-6 text-left">
+                <h6 class="label label-default">Equipo</h6>
+            </div>
+            <div class="col-6 text-left">
+                <h6 class="label label-default">Grupo</h6>
+            </div>
+        </div>
+        {% for equipo in equipos %}
+        <ul class="list-group admin_list_group">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-6 text-left">
+                    {{ equipo.id_equipo }}
+                    </div>
+                    <div class="col-6 text-left">
+                    {{ equipo.grupo }}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        {% endfor %}
         </div>
         {% endif %}
-    
-        {{ participacion_formset.management_form }}
 
+        </br>
+
+        {{ participacion_formset.management_form }}
         {% for participacion in participacion_formset %}
-            <div>
-                {{ participacion.ganador }}
-                {{ participacion.puntos_equipo }}
+            <div class="row ml-2">
+                <div class="ml-2 mb-2">
+                    <select class="ml-3" name="equipo-{{ participacion.valor }}">
+                        {% for equipo in equipos %}
+                            {% if participacion.equipo == equipo.id_equipo.id %}
+                                <option value="{{ equipo.id_equipo.id }}" selected>{{ equipo.id_equipo.nombre }}</option>
+                            {% else %}
+                                <option value="{{ equipo.id_equipo.id }}">{{ equipo.id_equipo.nombre }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.score }}
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.puntos_equipo }}
+                </div>
+                <div class="w-100 d-block d-sm-none"></div>
+                <div class="ml-2 mb-2">
+                    {{ participacion.ganador }}
+                </div>
+                <div class="ml-2 mb-3">
+                    Ganador
+                </div>
             </div>
         {% endfor %}
     </div>
   
     <div class="card-footer col-11 ml-4 admin_footer">
         <button type="submit" class="btn btn-primary btn-flat float-right">
-            <i class="fas fa-save"></i> Crear partido
+            <i class="fas fa-save"></i>
+            {% if update %}
+                Actualizar partido
+            {% else %}
+                Crear partido
+            {% endif %}
         </button>
     </div>
   

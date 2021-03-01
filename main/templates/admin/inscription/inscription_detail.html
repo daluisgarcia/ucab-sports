@@ -1,17 +1,127 @@
 {% extends 'admin/adminMain.html' %}
-{% block head %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %} 
 
-    <h1>Detalle de inscripción</h1>
+<br>
+<h2 class="text-center">Historial de participaciones</h2>
 
-    {% for person in persons %}
-        {{ person.id_persona.cedula }}
-        {{ person.id_persona.nombre }}
-        {{ person.id_persona.apellido }}
-        {{ person.id_persona.correo }}
-        {{ person.id_persona.nickname }}
-        <br/>
+  <div class="card-body">
+    <div>
+        <a class="btn btn-primary btn-sm btn-flat admin_buttons" href="{% url 'main:person_list' %}">
+          Regresar
+        </a>
+    </div>
+    <br>
+    <div class="col-8 text-left ml-3">
+        <div class="row mb-2">
+            <h6 class="label label-default font-weight-bold">Cédula:</h6>
+            <div class="label label-default ml-2">{{ person.cedula }}</div>
+        </div>
+        <div class="row mb-2">
+            <h6 class="label label-default font-weight-bold">Nombre:</h6>
+            <div class="label label-default ml-2">{{ person.nombre }}</div>
+        </div>
+        <div class="row mb-2">
+            <h6 class="label label-default font-weight-bold">Apellido:</h6>
+            <div class="label label-default ml-2">{{ person.apellido }}</div>
+        </div>
+        <div class="row mb-2">
+            <h6 class="label label-default font-weight-bold">Correo:</h6>
+            <div class="label label-default ml-2">{{ person.correo }}</div>
+        </div>
+        {% if person.nickname %}
+        <div class="row mb-2">
+            <h6 class="label label-default font-weight-bold">Nickname:</h6>
+            <div class="label label-default ml-2">{{ person.nickname }}</div>
+          </div>
+          {% endif %}
+    </div>
+    <br>
+    <div class="container col-12">
+      <div class="row">
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Fecha de Registro</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Torneo</h6>
+          </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Equipo</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Logo</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Rol en el equipo</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Fase final de participación</h6>
+        </div>
+      </div>
+    </div>
+
+    {% for team in teams %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item col-12">
+        <div class="row">
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Fecha de Registro</h6>
+            <td>
+              {{ team.fecha_registro }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Equipo</h6>
+            <td>
+              {{ team.id_torneo }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Equipo</h6>
+            <td>
+              {{ team.id_equipo }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Logo</h6>
+            <td>
+                {% if team.id_equipo.logo %}
+                <img class="post_images" src={{ team.id_equipo.logo.url }}>
+                {% endif %}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Rol en el equipo</h6>
+            <td>
+                {% if team.rol == 'jd' %}
+                    Jugador y delegado
+                {% elif team.rol == 'd' %}
+                    Delegado
+                {% elif team.rol == 'j' %}
+                    Jugador               
+                {% endif %}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Rol en el equipo</h6>
+            <td>
+              {% if team.last_stage %}
+                {{ team.last_stage }}
+              {% endif %}
+            </td>
+          </div>
+        </div>
+      </li>
+    </ul>
     {% endfor %}
-    <br/>
-    <a href="{% url 'main:team_list' %}">Volver</a>
-    
+  </div>
+
 {% endblock %}

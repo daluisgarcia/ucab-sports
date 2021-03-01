@@ -1,14 +1,14 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from main.models import Post, Tournament, Stage, Game
 from main.forms import PostCreateForm
-
 
 
 # Crear Post
@@ -56,7 +56,7 @@ class PostsList(LoginRequiredMixin, ListView):
         return context
 
 # Lista de posts para el publico en general
-class PublicPostList(ListView):
+class PublicPostList(ListView): 
     model = Post
     template_name = 'admin/posts/public_post_list.html'
 
@@ -93,11 +93,11 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
         return redirect('main:admin_index') 
 
-    def post(self, request, pk):
+    def post(self, request, pk): 
         post = get_object_or_404(self.model, pk=pk)
         if post.owner != request.user:
             return redirect('main:admin_index')
-        form = PostCreateForm(request.POST, instance=post)
+        form = PostCreateForm(request.POST, request.FILES, instance=post)
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
             return render(request, self.template_name, ctx)
@@ -115,7 +115,10 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
 
 
 #Eliminar post
-class DeletePost(LoginRequiredMixin, DeleteView):
-    model = Post
-    success_url = reverse_lazy('main:post_list')
-    template_name = 'admin/posts/post_confirm_delete.html'
+@login_required
+def deletePost(request, pk):
+    post = Post.objects.get(id=pk)
+    post.delete()
+    print('Post eliminado')
+    messages.success(request, 'El post se ha eliminado satisfactoriamente')
+    return redirect(reverse_lazy('main:post_list'))

@@ -10,11 +10,13 @@
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     <!--Bootstrap-->
     <link rel="stylesheet" href="{% static 'lib/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
-    {% block extra_css %} {% endblock %}
+    {% block extra_css %} 
+    <link rel="stylesheet" href={% static "css/styles.css" %}>
+    {% endblock %}
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{% url 'main:posts' %}">Deportes UCAB</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+      <a class="navbar-brand text-white" href="{% url 'main:posts' %}">Deportes UCAB</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -22,30 +24,30 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'main:tournaments_public_list' %}">Torneos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Sobre nosotros</a>
+            <a class="nav-link text-white" href="{% url 'main:tournaments_public_list' 'esport' %}">e-Sports</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Copa UCAB</a>
+            <a class="nav-link text-white" href="{% url 'main:tournaments_public_list' 'varios' %}">Copa UCAB</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link text-white" href="#">Sobre nosotros</a>
           </li>
         </ul>
 
         <ul class="nav ml-auto mr-1">
           {% if user.is_authenticated %}
-            <li class="dropdown p-1" style="width: 5rem;">
-              <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+            <li class="dropdown p-1" style="width: 4rem;">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle text-white">
                 <div>{{ user.username }}</div>
               </a>
-              <ul class="dropdown-menu p-1">
-                <li class="p-1"><a href="{% url 'main:admin_index' %}">Vista de control</a></li>
-                <li class="p-1"><a href="{% url 'logout' %}?next={% url 'main:posts' %}">Cerrar sesión</a></li>
+              <ul class="dropdown-menu p-1 dropdown-menu-right">
+                <li class="p-1"><a class="text-black" href="{% url 'main:tournament_list' %}">Vista de control</a></li>
+                <li class="p-1"><a class="text-black" href="{% url 'logout' %}?next={% url 'main:posts' %}">Cerrar sesión</a></li>
               </ul>
             </li>
           {% else %}
             <li>
-            <a href="{% url 'login' %}?next={% url 'main:admin_index' %}">Iniciar sesión</a>
+            <a class="text-white" href="{% url 'login' %}?next={% url 'main:admin_index' %}">Iniciar sesión</a>
             </li>
           {% endif %}
         </ul>

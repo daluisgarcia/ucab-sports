@@ -2,16 +2,6 @@ from django.forms import *
 from django.core.exceptions import ValidationError
 from main.models import *
 
-"""
-#Se deja comentado por si llega a ser necesario
-class DateInput(forms.DateInput):
-    input_type = "date"
-
-    def __init__(self, **kwargs):
-        kwargs["format"] = "%Y-%m-%d"
-        super().__init__(**kwargs)
-"""
-
 
 '''
     POST CREATE FORM
@@ -29,12 +19,12 @@ class PostCreateForm(ModelForm):
     widgets = {
       'titulo': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un título'
+          'placeholder': 'Título'
         }
       ),
       'cuerpo': Textarea(
         attrs = {
-          'placeholder': 'Ingrese el cuerpo del post',
+          'placeholder': 'Cuerpo',
           'rows': 5
         }
       )
@@ -48,22 +38,23 @@ class TournamentCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
     for form in self.visible_fields():
-      # form.field.widget.attrs['class'] = 'form-control'
+      form.field.widget.attrs['class'] = 'form-control'
       form.field.widget.attrs['autocomplete'] = 'off'
+      form.field.widget.attrs['required'] = 'true'
 
   class Meta:
     model = Tournament
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'inscripcion_abierta', 'edicion', 'id_juego']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'edicion', 'tipo_delegado', 'id_juego']
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un nombre'
+          'placeholder': 'Nombre'
         }
       ),
-      'fecha_inicio': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
-      'fecha_fin': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
-      'inscripcion_abierta':  CheckboxInput(),
+      'fecha_inicio': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
+      'fecha_fin': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
       'edicion': NumberInput(),
+      'tipo_delegado': Select(),
       'id_juego': Select()
     }
 
@@ -79,6 +70,27 @@ class TournamentCreateForm(ModelForm):
     if fecha_fin and fecha_inicio:
       if(fecha_fin < fecha_inicio):
           raise forms.ValidationError('La fecha de fin tiene que ser posterior a la fecha de inicio')
+    
+
+'''
+    INITIAL STAGE-TOURNAMENT
+'''
+class InitialStageTournamentForm(ModelForm):
+  def __init__(self, *args, **kwargs):
+    super().__init__( *args, **kwargs)
+    for form in self.visible_fields():
+      form.field.widget.attrs['class'] = 'form-control'
+
+  class Meta:
+    model = StageTournament
+    fields = ['participantes_por_equipo']
+    widgets = {
+      'participantes_por_equipo': NumberInput(
+        attrs = {
+          'placeholder': 'Participantes por equipo'
+        }
+      )
+    }
 
 
 '''
@@ -92,12 +104,28 @@ class StageTournamentCreateForm(forms.Form):
 
   class Meta:
     model = StageTournament
-    fields = ['id_fase', 'jerarquia']
+    fields = ['id_fase', 'participantes_por_equipo', 'equipos_por_partido', 'num_grupos', 'equipos_por_grupo']
     widgets = {
       'id_fase': Select(),
-      'jerarquia': NumberInput(
+      'participantes_por_equipo': NumberInput(),
+      'participantes_por_equipo': NumberInput(
         attrs = {
-          'placeholder': 'Ingrese la jerarquía'
+          'placeholder': 'número de participantes'
+        }
+      ),
+      'equipos_por_partido': NumberInput(
+        attrs = {
+          'placeholder': 'Número de equipos'
+        }
+      ),
+      'num_grupos': NumberInput(
+        attrs = {
+          'placeholder': 'Número de grupos'
+        }
+      ),
+      'equipos_por_grupo': NumberInput(
+        attrs = {
+          'placeholder': 'Equipos por grupo'
         }
       )
     }
@@ -115,21 +143,19 @@ class StageCreateForm(ModelForm):
 
   class Meta:
     model = Stage
-    fields = ['nombre', 'descripcion', 'part_por_equipo', 'equipos_por_partido']
+    fields = ['nombre', 'descripcion']
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese un título'
+          'placeholder': 'Título'
         }
       ),
       'descripcion': Textarea(
         attrs = {
-          'placeholder': 'Ingrese el cuerpo del post',
+          'placeholder': 'Descripción breve de la fase',
           'rows': 5
         }
       ),
-      'part_por_equipo': NumberInput(),
-      'equipos_por_partido': NumberInput(),
     }
 
 
@@ -139,19 +165,19 @@ class StageCreateForm(ModelForm):
 class GameCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
 
   class Meta:
     model = Game
-    fields = ['nombre']
+    fields = ['nombre', 'esport']
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del juego'
+          'placeholder': 'Nombre',
+          'class': 'form-control',
+          'autocomplete': 'off'
         }
-      )
+      ),
+      'esport': CheckboxInput(),
     }
 
 
@@ -171,7 +197,7 @@ class PreteamCreateForm(ModelForm):
     widgets = {
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del equipo'
+          'placeholder': 'Nombre'
         }
       ),
       'comentario': Textarea(
@@ -198,30 +224,39 @@ class PrePersonCreateForm(ModelForm):
     widgets = {
       'cedula': NumberInput(
         attrs = {
-          'placeholder': 'Ingrese la cédula'
+          'placeholder': 'Cédula'
         }
       ),
       'nombre': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nombre del participante'
+          'placeholder': 'Nombre'
         }
       ),
       'apellido': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el apellido del participante'
+          'placeholder': 'Apellido'
         }
       ),
       'correo': EmailInput(
         attrs = {
-          'placeholder': 'Ingrese el correo del participante',
+          'placeholder': 'Correo',
         }
       ),
       'nickname': TextInput(
         attrs = {
-          'placeholder': 'Ingrese el nickname del participante (opcional)'
+          'placeholder': 'Username (opcional)'
         }
       ),
     }
+
+  #Función para validar fechas de inicio y fin del torneo
+  def clean(self):
+    cleaned_data = super().clean()
+    cedula = cleaned_data.get('cedula')
+
+    if cedula:
+      if int(cedula) < 0:
+        raise forms.ValidationError('Las cédulas tienen que ser números positivos')
 
 
 #REVISAR
@@ -277,10 +312,11 @@ class TeamRegisterCreateForm(ModelForm):
 
   class Meta:
     model = PreTeamRegister
-    fields = ('rol',)
+    fields = ['rol']
     widgets = {
       'rol': Select()
     }
+  
 
 
 '''
@@ -290,11 +326,12 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
     def clean(self):
         #Validaciones para verificar que haya solamente un delegado
         if any(self.errors):
-            return
+            return 
 
         roles = []
         duplicates = False
         duplicate_rol = False
+        hay_delegado = False
 
         for form in self.forms:
             
@@ -303,6 +340,7 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                 print('Rol validator: ', role)
                 # Verificar que no hayan delegados repetidos
                 if (role == 'd') or (role=='jd'):
+                    hay_delegado = True
                     print('delegado')
                     if role in roles:
                         duplicates = True
@@ -313,6 +351,10 @@ class TeamsRegisterFormSet(formsets.BaseFormSet):
                 if duplicates and duplicate_rol == False:
                     form.add_error('rol','Sólo puede existir un delegado por equipo.')
                     duplicate_rol = True
+
+        if(not hay_delegado):
+            form.add_error('rol','Tiene que existir un delegado.')
+
 
 '''
     MATCH CREATE FORM
@@ -328,32 +370,14 @@ class MatchCreateForm(ModelForm):
     model = Match
     fields = ['fecha', 'direccion']
     widgets = {
-      'fecha': DateInput(format=('%m/%d/%Y'), attrs={'type':'date'}),
+      'fecha': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
       'direccion': TextInput(
         attrs = {
-          'placeholder': 'Ingrese la dirección del partido (opcional)'
+          'placeholder': 'Lugar del partido (opcional)'
         }
       ),
     }
 
-
-'''
-    STAGE TOUR MATCH CREATE FORM
-'''
-class StageTourForMatchForm(ModelForm):
-  def __init__(self, *args, **kwargs):
-    super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
-      form.field.widget.attrs['autocomplete'] = 'off'
-
-  class Meta:
-    model = StageTournament
-    fields = ['id_fase', 'id_torneo']
-    widgets = {
-      'id_fase': Select(),
-      'id_torneo': Select(),
-    }
 
 
 '''
@@ -362,17 +386,20 @@ class StageTourForMatchForm(ModelForm):
 class ParticipationCreateForm(ModelForm):
   def __init__(self, *args, **kwargs):
     super().__init__( *args, **kwargs)
-    for form in self.visible_fields():
-      form.field.widget.attrs['class'] = 'form-control'
 
   class Meta:
     model = Participation
-    fields = ['ganador','puntos_equipo']
+    fields = ['ganador','puntos_equipo', 'score']
     widgets = {
       'ganador': CheckboxInput(),
       'puntos_equipo': NumberInput(
         attrs = {
-          'placeholder': 'Puntos que obtuvo el equipo'
+          'placeholder': 'Puntos'
+        }
+      ),
+      'score': NumberInput(
+        attrs = {
+          'placeholder': 'Scores'
         }
       )
     }
@@ -388,8 +415,6 @@ class ParticipationFormSet(formsets.BaseFormSet):
             return
 
         todos_ganadores = True
-        puntos = False
-        un_ganador = False
 
         for form in self.forms:
             
@@ -397,16 +422,10 @@ class ParticipationFormSet(formsets.BaseFormSet):
                 ganador = form.cleaned_data['ganador']
                 puntos_equipo = form.cleaned_data['puntos_equipo']
 
-                if ganador == True:
-                    un_ganador = True
                 if ganador == False:
                     todos_ganadores = False
-                if puntos_equipo:
-                    puntos = True
 
         if (todos_ganadores):
-            form.add_error('ganador','No todos los participantes pueden ser ganadores')
-        if ((puntos == True) and (un_ganador == False)):
-            form.add_error('puntos_equipo','Si va a colocar puntajes tiene que colocar el o los ganadores del partido')
+            form.add_error('ganador','No todos los equipos pueden resultar ganadores.')
 
         

@@ -9,17 +9,24 @@
 
 <div class="card-body">  
   {% if cant_pendientes > 0 %}
+  
+    <!--Mostrar las solicitudes aprobadas hasta el momento-->
+    <p>Inscritos hasta los momentos en cada torneo:</p>
+    {% for ins in inscritos %}
+      <ul>Torneo: {{ ins.nombre_torneo }}, Inscritos: {{ ins.cantidad_inscritos }}</ul>
+    {% endfor %}
+
     <div class="row ">
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Imagen</h6>
     </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
           <h6 class="label label-default">Torneo</h6>
       </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Equipo</h6>
       </div>
-      <div class="col-2 text-center">
+      <div class="col-2 text-center d-none d-md-block">
         <h6 class="label label-default">Comentario</h6>
       </div>
     </div>
@@ -28,36 +35,70 @@
     <ul class="list-group admin_list_group mr-4">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-2 text-center">
-            {% if reg.id_equipo__logo %}
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
             <td>
-              {{ reg.id_equipo__logo }}
-            </td>
+            {% if reg.id_equipo__logo %}
+              <img class="post_images" src={% get_media_prefix %}{{ reg.id_equipo__logo }}>
+              
             {% endif %}
+            </td>
           </div>
-          <div class="col-2 text-center">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
+            <h6 class="d-md-none">Torneo</h6>
             <td>
               {{ reg.id_torneo__nombre }}
             </td>
           </div>
-          <div class="col-2 text-center">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-center mb-3">
+            <h6 class="d-md-none">Equipo</h6>
             <td>
               {{ reg.id_equipo__nombre }}
             </td>
           </div>
-          <div class="col-2 text-left">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
             {% if reg.id_equipo__comentario %}
+            <h6 class="d-md-none">Comentario</h6>
             <td>
               {{ reg.id_equipo__comentario }}
             </td>
             {% endif %}
           </div>
-          <div class="col-4 align-middle">
-            <a class="btn btn-success btn-flat float-right btn-sm admin_buttons" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
-            <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">Anular</a>
-            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons" href="{% url 'main:inscription_detail' reg.id_equipo %}">Integrantes</a>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-3 col-xl-3 align-middle">
+            <a class="btn btn-success btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:approve_inscription' reg.id_equipo reg.id_torneo %}">Aprobar</a>
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#team-{{reg.id_equipo}}">
+            Eliminar
+          </button>
+          <div class="modal fade" id="team-{{reg.id_equipo}}" tabindex="-1" role="dialog" aria-labelledby="delete_modal_inscription_Label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="delete_modal_inscription_Label">¿Estas seguro que quieres rechazar esta solicitud de inscripción?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div>
+                    De ser así, especifica la razón por la que la solicitud está siendo rechazada y esta se enviará por correo a los participantes que solicitaron la inscripción.
+                  </div>
+                  <textarea class="form-control" id="specificacion_rechazo" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                  <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:fail_inscription' reg.id_equipo reg.id_torneo %}">
+                    Sí
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:inscription_detail' reg.id_equipo %}">Integrantes</a>
+          </div>
+        </div> 
       </li>
     </ul>
     {% endfor %}
@@ -65,5 +106,5 @@
     <h5 class="text-center">¡No tienes Solicitudes pendientes por aprobar!</h5>
   {% endif %}
   
-</div>    
+</!->    
 {% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'admin/adminMain.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href={% static "css/styles.css" %}>
+{% endblock %}
+{% block content %} 
+
+<br>
+<h2 class="text-center">Partidos</h2>
+
+  <div class="card-body">
+    <div>
+      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
+        Agregar
+      </a>
+    </div>
+    <br>
+    <div class="container col-12">
+      <div class="row">
+        <div class="col-1 text-left d-none d-md-block">
+            <h6 class="label label-default">Fecha</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Lugar</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+            <h6 class="label label-default">Torneo</h6>
+        </div>
+        <div class="col-2 text-left d-none d-md-block">
+          <h6 class="label label-default">Fase</h6>
+        </div>
+      </div>
+    </div>
+
+    {% for match in match_list %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item col-12">
+        <div class="row">
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">Fecha</h6>
+            <td>
+              {{ match.fecha }}
+            </td>
+          </div>
+          {% if match.direccion %}
+          <div class="w-100 d-block d-sm-none"></div>
+          {% endif %}
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            {% if match.direccion %}
+            <h6 class="d-md-none">Dirección</h6>
+            <td>
+              {{ match.direccion }}
+            </td>
+            {% endif %}
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Torneo</h6>
+            <td>
+              {{ match.id_fase_torneo.id_torneo }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
+            <h6 class="d-md-none">Fase</h6>
+            <td>
+              {{ match.id_fase_torneo.id_fase }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-5 col-xl-5 text-center">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#match-{{ match.id }}">
+              Eliminar
+            </button>
+            <div class="modal fade" id="match-{{ match.id }}" role="dialog" aria-labelledby="delete_modal_match_Label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="delete_modal_match_Label">¿Estás seguro que quieres eliminar este partido?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Esto eliminará el registro de manera permanente.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_match' match.id %}">
+                      Sí
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_match' match.id %}">
+              Modificar
+            </a>
+            <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:match_detail' match.id %}">
+              Detalle
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+  </div>
+
+{% endblock %}

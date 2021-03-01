@@ -1,11 +1,13 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.forms.utils import ErrorList
 from django.views.generic import DetailView
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from smtplib import SMTPDataError
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -16,15 +18,24 @@ from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCrea
 
 #Inscribir a los participantes del torneo
 def createRegisterTeam(request, pk_torneo):
-    #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
-    person_number = StageTournament.objects.get(jerarquia=1, id_torneo=pk_torneo).id_fase.part_por_equipo
-
-    #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
-    if(Tournament.objects.get(id=pk_torneo).tipo_delegado == 'd'):
-        person_number = person_number + 1
 
     #Obtenemos el torneo
-    tournament = Tournament.objects.get(id=pk_torneo)
+    try:
+        tournament = Tournament.objects.get(id=pk_torneo)
+    except Tournament.DoesNotExist:
+        tournament = None
+
+    #Si el torneo fue eliminado o la inscripción fue cerrada, entonces mandar al usuario a la vista de torneos
+    if((not tournament) or (tournament.inscripcion_abierta == False)):
+        messages.error(request, 'El torneo al que ha tratado de acceder ha cerrado su inscripción o ha sido eliminado del sistema')
+        return redirect('/torneos/abiertos/')
+
+    #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
+    person_number = StageTournament.objects.get(jerarquia=0, id_torneo=pk_torneo, id_fase__isnull=True).participantes_por_equipo
+
+    #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
+    if(tournament.tipo_delegado == 'd'):
+        person_number = person_number + 1
 
     #Formset de los participantes
     # Creación del formset, especificando el form y el formset a usar
@@ -36,16 +47,53 @@ def createRegisterTeam(request, pk_torneo):
 
     if request.method == 'POST':
         person_formset = PersonFormSet(request.POST)
-        team_form = PreteamCreateForm(request.POST)
+        team_form = PreteamCreateForm(request.POST, request.FILES)
         team_register_formset = TeamRegisterFormSet(request.POST)
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
-            
+            #validar que los roles ingresados cumplan los estándares para este torneo
+            for role_form in team_register_formset:
+                role = role_form.cleaned_data['rol']
+                print('Role Form: ', role)
+
+                if((tournament.tipo_delegado == 'd' and role == 'jd') or (tournament.tipo_delegado == 'jd' and role == 'd')):
+                    messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
+
+                    context = {
+                        'inscription_fields': zip(person_formset, team_register_formset),
+                        'person_formset': person_formset,
+                        'tipo_delegado': tournament.tipo_delegado,
+                        'team_form': team_form,
+                        'title': 'Inscribe al equipo y a los participantes', 
+                        'botton_title': 'Inscribirse'
+                    }
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
+
+            #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
+            for person_form in person_formset:
+                cedula = person_form.cleaned_data.get('cedula')
+                nombre = person_form.cleaned_data.get('nombre')
+                apellido = person_form.cleaned_data.get('apellido')
+                    
+                if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
+                    messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
+
+                    context = {
+                        'inscription_fields': zip(person_formset, team_register_formset),
+                        'person_formset': person_formset,
+                        'team_register_formset': team_register_formset,
+                        'tipo_delegado': tournament.tipo_delegado,
+                        'team_form': team_form,
+                        'title': 'Inscribe al equipo y a los participantes',
+                        'botton_title': 'Inscribirse'
+                    }
+
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
+
+
             team_form.save()
             #Obtenemos el último registro del equipo
             pk_team = PreTeam.objects.order_by('-id')[0]
-            #Obtenemos el registro del torneo
-            pk_tournament = Tournament.objects.get(id=pk_torneo)
             
             #Guardar la data por cada form del formset
             new_persons = []
@@ -66,46 +114,43 @@ def createRegisterTeam(request, pk_torneo):
                     if (PrePerson.objects.filter(cedula=cedula).count() == 0):
                         new_persons.append(PrePerson(cedula=cedula, nombre=nombre, apellido=apellido, correo=correo, nickname=nickname))
                 
-                    #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
-                    if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
-                        messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
-                        return redirect('/torneos/')
-
             #Con bulk se insertan todos los objetos en el array
             PrePerson.objects.bulk_create(new_persons)
             i=0
-            
+
+            person_email = None
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
-                print('Role Form: ', role)
-
-                #Validar que los roles sean exclusivamente del tipo de delegado
-                if((tournament.tipo_delegado == 'd' and role == 'jd') or(tournament.tipo_delegado == 'jd' and role == 'd')):
-                    
-                    #REVISAR
-                    #Salen el error corto y el de "Ha ocurrido un error"
-                    messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
-                    context = {
-                        'person_formset': person_formset,
-                        'team_form': team_form,
-                        'team_register_formset': team_register_formset,
-                        'title': 'Inscribe al equipo y a los participantes', 
-                        'botton_title': 'Inscribirse'
-                    }
-                    return render(request, 'layouts/inscription/preinscription_form.html', context)
 
                 pk_persona = PrePerson.objects.get(cedula=ci[i])
 
+                if (role == 'd' or role == 'jd'):
+                    person_email = pk_persona.correo
+
                 if role:
-                    new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=pk_tournament))
+                    new_team_register.append(PreTeamRegister(rol=role, id_equipo=pk_team, id_persona=pk_persona,  id_torneo=tournament))
                 i=i+1
 
             PreTeamRegister.objects.bulk_create(new_team_register)
 
-            messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
+            try:
+                send_mail('Nueva solicitud de participacion',
+                          'Tienes una nueva solicitud de participacion para el torneo '+tournament.nombre,
+                          tournament.owner.email,
+                          [tournament.owner.email])
 
+                send_mail('Solicitud de participacion enviada',
+                          'Tu solicitud de participacion fue enviada correctamente, estate atento a este correo por cualquier informacion\n'+
+                          'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                          tournament.owner.email,
+                          [person_email])
+            except SMTPDataError:
+                messages.success(request, 'Tu solicitud fue procesada pero hubo un error en el envio de correos, ponte en contacto con el organizador')
+                return redirect('main:posts')
+
+            messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
             #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
-            return redirect('main:tournaments_public_list')
+            return redirect('main:posts')
         
         else:
             
@@ -121,7 +166,7 @@ def createRegisterTeam(request, pk_torneo):
                     messages.error(request, 'Debe llenar los campos de los datos de los participantes')
                     break
             
-    else:
+    else: 
         #Formset inicial vacío
         person_formset = PersonFormSet(initial=None)
         team_register_formset = TeamRegisterFormSet(initial=None)
@@ -129,18 +174,20 @@ def createRegisterTeam(request, pk_torneo):
         team_form = PreteamCreateForm()
     
     context = {
+        'inscription_fields': zip(person_formset, team_register_formset),
         'person_formset': person_formset,
+        'tipo_delegado': tournament.tipo_delegado,
         'team_form': team_form,
-        'team_register_formset': team_register_formset,
         'title': 'Inscribe al equipo y a los participantes', 
         'botton_title': 'Inscribirse'
-    }
+    } 
 
     return render(request, 'layouts/inscription/preinscription_form.html', context)
 
 
 
 #Aprobar inscripción
+@login_required
 def approveInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister
     preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
@@ -186,9 +233,8 @@ def approveInscription(request, pk_team, pk_tour):
         #Busquemos si este equipo ha participado antes en un torneo de este mismo tipo de juego
         #Nombre del torneo tal del juego tal
         torneo = Tournament.objects.filter(id_juego__nombre=reg.id_torneo.id_juego.nombre)
-        #torneo = Tournament.objects.get(id_juego=Game.objects.get(nombre=nombre))
+
         try:
-            #Revisar query súper yuca
             ant_registro = HistoryParticipation.objects.filter(id_equipo__nombre=reg.id_equipo.nombre, id_torneo__in=torneo)
         except Team.DoesNotExist:
             ant_registro = None
@@ -204,9 +250,17 @@ def approveInscription(request, pk_team, pk_tour):
     
     print(nuevo_registro_equipo)
 
-    #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 1 (jerarquía 1 porque es la primera fase del torneo)
+    #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 0 (jerarquía 0 porque es la fase de inscripcion)
+    try:
+        fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=0)
+    except StageTournament.DoesNotExist:
+        fase_torneo = None
 
-    fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=1)
+    #Si no se encuentra la fase torneo con jerarquía 0, entonces es que se cerró la inscripción, por lo tanto, hay que buscar la fase con jerarquia 1
+    if(not fase_torneo):
+        fase_torneo = StageTournament.objects.get(id_torneo=pk_tour,jerarquia=1)
+    
+
     equipo_clasificado = Classified(id_equipo=nuevo_registro_equipo, id_fase_torneo=fase_torneo)
     equipo_clasificado.save()
     
@@ -223,8 +277,14 @@ def approveInscription(request, pk_team, pk_tour):
 
     #Se verifica si la persona ha solicitado inscripcion en otro torneo, si no es asi Se borran los registros de las tablas PrePerson. Siempre se borran los datos de PreTeamRegister
     i=0
+    email_person = None
+    tournament = None
     for reg in preteamregister:    
         person_delete = PrePerson.objects.get(cedula=ci[i])
+        # Se obtiene el delegado o jugador delegado para el envio de correo
+        if reg.rol == 'd' or reg.rol == 'jd':
+            email_person = reg.id_persona
+        tournament = reg.id_torneo
         #Si tiene solamente una solicitud de inscripcion pendiente, se borra
         if (PreTeamRegister.objects.filter(id_persona=person_delete).count() == 1):
             print('paso')
@@ -232,40 +292,86 @@ def approveInscription(request, pk_team, pk_tour):
         i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
     team_delete.delete()
+    try:
+        send_mail('Participacion aprobada',
+                  'Tu solicitud de participacion al torneo '+tournament.nombre+' fue aprobada por el organizador\n'+
+                  'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                  tournament.owner.email,
+                  [email_person.correo])
+    except SMTPDataError:
+        messages.success(request, 'No se pudo enviar el correo al delegado pero se ha registrado al equipo en el torneo')
+        return redirect('main:inscription_list')
 
     messages.success(request, 'Se ha registrado al equipo en el torneo exitosamente')
-    return redirect('/inscripciones/pendientes/')
+    return redirect('main:inscription_list')
 
 
 #Anular inscripción
+@login_required
 def failInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister
     preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
 
+    email_person = None
+    tournament = None
     #Se borran los registros de las tablas PrePerson y a su vez de PreTeamRegister
     for reg in preteamregister:
         person = PrePerson.objects.get(id=reg.id_persona.id)
+        # Se obtiene el delegado o jugador delegado para el envio de correo
+        if reg.rol == 'd' or reg.rol == 'jd':
+            email_person = reg.id_persona
+        tournament = reg.id_torneo
         #Se borra a la persona unicamente si aparece una sola vez en las solicitudes de inscripcion
         if (PreTeamRegister.objects.filter(id_persona=person).count() == 1):
             person.delete()
 
     team_delete = PreTeam.objects.get(id=pk_team)
+    message = team_delete.comentario
+    team_delete.logo.delete(save=True)
     team_delete.delete()
 
+    try:
+        send_mail('Participacion rechazada',
+                  'Tu solicitud de participacion al torneo '+tournament.nombre+' fue rechazada por el organizador. Motivo: '+str(message)+'\n'+
+                  'Para cualquier duda o problema puedes contactarte con el organizador del torneo a traves del correo: '+tournament.owner.email,
+                  tournament.owner.email,
+                  [email_person.correo])
+    except SMTPDataError:
+        messages.success(request, 'No se pudo enviar el correo al delegado pero se ha anulado la solicitud de inscripción')
+        return redirect('main:inscription_list')
+
     messages.success(request, 'Se ha anulado la solicitud de inscripción')
-    return redirect('/inscripciones/pendientes/')
+    return redirect('main:inscription_list')
 
 
 #Lista de solicitudes de inscripciones
-def preinscriptionList(request):
-    register = PreTeamRegister.objects.values('id_equipo','id_equipo__nombre','id_torneo','id_torneo__nombre','id_equipo__comentario').distinct('id_equipo')
-    cant_pendientes = PreTeamRegister.objects.filter().count()
-    print(register)
-    print(cant_pendientes)
+@login_required
+def preinscriptionList(request): 
+    #Lista de las solicitudes pendientes
+    register = PreTeamRegister.objects.filter(id_torneo__owner=request.user).values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo','id_torneo__nombre','id_equipo__comentario').order_by('id_equipo','id_torneo','fecha_registro').distinct('id_equipo')
+
+    solicitudes_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).distinct('id_equipo')
+
+    #Cantidad de solicitudes aprobadas por torneo
+    torneos = []
+    inscritos = []
+    for solicitudes in solicitudes_pendientes:
+        if not solicitudes.id_torneo in torneos:
+            torneos.append(solicitudes.id_torneo)
+
+    for i in torneos:
+        solicitudes_aprobadas = HistoryParticipation.objects.filter(id_torneo=i).distinct('id_equipo').count()
+        inscritos.append({'nombre_torneo': i.nombre, 'cantidad_inscritos': solicitudes_aprobadas})
+    #print(inscritos)
+
+    #Cantidad de solicitudes pendientes
+    cant_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).count()
+
     context = {
         'register': register,
-        'cant_pendientes': cant_pendientes
-    }
+        'cant_pendientes': cant_pendientes,
+        'inscritos': inscritos
+        }
 
     return render(request, 'admin/inscription/preinscription_list.html', context)
 
@@ -281,26 +387,49 @@ def preinscriptionDetail(request, pk):
     return render(request, 'admin/inscription/preinscription_detail.html', context)
 
 
-#Lista de inscripciones (Lista de equipos)
+#Lista de inscripciones (Lista de usuarios)
+@login_required
 def inscriptionList(request):
-    register = HistoryParticipation.objects.values('id_equipo','id_equipo__nombre','id_equipo__logo','id_torneo__nombre','fecha_registro','fecha_fin').distinct('id_equipo')
-    cant_pendientes = HistoryParticipation.objects.filter().count()
-    print(register)
-    print(cant_pendientes)
+    register = HistoryParticipation.objects.order_by('id_persona', 'id_torneo','fecha_registro').distinct('id_persona')
+
     context = {
-        'register': register,
-        'cant_pendientes': cant_pendientes
+        'register': register
     }
 
     return render(request, 'admin/inscription/inscription_list.html', context)
 
 
-#Detalle de inscripcion (detalle de equipo)
+#Detalle de inscripcion (detalle del usuario)
+@login_required
 def inscriptionDetail(request, pk):
-    persons = HistoryParticipation.objects.filter(id_equipo=pk)
+    person = Person.objects.get(id=pk)
+    teams = HistoryParticipation.objects.filter(id_persona=person).order_by('-fecha_registro')
+
+    print(teams)
+
+    for team in teams:
+
+        places = Classified.objects.filter(id_equipo=team.id_equipo, id_fase_torneo__id_torneo=team.id_torneo)
+        print(places)
+
+        max_position = 0
+        last_stage = None
+        #Validate if the team is in stage with hierarchy 0
+        if(places.first().id_fase_torneo.jerarquia != 0):
+            for place in places:
+                if(place.id_fase_torneo.jerarquia > max_position):
+                    max_position = place.id_fase_torneo.jerarquia
+                    last_stage = place.id_fase_torneo.id_fase
+
+        print('Resultado final:')
+        print(max_position)
+        print(last_stage)
+
+        team.last_stage = last_stage
     
     context = {
-        'persons': persons
+        'person': person,
+        'teams': teams
     }
 
     return render(request, 'admin/inscription/inscription_detail.html', context)

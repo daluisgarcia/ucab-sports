@@ -42,8 +42,6 @@ class Team(models.Model):
 class Stage(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
   descripcion = models.CharField(max_length=100, verbose_name='Descripción')
-  part_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
-  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
 
   def __str__(self):
     return self.nombre
@@ -58,6 +56,7 @@ class Stage(models.Model):
 '''
 class Game(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
+  esport = models.BooleanField(default=False)
 
   def __str__(self):
     return self.nombre
@@ -98,7 +97,7 @@ class Tournament(models.Model):
 class Post(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
   cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
-  imagen = models.ImageField(null=True, blank=True)
+  imagen = models.ImageField(upload_to='post_images', null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
 
   def __str__(self):
@@ -133,9 +132,13 @@ class HistoryParticipation(models.Model):
   STAGE TOURNAMENT MODEL
 '''
 class StageTournament(models.Model):
-  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE)
+  id_fase = models.ForeignKey(Stage, on_delete=models.CASCADE, null=True)
   id_torneo = models.ForeignKey(Tournament, on_delete=models.CASCADE)
   jerarquia = models.SmallIntegerField(verbose_name='Jerarquia')
+  participantes_por_equipo = models.SmallIntegerField(verbose_name='Participantes por equipo')
+  equipos_por_partido = models.SmallIntegerField(verbose_name='Equipos por partido')
+  num_grupos = models.SmallIntegerField(verbose_name='Numero de grupos', null=True, blank=True)
+  equipos_por_grupo = models.SmallIntegerField(verbose_name='Equipos por grupo', null=True, blank=True)
 
 
 '''
@@ -162,6 +165,7 @@ class Participation(models.Model):
   id_partido = models.ForeignKey(Match, on_delete=models.CASCADE)
   ganador = models.BooleanField(null=True, blank=True)
   puntos_equipo = models.IntegerField(verbose_name='Puntos del equipo', null=True, blank=True)
+  score = models.IntegerField(verbose_name='Scores', null=True, blank=True)
 
   def __str__(self):
     return 'Puntaje del equipo %s: %s' % (self.id_equipo.nombre,self.puntos_equipo)
@@ -177,6 +181,7 @@ class Participation(models.Model):
 class Classified(models.Model):
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
   id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.CASCADE)
+  grupo = models.CharField(max_length=1, verbose_name='Grupo', null=True)
 
 
 '''
@@ -202,7 +207,7 @@ class PrePerson(models.Model):
 '''
 class PreTeam(models.Model):
   nombre = models.CharField(max_length=30, verbose_name='Nombre')
-  logo = models.ImageField(upload_to='logos/%Y/%m/%d', null=True, blank=True)
+  logo = models.ImageField(upload_to='team_logos', null=True, blank=True)
   comentario = models.CharField(max_length=150, verbose_name='Comentario (opcional)', null=True, blank=True)
   
   def __str__(self):

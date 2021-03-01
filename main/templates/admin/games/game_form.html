@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 <br>
-<h2 class="text-center">{{ title }}</h2>
+<h2 class="text-center mr-3">{{ title }}</h2>
 
 <form method="POST" action="">
 
@@ -31,16 +31,35 @@
       {% endfor %}
     </div>
     {% endif %} 
-    
+    <ul>
+      <li>
+        Si el torneo es de tipo e-Sport, coloque el check.
+      </li>
+    </ul>
+
     {% for field in form.visible_fields %}
       <div class="form-group">
-        <label>{{ field.label }}</label>
-        {{ field }}
+          {% if forloop.counter0 > 0 %}
+          <div class="row">
+            <div class="ml-3">
+              <label>{{ field.label }}</label>
+            </div>
+            <div class="ml-2">
+              {{ field }}
+            </div>
+          </div>
+          {% else %}
+          <label>{{ field.label }}</label>
+            <div class="col col-sm col-md-4">
+              {{ field }}
+            </div>
+          {% endif %}
+        
       </div>
     {% endfor %}
   </div>
-  <div class="card-footer admin_footer">
-    <button type="submit" class="btn btn-primary btn-flat float-right">
+  <div class="card-footer admin_footer col-11">
+    <button type="submit" class="btn btn-primary btn-flat float-right mb-2">
       <i class="fas fa-save"></i> {{ botton_title }}
     </button>
     <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:game_list' %}">

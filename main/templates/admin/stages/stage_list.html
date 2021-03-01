@@ -9,74 +9,50 @@
 <h2 class="text-center">{{ title }}</h2>
 
   <div class="card-body">
-    <!--Validación de errores-->
-    {% csrf_token %} 
-    {% if form.errors %}
-    <div class="alert alert-danger alert-dismissible">
-      <button
-        type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-hidden="true"
-      >
-        ×
-      </button>
-      <h4><i class="icon fa fa-ban"></i> Ha ocurrido un error</h4>
-      {% for field in form %} 
-        {% for error in field.errors %}
-          <li>{{ error }}</li>
-        {% endfor %} 
-      {% endfor %}
-    </div>
-    {% endif %} 
-
     <div>
       <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_stage' %}">
         Agregar
       </a>
     </div>
     <br>
-    <div class="row ml-2">
-      <div class="col-2 text-center">
-          <h6 class="label label-default">Nombre</h6>
+    <div class="container col-12">
+      <div class="row">
+        <div class="col-3 text-left d-none d-md-block">
+            <h6 class="label label-default">Nombre</h6>
+        </div>
+        <div class="col-5 text-left d-none d-md-block">
+          <h6 class="label label-default">Descripcion</h6>
+        </div>
       </div>
-      <div class="col-3 text-center">
-        <h6 class="label label-default">Descripcion</h6>
-      </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Participantes por equipo</h6>
-      </div>
-      <div class="col-2 text-center">
-        <h6 class="label label-default">Equipos por partido</h6>
-      </div>
-      <div class="col-3 text-center"></div>
     </div>
 
     {% for stage in stage_list %}
     <ul class="list-group admin_list_group">
-      <li class="list-group-item">
+      <li class="list-group-item col-12">
         <div class="row">
-          <div class="col-2 text-center">
-            {{ stage.nombre }}
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
+            <h6 class="d-md-none">Nombre</h6>
+            <td>
+              {{ stage.nombre }}
+            </td>
           </div>
-          <div class="col-3 text-center">
-            {{ stage.descripcion }}
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-6 col-xl-6 text-left mb-3">
+            <h6 class="d-md-none">Descripción</h6>
+            <td>
+              {{ stage.descripcion }}
+            </td>
           </div>
-          <div class="col-2 text-center">
-            {{ stage.part_por_equipo }}
-          </div>
-          <div class="col-2 text-center">
-            {{ stage.equipos_por_partido }}
-          </div>
-          <div class="col-3 text-center">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_stage">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-right">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#stage-{{ stage.id }}">
               Eliminar
             </button>
-            <div class="modal fade" id="delete_modal_stage" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal fade" id="stage-{{ stage.id }}" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar esta fase?</h5>
+                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estás seguro que quieres eliminar esta fase?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -85,13 +61,15 @@
                     Esto eliminará el registro de manera permanente.
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Si</button>
+                    <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_stage' stage.id %}">
+                      Sí
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
-            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_stage' stage.id %}">
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_stage' stage.id %}">
               Modificar
             </a>
           </div>
@@ -99,21 +77,6 @@
       </li>
     </ul>
     {% endfor %}
-  </div>
+  </div> 
 
-  <!-- 
-  {% for stage in stage_list %}
-    <br/><strong>{{ stage.nombre }}</strong>
-    <br/>{{ stage.descripcion }}
-    <br/>{{ stage.equipos_por_grupo }}
-    <br/>{{ stage.num_grupos }}
-    <br/>{{ stage.part_por_equipo }}
-    <br/>{{ stage.equipos_por_partido }}
-    <br/>
-    <a href="{% url 'main:stage_detail' stage.id %}">Ver fase</a>
-    <a href="{% url 'main:update_stage' stage.id %}">Modificar</a>
-    <a href="{% url 'main:delete_stage' stage.id %}">Eliminar</a>
-    <br/>
-  {% endfor %}
-    -->
 {% endblock %}

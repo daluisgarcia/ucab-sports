@@ -15,27 +15,44 @@
     </div>
     <br>
     <div class="row ml-2">
-      <div class="col-2 text-left">
+      <div class="col-3 text-left d-none d-md-block">
           <h6 class="label label-default">Nombre</h6>
+      </div>
+      <div class="col-3 text-left d-none d-md-block">
+          <h6 class="label label-default">e-Sport</h6>
       </div>
     </div>
   
     {% for c in object_list %}
-    <ul class="list-group admin_list_group">
+    <ul class="list-group admin_list_group col-11">
       <li class="list-group-item">
         <div class="row">
-          <div class="col-4 text-left">
-            {{ c.nombre }}
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3">
+            <h6 class="d-md-none">Nombre</h6>
+            <td>
+              {{ c.nombre }}
+            </td>
           </div>
-          <div class="offset-4 col-4 text-center">
-            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons" data-toggle="modal" data-target="#delete_modal_game">
+          <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-1">
+            <h6 class="d-md-none">e-Sport</h6>
+            <td>
+              {% if c.esport %}
+                Sí
+              {% else %}
+                No
+              {% endif %}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-6 col-xl-6 text-center">
+            <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#game-{{ c.id }}">
               Eliminar
             </button>
-            <div class="modal fade" id="delete_modal_game" tabindex="-1" role="dialog" aria-labelledby="delete_modal_stage_Label" aria-hidden="true">
+            <div class="modal fade" id="game-{{ c.id }}" role="dialog" aria-labelledby="delete_modal_game_Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="delete_modal_stage_Label">¿Estas seguro que quieres eliminar este juego?</h5>
+                    <h5 class="modal-title" id="delete_modal_game_Label">¿Estás seguro que quieres eliminar este juego?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -44,13 +61,15 @@
                     Esto eliminará el registro de manera permanente.
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Si</button>
+                    <button type="button" class="btn btn-secondary btn-flat float-right btn-sm admin_buttons mb-1" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:delete_game' c.id %}">
+                      Sí
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
-            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons" href="{% url 'main:update_game' c.id %}">
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_game' c.id %}">
               Modificar
             </a>
           </div>

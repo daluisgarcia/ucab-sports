@@ -9,12 +9,16 @@
     color: white;
 }
 
+.list_titles {
+    font-size: medium;
+}
+
 .post_images {
-    height: 100px;
+    width: 100%;
 }
 
 .main_post_images {
-    height: 150px;
+    width: 100%;
 }
 
 .admin_list_group {
@@ -35,3 +39,54 @@
     outline: none;
     box-shadow: none;
 }
+
+.header_img {
+    background-repeat:no-repeat;
+    background-position-y:30%;
+    background-size:100%;
+    height:10rem;
+    width:100%;
+    position:relative;
+    border-style: none;
+    border-color: #E3E1F9;
+}
+
+.general_background {
+    background-color: #F2F2F2;
+}
+
+.form-container{
+    position:absolute;
+    top:20vh;
+    background:#ffffff;
+    padding:30px;
+    border-radius:10px;
+    -webkit-box-shadow:0px 0px 10px 0px #000000;
+    box-shadow:0px 0px 10px 0px #000000;
+    width:100%
+}
+
+.inscription-img {
+    background-image:url("/images/system/cancha.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    height:80rem
+}
+
+.login-img {
+    background-image:url("/images/system/pelota.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+    height:40rem
+}
+
+.vertical_line {
+    border-left: 3px solid black;
+    height: 100%;
+  }
+
+  .bottom_line {
+    border-bottom: 3px solid black;
+    height: 30px;
+    width: 80%
+  }

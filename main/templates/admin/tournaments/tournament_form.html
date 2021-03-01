@@ -13,7 +13,7 @@
     
     <!--Validación de errores-->
     {% csrf_token %} 
-    {% if form.errors %}
+    {% if form.errors %} 
     <div class="alert alert-danger alert-dismissible">
       <button
         type="button"
@@ -31,16 +31,27 @@
           <li>{{ error }}</li>
       {% endfor %}
     {% for field in form.visible_fields %}
-    <div class="form-group">
+      <div class="form-group">
+        <label>{{ field.label }}</label>
+        <div class="col col-sm col-md-5">
+          {{ field }}
+        </div>
+      </div>
+    {% endfor %}
+
+    {% for field in num_p_form %}
+      <div class="form-group">
       <label>{{ field.label }}</label>
-      {{ field }}
-    </div>
+      <div class="col col-sm col-md-4">
+        {{ field }}
+      </div>
+      </div>
     {% endfor %}
   </div>
 
   <div class="card-footer col-11 ml-4 admin_footer">
     <button type="submit" class="btn btn-primary btn-flat float-right">
-      <i class="fas fa-save"></i> Seleccionar fases
+      <i class="fas fa-save"></i> {{ botton_title }}
     </button>
     <a class="btn btn-primary btn-flat float-left admin_buttons" href="{% url 'main:tournament_list' %}">
       Cancelar
