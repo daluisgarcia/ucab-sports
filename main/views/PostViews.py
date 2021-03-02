@@ -23,9 +23,21 @@ class CreatePost(LoginRequiredMixin, CreateView):
         form = PostCreateForm(request.POST, request.FILES)
         self.object = None
         if form.is_valid():
+            #Validar que el tamaño de la imagen subida no exceda de los 10MB
+            try:
+                file_post = form.cleaned_data.get('imagen')
+            except form.cleaned_data.get('imagen').DoesNotExist:
+                file_post = None
+            print(file_post.size)
+            if(file_post):
+                if(file_post.size > 10000000):
+                    messages.error(request, 'El tamaño de la imagen subida no puede exceder de 10 MB')
+                    ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
+                    return render(request, self.template_name, ctx)
             object = form.save(commit=False)
             object.owner = self.request.user
             object.save()
+            messages.success(request, 'El post se ha creado satisfactoriamente')
             return HttpResponseRedirect(self.success_url)
         context = self.get_context_data(**kwargs)
         context['form'] = form
@@ -101,7 +113,19 @@ class UpdatePost(LoginRequiredMixin, UpdateView):
         if not form.is_valid():
             ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
             return render(request, self.template_name, ctx)
+        #Validar que el tamaño de la imagen subida no exceda de los 10MB
+        try:
+            file_post = form.cleaned_data.get('imagen')
+        except form.cleaned_data.get('imagen').DoesNotExist:
+            file_post = None
+
+        if(file_post):
+            if(file_post.size > 10000000):
+                messages.error(request, 'El tamaño de la imagen subida no puede exceder de 10 MB')
+                ctx = {'form': form, 'title': 'Edición del post', 'button_title': 'Editar post'}
+                return render(request, self.template_name, ctx)
         form.save()
+        messages.success(request, 'El post se ha modificado satisfactoriamente')
         self.object = None
         return redirect(self.success_url)
 

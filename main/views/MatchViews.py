@@ -44,21 +44,20 @@ def createMatch(request):
         else:
             messages.error(request, 'No hay equipos clasificados en esta fase')
 
-    else:
-        #Validar que existan al menos 1 torneo y 1 fase en el sistema
-        try:
-            stg = Stage.objects.all()
-        except Stage.DoesNotExist:
-            stg = None
+    #Validar que existan al menos 1 torneo y 1 fase en el sistema
+    try:
+        stg = Stage.objects.all()
+    except Stage.DoesNotExist:
+        stg = None
 
-        try:
-            tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
-        except Tournament.DoesNotExist:
-            tour = None
+    try:
+        tour = Tournament.objects.filter(owner=request.user, inscripcion_abierta=False)
+    except Tournament.DoesNotExist:
+        tour = None
         
-        if((not stg) or (not tour)):
-            messages.error(request, 'Debe existir al menos una fase y un torneo dentro del sistema')
-            return redirect(reverse_lazy('main:match_list'))
+    if((not stg) or (not tour)):
+        messages.error(request, 'Debe existir al menos una fase y un torneo dentro del sistema')
+        return redirect(reverse_lazy('main:match_list'))
 
     context = {
         'stage': stg, 
@@ -437,8 +436,7 @@ class publicMatchListPDF(View):
 
     def get(self, request, pk_torneo):
         stages = StageTournament.objects.filter(id_torneo=pk_torneo)
-        matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase',
-                                                                                     '-fecha')
+        matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase','-fecha')
         participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by(
             'id_partido')
 
