@@ -10,7 +10,7 @@
   <div class="card-body general_background">
     {% for c in object_list %}
     {% if tipo == 'esport' and c.id_juego.esport == True %}
-        <h2 class="text-center">{{ c.nombre }}</h2>
+        <h2 class="text-center mt-2">{{ c.nombre }}</h2>
         <div class="col-8 text-left ml-5 mb-3">
             <div class="row mb-2">
                 <h6 class="label label-default font-weight-bold">Juego:</h6>
@@ -96,7 +96,9 @@
         <br>
         <br>
         {% endif %}
-        <div class="bottom_line"></div>
+        <div class="col-12">
+            <div class="bottom_line"></div>
+        </div>
     {% endif %}
     {% endfor %}
 </div>
