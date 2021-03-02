@@ -21,6 +21,7 @@ class CreateStage(LoginRequiredMixin, CreateView):
         form = StageCreateForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'La fase se ha creado satisfactoriamente')
             return HttpResponseRedirect(self.success_url)
         self.object = None
         context = self.get_context_data(**kwargs)
@@ -70,6 +71,7 @@ class UpdateStage(LoginRequiredMixin, UpdateView):
             ctx = {'form': form, 'title': 'Edición de la fase', 'botton_title': 'Editar fase'}
             return render(request, self.template_name, ctx)
         form.save()
+        messages.success(request, 'La fase se ha modificado satisfactoriamente')
         return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):

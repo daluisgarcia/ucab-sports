@@ -51,6 +51,18 @@ def createRegisterTeam(request, pk_torneo):
         team_register_formset = TeamRegisterFormSet(request.POST)
 
         if person_formset.is_valid() and team_form.is_valid() and team_register_formset.is_valid():
+
+            #Definimos context que se retornará si el formulario no cumple todas las validaciones
+            context = {
+                'inscription_fields': zip(person_formset, team_register_formset),
+                'person_formset': person_formset,
+                'team_register_formset': team_register_formset,
+                'tipo_delegado': tournament.tipo_delegado,
+                'team_form': team_form,
+                'title': 'Inscribe al equipo y a los participantes',
+                'botton_title': 'Inscribirse'
+            }
+
             #validar que los roles ingresados cumplan los estándares para este torneo
             for role_form in team_register_formset:
                 role = role_form.cleaned_data['rol']
@@ -58,15 +70,6 @@ def createRegisterTeam(request, pk_torneo):
 
                 if((tournament.tipo_delegado == 'd' and role == 'jd') or (tournament.tipo_delegado == 'jd' and role == 'd')):
                     messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
-
-                    context = {
-                        'inscription_fields': zip(person_formset, team_register_formset),
-                        'person_formset': person_formset,
-                        'tipo_delegado': tournament.tipo_delegado,
-                        'team_form': team_form,
-                        'title': 'Inscribe al equipo y a los participantes', 
-                        'botton_title': 'Inscribirse'
-                    }
                     return render(request, 'layouts/inscription/preinscription_form.html', context)
 
             #Verificar que el usuario no trate de inscribirse en el mismo torneo si ya esta inscrito
@@ -77,19 +80,18 @@ def createRegisterTeam(request, pk_torneo):
                     
                 if(PreTeamRegister.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo) or HistoryParticipation.objects.filter(id_persona__cedula=cedula, id_torneo=pk_torneo)):
                     messages.error(request, 'El usuario '+ nombre +' '+ apellido +' ya se inscribió con anterioridad al torneo.')
-
-                    context = {
-                        'inscription_fields': zip(person_formset, team_register_formset),
-                        'person_formset': person_formset,
-                        'team_register_formset': team_register_formset,
-                        'tipo_delegado': tournament.tipo_delegado,
-                        'team_form': team_form,
-                        'title': 'Inscribe al equipo y a los participantes',
-                        'botton_title': 'Inscribirse'
-                    }
-
                     return render(request, 'layouts/inscription/preinscription_form.html', context)
-
+            
+            #Validar que el tamaño de la imagen subida no exceda de los 10MB
+            try:
+                file_logo = team_form.cleaned_data.get('logo')
+            except team_form.cleaned_data.get('logo').DoesNotExist:
+                file_logo = None
+            
+            if(file_logo):
+                if(file_logo.size > 10000000):
+                    messages.error(request, 'El tamaño del logo subido no puede exceder de 10 MB')
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
 
             team_form.save()
             #Obtenemos el último registro del equipo
@@ -149,7 +151,6 @@ def createRegisterTeam(request, pk_torneo):
                 return redirect('main:posts')
 
             messages.success(request, 'La solicitud de inscripción al torneo se ha procesado satisfactoriamente')
-            #REVISAR ESTE LINK PARA QUE REDIRECCIONE A LOS TORNEOS DEL PARTICIPANTE
             return redirect('main:posts')
         
         else:
@@ -390,7 +391,7 @@ def preinscriptionDetail(request, pk):
 #Lista de inscripciones (Lista de usuarios)
 @login_required
 def inscriptionList(request):
-    register = HistoryParticipation.objects.order_by('id_persona', 'id_torneo','fecha_registro').distinct('id_persona')
+    register = HistoryParticipation.objects.order_by('id_persona__cedula').distinct('id_persona__cedula')
 
     context = {
         'register': register
