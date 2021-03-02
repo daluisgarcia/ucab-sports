@@ -1,0 +1,29 @@
+{% extends 'layouts/head.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+{% block head %}
+<div class="general_background">
+    <br>
+    <h2 class="text-center">Dirección de Deportes UCAB</h2>
+    <br>
+    <div class="row">
+        <div class="offset-1 col-10">
+            <p class="text-justify">
+                La Dirección de Deportes es una dependencia adscrita al Decanato de Servicios Estudiantiles, encargada de planificar, organizar y ejecutar los planes deportivos de competencia, la actividad física de recreación y los programas deportivos-recreativos con las comunidades que atiende la universidad.
+            </p>
+            <h4 class="text-left">Misión</h4>
+            <p class="text-justify">
+                Desarrollar un modelo de gestión deportiva que favorezca el crecimiento y un mejor rendimiento bajo un esquema de trabajo sustentable, permitiendo una mejora gradual de la infraestructura y los servicios deportivos. Todo ello orientado a la consolidación de una formación verdaderamente integral, que redunde en la mejora de la salud y el bienestar de la comunidad ucabista.
+            </p>
+            <h4 class="text-left">Visión</h4>
+            <p class="text-justify">
+                Contribuir activamente a la formación integral de la comunidad universitaria.
+                Proyección del deporte y del arraigo ucabista fuera de la universidad.
+                Inserción del deporte como política de la universidad.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
