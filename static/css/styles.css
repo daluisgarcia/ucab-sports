@@ -26,8 +26,8 @@
 }
 
 .admin_footer {
-    background-color: white; 
-    border-top: white;
+    background-color: #F2F2F2; 
+    border-top: #F2F2F2;
 }
 
 .select_element {
@@ -48,7 +48,7 @@
     width:100%;
     position:relative;
     border-style: none;
-    border-color: #E3E1F9;
+    border-color: #F2F2F2;
 }
 
 .general_background {
@@ -58,7 +58,7 @@
 .form-container{
     position:absolute;
     top:20vh;
-    background:#ffffff;
+    background:#F2F2F2;
     padding:30px;
     border-radius:10px;
     -webkit-box-shadow:0px 0px 10px 0px #000000;
@@ -93,6 +93,10 @@
 
 body {
       min-height: 100vh;
+}
+
+.navbar_color {
+    background-color: #00aac4;
 }
 
 /* 

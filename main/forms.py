@@ -140,7 +140,7 @@ class GameCreateForm(ModelForm):
         }
       ),
       'esport': CheckboxInput(),
-    }
+    } 
 
 
 '''
