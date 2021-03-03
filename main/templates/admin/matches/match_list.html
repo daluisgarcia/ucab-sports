@@ -10,7 +10,11 @@
 
   <div class="card-body">
     <div>
+      {% if specific %}
+      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}">
+      {% else %}
       <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
+      {% endif %}
         Agregar
       </a>
     </div>

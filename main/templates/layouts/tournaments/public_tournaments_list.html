@@ -50,13 +50,17 @@
         <br>
         <br>
         {% endif %}
-        <div class="bottom_line"></div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="bottom_line"></div>
+            </div>
+        </div>
     {% endif %}
     {% endfor %}
 
     {% for c in object_list %}
     {% if tipo == 'varios' and c.id_juego.esport == False %}
-        <h2 class="text-center">{{ c.nombre }}</h2>
+        <h2 class="text-center mt-2">{{ c.nombre }}</h2>
         <div class="col-8 text-left ml-5 mb-3">
             <div class="row mb-2">
                 <h6 class="label label-default font-weight-bold">Juego:</h6>
@@ -96,8 +100,10 @@
         <br>
         <br>
         {% endif %}
-        <div class="col-12">
-            <div class="bottom_line"></div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="bottom_line"></div>
+            </div>
         </div>
     {% endif %}
     {% endfor %}

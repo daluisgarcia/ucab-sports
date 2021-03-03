@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 from main.models import Post, Tournament, Stage, Game, Stage, StageTournament, Classified, Match, Participation
-from main.forms import TournamentCreateForm, StageTournamentCreateForm, InitialStageTournamentForm
+from main.forms import TournamentCreateForm, InitialStageTournamentForm
 
 
 #Función que devuelve en un array la tabla de clasificatorias
@@ -253,7 +253,6 @@ class PublicTournamentList(ListView):
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
     def get(self, request, tipo):
-        print(tipo)
         self.object_list = self.model.objects.order_by('-inscripcion_abierta')
         context = self.get_context_data()
         context['tipo'] = tipo
@@ -310,7 +309,6 @@ def tournamentInfo(request, pk):
             fase_clasificados = None
             fase_torneo = None
 
-        print(fase_torneo)
         #Verificar que exista una siguiente fase
         if(not fase_torneo):
             next_stage = None
@@ -319,8 +317,7 @@ def tournamentInfo(request, pk):
                 next_stage = StageTournament.objects.get(id_torneo=tournament, jerarquia=fase_torneo[0].jerarquia + 1)
             except StageTournament.DoesNotExist:
                 next_stage = None
-        
-        print(next_stage)
+
 
         context = {
             'tournament': tournament, 
@@ -437,7 +434,6 @@ class UpdateStageTournament(LoginRequiredMixin, View):
                     data_number = keys[0][-3:-2]
 
                 data_number = data_number+'NN'
-                print(data_number)
                 data = self.splitDictionay(items, data_number)
                 keys = list(items.keys())
 
@@ -451,6 +447,7 @@ class UpdateStageTournament(LoginRequiredMixin, View):
                     jerarquia=hierarchy
                 )
                 stageT.save()
+
 
                 continue
 
@@ -487,10 +484,8 @@ class DeleteTournament(LoginRequiredMixin, DeleteView):
 
 @login_required
 def deleteTournament(request, pk):
-    print(pk)
     tournament = Tournament.objects.get(id=pk)
     tournament.delete()
-    print('Torneo eliminado')
     return redirect(reverse_lazy('main:tournament_list'))
 
 
@@ -502,7 +497,6 @@ def clasificatorias(request, pk_torneo, pk_fase):
 
     #Siguiente fase
     next_stage = StageTournament.objects.get(id_torneo=pk_torneo, jerarquia=stage_tour.jerarquia + 1)
-    print(next_stage)
     
     datos_tabla = {
         'equipo': None,
@@ -529,7 +523,6 @@ def clasificatorias(request, pk_torneo, pk_fase):
             i = i + 1
             team = request.POST.get(num_equipo, None)
             if(team):
-                print(equipo['equipo'])
 
                 nuevo_clasificado = Classified(
                     id_equipo = equipo['equipo'].id_equipo,
