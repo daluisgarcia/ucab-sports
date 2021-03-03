@@ -83,10 +83,14 @@
 .vertical_line {
     border-left: 3px solid black;
     height: 100%;
-  }
+}
 
-  .bottom_line {
+.bottom_line {
     border-bottom: 3px solid black;
     height: 30px;
     width: 80%
-  }
+}
+
+body {
+      min-height: 100vh;
+}

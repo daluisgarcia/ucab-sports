@@ -4,10 +4,10 @@
 <link rel="stylesheet" href={% static "css/styles.css" %}>
 {% endblock %}
 {% block head %}
-<div class="general_background">
+<div>
   <img class="header_img" style="background-image: url(/images/system/futbol_mesa.jpg)">
 </div>
-<div class="card-body general_background">
+<div class="card-body">
   {% for c in object_list %}
       <h2 class="text-center">{{ c.titulo }}</h2> 
       <br>
