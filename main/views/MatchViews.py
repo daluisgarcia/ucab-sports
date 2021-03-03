@@ -397,6 +397,7 @@ class MatchListSpecific(LoginRequiredMixin, View):
             return redirect('main:tournament_detail',  pk=pkt)
 
         context = {
+            'specific': {'pkt': pkt,'pks': pks},
             'match_list': matches
         }
         return render(request, self.template, context)
