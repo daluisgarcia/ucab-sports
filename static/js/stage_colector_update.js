@@ -30,7 +30,10 @@ $(document).ready(function(){
         label.classList.add('d-md-none');
         label.innerText = 'Fase';
         divIn.append(label);
-        selector.appendTo(divIn);
+        let span = document.createElement('span');
+        span.classList.add('stage_select');
+        selector.appendTo(span);
+        divIn.append(span);
         div.append(divIn);
 
         divIn = document.createElement('div');  // Separation block
@@ -145,5 +148,29 @@ $(document).ready(function(){
         }else {
             alert('No puedes borrar todas las fases');
         }
+    });
+
+    $("#form").submit(function (e) {
+        let stagesAdded = [];
+
+        let stages = $(".stage_select").get();
+        let promise = new Promise((resolve, reject) => {
+            stages.forEach(function (stage){
+                let num = stage.children[0].value;
+                if (!stagesAdded.includes(num)) {
+                    stagesAdded.push(num);
+                } else {
+                    reject();
+                }
+            });
+            resolve();
+        });
+
+        promise.then(value => {
+            return true;
+        }).catch(err => {
+            e.preventDefault();
+            alert('No se pueden agregar dos veces la misma fase al torneo');
+        });
     });
 });

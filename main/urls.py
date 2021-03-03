@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from main.views import *
-from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, InscriptionViews, MatchViews
+from .views import IndexViews, PostViews,TournamentViews, GameViews, StageViews, InscriptionViews, MatchViews, AboutUsView
 
 
 app_name='main'
@@ -88,6 +88,9 @@ urlpatterns = [
     path('partido/<int:pk>/', MatchViews.matchInfo, name='match_detail'),
     path('partido/edit/<int:pk>', MatchViews.updateMatch, name='update_match'),
     path('partido/delete/<int:pk>/', MatchViews.deleteMatch, name='delete_match'),
+
+    #about us
+    path('about/', AboutUsView.AboutUsView.as_view(), name='about_us')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
