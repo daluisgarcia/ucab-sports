@@ -162,9 +162,15 @@ def createTeams(request, pk_torneo, pk_fase):
                 teams.append(equipo)
                 i = i + 1    
 
+            #Obtener hora ingresada
+            hora = request.POST.get('match-time', None)
+            if not hora:
+                hora = '00:00'
+            fecha_completa = match_form['fecha'].value() + ' ' + hora
+
             #team object
             match = Match(
-                fecha=match_form['fecha'].value(), 
+                fecha=fecha_completa, 
                 direccion=match_form['direccion'].value(), id_fase_torneo=fase_torneo
             )
             #save match
@@ -326,7 +332,16 @@ def updateMatch(request, pk):
                         }
 
                         return render(request, 'admin/matches/teams_match.html', context)
-                        
+
+            
+            #Obtener hora ingresada
+            hora = request.POST.get('match-time', None)
+            if not hora:
+                hora = '00:00'
+            fecha_completa = match_form['fecha'].value() + ' ' + hora
+
+            match_form.fecha = fecha_completa
+
             match_form.save()
             # Se actualizan los registros de participacion
             for part in to_update:
@@ -338,6 +353,13 @@ def updateMatch(request, pk):
          
     else:
         match_form = MatchCreateForm(instance=match)
+        
+        #fecha = match_form['fecha'].value()
+        #print(fecha[0:10])
+
+        #match_array = {}
+        #match_array['fecha'] = fecha[0:10]
+        
 
         part_array = {}
         part_array['form-INITIAL_FORMS'] = str(0)

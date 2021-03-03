@@ -73,11 +73,11 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         #Partidos ganados
         datos_tabla['partidos_ganados'] = partidos_ganados
 
-        #Partidos perdidos
-        datos_tabla['partidos_perdidos'] = partidos_perdidos
-
         #Partidos empatados
         datos_tabla['partidos_empatados'] = partidos_empatados
+
+        #Partidos perdidos
+        datos_tabla['partidos_perdidos'] = partidos_perdidos
 
         #Puntos totales
         datos_tabla['puntos_totales'] = puntos_totales

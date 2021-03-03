@@ -44,14 +44,24 @@
             {% endif %}
         {% endif %}
         
-        {% for field in match_form.visible_fields %}
         <div class="form-group"> 
-            <label class="ml-3 mr-3">{{ field.label }}</label>
+            <label class="ml-3 mr-3">Fecha</label>
             <div class="ml-3 mr-3 col col-sm col-md-4 col-lg-4">
-                {{ field }}
+                {{ match_form.fecha }}
             </div>
         </div>
-        {% endfor %}
+        <div class="form-group"> 
+            <label class="ml-3 mr-3">Hora</label>
+            <div class="ml-3 mr-3 col col-sm col-md-4 col-lg-4">
+                <input class="form-control" id="match-time" name="match-time" type="time">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="ml-3 mr-3">Dirección</label>
+            <div class="ml-3 mr-3 col col-sm col-md-4 col-lg-4">
+                {{ match_form.direccion }}
+            </div>
+        </div>
 
         <!--Lista de clasificados-->
         {% if grupos %}
@@ -130,6 +140,4 @@
   
 </form>
   
-      
-
 {% endblock %}
