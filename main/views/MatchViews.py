@@ -240,7 +240,24 @@ def updateMatch(request, pk):
 
         if match_form.is_valid() and participacion_formset.is_valid():
 
+            #Obtener hora ingresada
+            hora = request.POST.get('match-time', None)
+            if not hora:
+                hora = '00:00'
+            fecha_completa = match_form['fecha'].value() + ' ' + hora
+
             to_update = []
+
+            context = {
+                'equipos': clasificados,
+                'match_form': match_form,
+                'participacion_formset': participacion_formset,
+                'grupos': groups,
+                'update': True,
+                'get_request': False,
+                'hora': hora
+            }
+
             #Validar que, si la fase es por grupos, los equipos seleccionados sean del mismo grupo
             if groups:
                 #variables necesarias para manejar la lógica de las validaciones
@@ -281,15 +298,6 @@ def updateMatch(request, pk):
                             part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
-                        context = {
-                            'equipos': clasificados,
-                            'match_form': match_form,
-                            'participacion_formset': participacion_formset,
-                            'grupos': groups,
-                            'update': True,
-                            'get_request': False
-                        }
-
                         return render(request, 'admin/matches/teams_match.html', context)
             else:
                 # No existen grupos
@@ -322,27 +330,24 @@ def updateMatch(request, pk):
                             part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
-                        context = {
-                            'equipos': clasificados,
-                            'match_form': match_form,
-                            'participacion_formset': participacion_formset,
-                            'grupos': groups,
-                            'update': True,
-                            'get_request': False
-                        }
-
                         return render(request, 'admin/matches/teams_match.html', context)
 
-            
-            #Obtener hora ingresada
-            hora = request.POST.get('match-time', None)
-            if not hora:
-                hora = '00:00'
-            fecha_completa = match_form['fecha'].value() + ' ' + hora
-
-            match_form.fecha = fecha_completa
+            #Se arma el partido que se va a guardar match_form
+            for m in match_form:
+                m.fecha = fecha_completa
+                print(m.fecha)
 
             match_form.save()
+
+            #match_form['fecha'] = fecha_completa
+            match_form.save()
+
+            #partido = Match(
+            #    fecha=fecha_completa, 
+            #    direccion=match_form['direccion'].value()
+            #)
+            #partido.save()
+
             # Se actualizan los registros de participacion
             for part in to_update:
                 part.save()
@@ -354,12 +359,16 @@ def updateMatch(request, pk):
     else:
         match_form = MatchCreateForm(instance=match)
         
-        #fecha = match_form['fecha'].value()
-        #print(fecha[0:10])
+        fecha = match_form['fecha'].value()
+        fecha = str(fecha)
+        print(fecha[0:10])
+        print(fecha[11:16])
 
-        #match_array = {}
-        #match_array['fecha'] = fecha[0:10]
-        
+        partido = Match(fecha=fecha[0:10], direccion=match_form['direccion'].value())
+
+        match_form = MatchCreateForm(instance=partido)
+
+        hora = fecha[11:16]
 
         part_array = {}
         part_array['form-INITIAL_FORMS'] = str(0)
@@ -386,7 +395,8 @@ def updateMatch(request, pk):
         'participacion_formset': participacion_formset,
         'grupos': groups,
         'update': True,
-        'get_request': True
+        'get_request': True,
+        'hora': hora
     }
 
     return render(request, 'admin/matches/teams_match.html', context)
