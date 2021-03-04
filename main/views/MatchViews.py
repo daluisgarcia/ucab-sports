@@ -333,21 +333,8 @@ def updateMatch(request, pk):
                         return render(request, 'admin/matches/teams_match.html', context)
 
             #Se arma el partido que se va a guardar match_form
-            for m in match_form:
-                m.fecha = fecha_completa
-                print(m.fecha)
-
-            match_form.save()
-
-            #match_form['fecha'] = fecha_completa
-            match_form.save()
-
-            #partido = Match(
-            #    fecha=fecha_completa, 
-            #    direccion=match_form['direccion'].value()
-            #)
-            #partido.save()
-
+            Match.objects.filter(id=pk).update(fecha=fecha_completa, direccion=match_form['direccion'].value())
+            
             # Se actualizan los registros de participacion
             for part in to_update:
                 part.save()
