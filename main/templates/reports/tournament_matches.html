@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reporte de partidos para torneo</title>
+    <title>Fixtue de torneo</title>
     <style>
         table {
             border-style: ridge;
@@ -23,7 +23,7 @@
 <body>
     <div>
         <center>
-            <h1 style="font-size: 2rem">Partidos para el torneo {{ tournament }}</h1>
+            <h1 style="font-size: 2rem">Fixture torneo: {{ tournament }}</h1>
         </center>
     </div>
     {% if not stage_with_match %}
@@ -37,7 +37,8 @@
                     <th>Fase</th>
                     <th>Equipos a participar</th>
                     <th>Fecha</th>
-                    <th>Dirección</th>
+                    <th>Hora</th>
+                    <th>Cancha</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,6 +76,9 @@
                                 </td>
                                 <td>
                                     {{ match.fecha }}
+                                </td>
+                                <td>
+
                                 </td>
                                 {% if match.direccion %}
                                     <td>

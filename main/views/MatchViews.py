@@ -76,6 +76,10 @@ def createTeams(request, pk_torneo, pk_fase):
     #clasified in this stage
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo")
 
+    if clasificados.first() == None:
+        messages.error(request, 'Debes pasar equipos a esa fase para poder hacer eso.')
+        return redirect('main:tournament_detail', pk_torneo)
+
     if(clasificados.first().grupo):
         groups = True
     else:

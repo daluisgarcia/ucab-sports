@@ -95,7 +95,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
- 
+
     def post(self, request):
         form = TournamentCreateForm(request.POST)
         initial_form = InitialStageTournamentForm(request.POST)
@@ -344,6 +344,12 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
             self.object = None
             ctx = self.get_context_data()
             ctx['form'] = form
+            stage_tournament = StageTournament.objects.filter(
+                id_torneo=tournament,
+                jerarquia=0
+            ).first()
+            if stage_tournament:
+                ctx['num_p_form'] = InitialStageTournamentForm(instance=stage_tournament)
             return render(request, self.template_name, ctx)
         return redirect('main:admin_index')
 
@@ -352,10 +358,24 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
         if tournament.owner != request.user:
             return redirect('main:admin_index')
         form = TournamentCreateForm(request.POST, instance=tournament)
-        if not form.is_valid():
-            ctx = {'form': form, 'title': 'Edición del torneo', 'botton_title': 'Editar torneo'}
+        stage_tournament = StageTournament.objects.filter(
+            id_torneo=tournament,
+            jerarquia=0
+        ).first()
+        stage_form = None
+        if stage_tournament:
+            stage_form = InitialStageTournamentForm(request.POST, instance=stage_tournament)
+        if not form.is_valid() or (stage_form and not stage_form.is_valid()):
+            ctx = {
+                'form': form,
+                'title': 'Edición del torneo',
+                'botton_title': 'Editar torneo',
+                'num_p_form': stage_form
+            }
             return render(request, self.template_name, ctx)
         form.save()
+        if stage_form:
+            stage_form.save()
         self.object = None
         
         #Si la inscripción todavía sigue abierta entonces no se pueden modificar las fases del torneo
