@@ -9,7 +9,7 @@
 <h2 class="text-center">Partidos</h2>
 
   <div class="card-body">
-    <div class="row">
+    <div class="row pl-3">
       {% if specific %}
       <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
       {% else %}
@@ -17,6 +17,7 @@
       {% endif %}
         Agregar nuevo partido
       </a>
+      {% if tournaments or stages %}
         <form class="form-inline">
             {% if tournaments %}
             <select class="form-control mr-1" name="tournament">
@@ -30,6 +31,7 @@
                 {% endfor %}
             </select>
             {% endif %}
+            {% if stages %}
             <select class="form-control mr-1" name="stage">
                 <option value="">Seleccione una fase</option>
                 {% for stage in stages %}
@@ -40,8 +42,10 @@
                     {% endif %}
                 {% endfor %}
             </select>
+            {% endif %}
             <button class="btn btn-primary">Buscar</button>
         </form>
+      {% endif %}
     </div>
     <br>
 
@@ -139,5 +143,35 @@
     </ul>
     {% endfor %}
   </div>
+
+  {% if match_list %}
+  <div class="row justify-content-center">
+      <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; Primer</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            <li class="page-item">
+                <span class="page-link">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            </li>
+            {% endif %}
+          </ul>
+      </nav>
+  </div>
+  {% endif %}
 
 {% endblock %}
