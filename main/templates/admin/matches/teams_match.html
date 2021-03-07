@@ -142,6 +142,10 @@
             {% endif %}
         </button>
     </div>
+
+    {% if next %}
+        <input name="next" type="hidden" value="{{ next }}">
+    {% endif %}
   
 </form>
   

@@ -79,7 +79,7 @@ urlpatterns = [
     path('participante/<int:pk>/', InscriptionViews.inscriptionDetail, name='person_detail'),
 
     #Match
-    path('partidos/', MatchViews.matchList, name='match_list'),
+    path('partidos/', MatchViews.MatchList.as_view(), name='match_list'),
     #Primero mostramos la lista de torneos y la lista de fases de cada torneo
     path('partido/fases/', MatchViews.createMatch, name='create_match'),
     #Form del partido

@@ -9,32 +9,62 @@
 <h2 class="text-center">Partidos</h2>
 
   <div class="card-body">
-    <div>
+    <div class="row">
       {% if specific %}
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}">
+      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
       {% else %}
       <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
       {% endif %}
-        Agregar
+        Agregar nuevo partido
       </a>
+        <form class="form-inline">
+            {% if tournaments %}
+            <select class="form-control mr-1" name="tournament">
+                <option value="">Seleccione un torneo</option>
+                {% for tournament in tournaments %}
+                    {% if request.GET.tournament == tournament.id %}
+                        <option value="{{ tournament.id }}" selected>{{ tournament.nombre }}</option>
+                    {% else %}
+                        <option value="{{ tournament.id }}">{{ tournament.nombre }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
+            <select class="form-control mr-1" name="stage">
+                <option value="">Seleccione una fase</option>
+                {% for stage in stages %}
+                    {% if request.GET.stage == stage.id %}
+                        <option value="{{ stage.id }}" selected>{{ stage.nombre }}</option>
+                    {% else %}
+                        <option value="{{ stage.id }}">{{ stage.nombre }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary">Buscar</button>
+        </form>
     </div>
     <br>
-    <div class="container col-12">
-      <div class="row">
-        <div class="col-2 text-left d-none d-md-block">
-            <h6 class="label label-default">Fecha</h6>
+
+    {% if match_list %}
+       <div class="container col-12">
+          <div class="row">
+            <div class="col-2 text-left d-none d-md-block">
+                <h6 class="label label-default">Fecha</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default">Lugar</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+                <h6 class="label label-default">Torneo</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default">Fase</h6>
+            </div>
+          </div>
         </div>
-        <div class="col-2 text-left d-none d-md-block">
-          <h6 class="label label-default">Lugar</h6>
-        </div>
-        <div class="col-2 text-left d-none d-md-block">
-            <h6 class="label label-default">Torneo</h6>
-        </div>
-        <div class="col-2 text-left d-none d-md-block">
-          <h6 class="label label-default">Fase</h6>
-        </div>
-      </div>
-    </div>
+    {% else %}
+         <h3>No existen registros de partidos</h3>
+    {% endif %}
 
     {% for match in match_list %}
     <ul class="list-group admin_list_group">
