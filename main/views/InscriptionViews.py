@@ -4,10 +4,12 @@ from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
 from django.forms.utils import ErrorList
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from smtplib import SMTPDataError
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -28,18 +30,19 @@ def createRegisterTeam(request, pk_torneo):
     #Si el torneo fue eliminado o la inscripción fue cerrada, entonces mandar al usuario a la vista de torneos
     if((not tournament) or (tournament.inscripcion_abierta == False)):
         messages.error(request, 'El torneo al que ha tratado de acceder ha cerrado su inscripción o ha sido eliminado del sistema')
-        return redirect('/torneos/abiertos/')
+        return redirect('main:posts')
 
     #Verificamos cuántas personas debe conformar el equipo, esto se hace viendo la fase del torneo que tenga jerarquía = 1
     person_number = StageTournament.objects.get(jerarquia=0, id_torneo=pk_torneo, id_fase__isnull=True).participantes_por_equipo
 
     #Verificamos si este tipo de torneo es del tipo_delegado = 'd'. Si es así, entonces se agrega una fila más al person_number
     if(tournament.tipo_delegado == 'd'):
-        person_number = person_number + 1
-
+        PersonFormSet = formset_factory(PrePersonCreateForm, formset=PersonsFormSet, extra=2)
+    else:
+        PersonFormSet = formset_factory(PrePersonCreateForm, formset=PersonsFormSet, extra=1)
     #Formset de los participantes
     # Creación del formset, especificando el form y el formset a usar
-    PersonFormSet = formset_factory(PrePersonCreateForm, formset=PersonsFormSet, extra=person_number)
+
 
     #Formset de los roles de los participantes
     # Creación del formset, especificando el form y el formset a usar
@@ -60,7 +63,8 @@ def createRegisterTeam(request, pk_torneo):
                 'tipo_delegado': tournament.tipo_delegado,
                 'team_form': team_form,
                 'title': 'Inscribe al equipo y a los participantes',
-                'botton_title': 'Inscribirse'
+                'botton_title': 'Inscribirse',
+                'person_number': person_number,
             }
 
             #validar que los roles ingresados cumplan los estándares para este torneo
@@ -180,7 +184,8 @@ def createRegisterTeam(request, pk_torneo):
         'tipo_delegado': tournament.tipo_delegado,
         'team_form': team_form,
         'title': 'Inscribe al equipo y a los participantes', 
-        'botton_title': 'Inscribirse'
+        'botton_title': 'Inscribirse',
+        'person_number': person_number,
     } 
 
     return render(request, 'layouts/inscription/preinscription_form.html', context)
@@ -388,16 +393,37 @@ def preinscriptionDetail(request, pk):
     return render(request, 'admin/inscription/preinscription_detail.html', context)
 
 
-#Lista de inscripciones (Lista de usuarios)
-@login_required
-def inscriptionList(request):
-    register = HistoryParticipation.objects.order_by('id_persona__cedula').distinct('id_persona__cedula')
+class InscriptionList(LoginRequiredMixin, ListView):
+    template_name = 'admin/inscription/inscription_list.html'
+    paginate_by = 10
 
-    context = {
-        'register': register
-    }
+    def get_queryset(self):
+        query = None
 
-    return render(request, 'admin/inscription/inscription_list.html', context)
+        if self.request.GET.get('cedula'):
+            query = Q(id_persona__cedula = self.request.GET['cedula'])
+
+        if self.request.GET.get('name'):
+            if query:
+                query.add(Q(id_persona__nombre__contains = self.request.GET['name']), Q.AND)
+            else:
+                query = Q(id_persona__nombre__contains = self.request.GET['name'])
+
+        if self.request.GET.get('lastname'):
+            if query:
+                query.add(Q(id_persona__apellido__contains = self.request.GET['lastname']), Q.AND)
+            else:
+                query = Q(id_persona__apellido__contains = self.request.GET['lastname'])
+
+        if query:
+            return HistoryParticipation.objects.filter(query).order_by('id_persona__cedula').distinct('id_persona__cedula')
+        else:
+            return HistoryParticipation.objects.order_by('id_persona__cedula').distinct('id_persona__cedula')
+
+    def get_context_data(self):
+        ctx = super(InscriptionList, self).get_context_data()
+
+        return ctx
 
 
 #Detalle de inscripcion (detalle del usuario)

@@ -73,11 +73,11 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         #Partidos ganados
         datos_tabla['partidos_ganados'] = partidos_ganados
 
-        #Partidos perdidos
-        datos_tabla['partidos_perdidos'] = partidos_perdidos
-
         #Partidos empatados
         datos_tabla['partidos_empatados'] = partidos_empatados
+
+        #Partidos perdidos
+        datos_tabla['partidos_perdidos'] = partidos_perdidos
 
         #Puntos totales
         datos_tabla['puntos_totales'] = puntos_totales
@@ -95,7 +95,7 @@ class CreateTournament(LoginRequiredMixin, CreateView):
     model = Tournament
     form_class = TournamentCreateForm
     template_name = 'admin/tournaments/tournament_form.html'
- 
+
     def post(self, request):
         form = TournamentCreateForm(request.POST)
         initial_form = InitialStageTournamentForm(request.POST)
@@ -151,8 +151,6 @@ def teamsTournament(request, pk_torneo, pk_fase):
         'clasified': clasified
     }
     return render(request, 'admin/tournaments/tournament_teams.html', context)
-
-
 
 
 #Asociar las fases al torneo (mediante un método)
@@ -232,16 +230,35 @@ Shows the tournament list to the owner
 class TournamentList(LoginRequiredMixin, ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
+    paginate_by = 5
 
-    def get(self, request):
-        if request.user.is_authenticated:
-            self.object_list = self.model.objects.filter(owner=request.user).order_by('id')
-            context = self.get_context_data()
-            return render(request, self.template_name, context)
+    def get_queryset(self):
+        # Validates some parameters from request to filter if necessary
+        if self.request.GET.get('name') and self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                nombre__contains = self.request.GET['name'],
+                id_juego = self.request.GET['game']
+            ).order_by('id')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        elif not self.request.GET.get('name') and self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                id_juego=self.request.GET['game']
+            ).order_by('id')
+
+        elif self.request.GET.get('name') and not self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                nombre__contains=self.request.GET['name']
+            ).order_by('id')
+
+        return self.model.objects.filter(owner=self.request.user).order_by('id')
+
+    def get_context_data(self):
+        context = super(TournamentList, self).get_context_data()
         context['title'] = 'Torneos'
+        context['games'] = Game.objects.all()
         return context
 
 
@@ -344,6 +361,12 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
             self.object = None
             ctx = self.get_context_data()
             ctx['form'] = form
+            stage_tournament = StageTournament.objects.filter(
+                id_torneo=tournament,
+                jerarquia=0
+            ).first()
+            if stage_tournament:
+                ctx['num_p_form'] = InitialStageTournamentForm(instance=stage_tournament)
             return render(request, self.template_name, ctx)
         return redirect('main:admin_index')
 
@@ -352,10 +375,24 @@ class UpdateTournament(LoginRequiredMixin, UpdateView):
         if tournament.owner != request.user:
             return redirect('main:admin_index')
         form = TournamentCreateForm(request.POST, instance=tournament)
-        if not form.is_valid():
-            ctx = {'form': form, 'title': 'Edición del torneo', 'botton_title': 'Editar torneo'}
+        stage_tournament = StageTournament.objects.filter(
+            id_torneo=tournament,
+            jerarquia=0
+        ).first()
+        stage_form = None
+        if stage_tournament:
+            stage_form = InitialStageTournamentForm(request.POST, instance=stage_tournament)
+        if not form.is_valid() or (stage_form and not stage_form.is_valid()):
+            ctx = {
+                'form': form,
+                'title': 'Edición del torneo',
+                'botton_title': 'Editar torneo',
+                'num_p_form': stage_form
+            }
             return render(request, self.template_name, ctx)
         form.save()
+        if stage_form:
+            stage_form.save()
         self.object = None
         
         #Si la inscripción todavía sigue abierta entonces no se pueden modificar las fases del torneo

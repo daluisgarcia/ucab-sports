@@ -4,10 +4,10 @@
 <link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
 {% endblock %}
 {% block head %}
-<div class="general_background">
+<div>
     <img class="header_img" style="background-image: url(/images/system/esports.jpg)">
 </div>
-<div class="card-body general_background">
+<div class="card-body">
   <a class="btn btn-warning btn-flat float-left btn-sm admin_buttons mb-1" href="{% url 'main:matches_public_list' id_torneo %}">Volver a la vista de partidos</a>
   <br>
   <br>
@@ -28,19 +28,19 @@
           <h6 class="label label-default list_titles">Equipo</h6>
       </div>
       <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PT</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PJ</h6>
       </div>
       <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PG</h6>
       </div>
       <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PE</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
         <h6 class="label label-default list_titles">PP</h6>
       </div>
       <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PE</h6>
+        <h6 class="label label-default list_titles">PTOS</h6>
       </div>
     </div>
   
@@ -53,13 +53,6 @@
             <h6 class="d-md-none">Equipo</h6>
             <td>
               {{ equipo.equipo.id_equipo }} {% if equipo.equipo.grupo %} (grupo {{ equipo.equipo.grupo }}) {% endif %}
-            </td>
-          </div>
-          <div class="w-100 d-block d-sm-none"></div>
-          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
-            <h6 class="d-md-none">PT</h6>
-            <td>
-              {{ equipo.puntos_totales }}
             </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
@@ -78,6 +71,13 @@
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PE</h6>
+            <td>
+              {{ equipo.partidos_empatados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
             <h6 class="d-md-none">PP</h6>
             <td>
               {{ equipo.partidos_perdidos }}
@@ -85,9 +85,9 @@
           </div>
           <div class="w-100 d-block d-sm-none"></div>
           <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
-            <h6 class="d-md-none">PE</h6>
+            <h6 class="d-md-none">PTOS</h6>
             <td>
-              {{ equipo.partidos_empatados }}
+              {{ equipo.puntos_totales }}
             </td>
           </div>
         </div>

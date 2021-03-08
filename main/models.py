@@ -76,8 +76,8 @@ class Tournament(models.Model):
   inscripcion_abierta = models.BooleanField(default=True)
   edicion = models.SmallIntegerField(verbose_name='Edición')
   DELEGADO = (
-    ('d','delegado'),
-    ('jd','delegado y jugador')
+    ('d','Delegado'),
+    ('jd','Delegado y Jugador')
   )
   tipo_delegado = models.CharField(max_length=2, choices=DELEGADO, verbose_name='Tipo de delegado', default='d')
   id_juego = models.ForeignKey(Game, verbose_name='Tipo de juego', on_delete=models.SET_NULL, null=True, blank=True)
@@ -113,9 +113,9 @@ class Post(models.Model):
 '''
 class HistoryParticipation(models.Model):
   ROLES = (
-    ('j','jugador'),
-    ('d','delegado'),
-    ('jd','delegado y jugador')
+    ('j','Jugador'),
+    ('d','Delegado'),
+    ('jd','Delegado y Jugador')
   )
   id_persona = models.ForeignKey(Person, on_delete=models.CASCADE)
   id_equipo = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -145,7 +145,7 @@ class StageTournament(models.Model):
   MATCH MODEL
 '''
 class Match(models.Model):
-  fecha = models.DateField(verbose_name='Fecha del partido')
+  fecha = models.DateTimeField(verbose_name='Fecha del partido')
   direccion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Dirección')
   id_fase_torneo = models.ForeignKey(StageTournament, on_delete=models.SET_NULL, null=True, blank=True)
 

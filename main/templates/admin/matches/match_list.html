@@ -9,38 +9,72 @@
 <h2 class="text-center">Partidos</h2>
 
   <div class="card-body">
-    <div>
+    <div class="row pl-3">
       {% if specific %}
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}">
+      <a class="btn btn-success btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
       {% else %}
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
+      <a class="btn btn-success btn-flat admin_buttons" href="{% url 'main:create_match' %}">
       {% endif %}
-        Agregar
+        Agregar nuevo partido
       </a>
+      {% if tournaments or stages %}
+        <form class="form-inline">
+            {% if tournaments %}
+            <select class="form-control mr-1" name="tournament">
+                <option value="">Seleccione un torneo</option>
+                {% for tournament in tournaments %}
+                    {% if request.GET.tournament == tournament.id %}
+                        <option value="{{ tournament.id }}" selected>{{ tournament.nombre }}</option>
+                    {% else %}
+                        <option value="{{ tournament.id }}">{{ tournament.nombre }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
+            {% if stages %}
+            <select class="form-control mr-1" name="stage">
+                <option value="">Seleccione una fase</option>
+                {% for stage in stages %}
+                    {% if request.GET.stage == stage.id %}
+                        <option value="{{ stage.id }}" selected>{{ stage.nombre }}</option>
+                    {% else %}
+                        <option value="{{ stage.id }}">{{ stage.nombre }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
+            <button class="btn btn-primary">Buscar</button>
+        </form>
+      {% endif %}
     </div>
     <br>
-    <div class="container col-12">
-      <div class="row">
-        <div class="col-1 text-left d-none d-md-block">
-            <h6 class="label label-default">Fecha</h6>
+
+    {% if match_list %}
+       <div class="container col-12">
+          <div class="row">
+            <div class="col-2 text-left d-none d-md-block">
+                <h6 class="label label-default">Fecha</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default">Lugar</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+                <h6 class="label label-default">Torneo</h6>
+            </div>
+            <div class="col-2 text-left d-none d-md-block">
+              <h6 class="label label-default">Fase</h6>
+            </div>
+          </div>
         </div>
-        <div class="col-2 text-left d-none d-md-block">
-          <h6 class="label label-default">Lugar</h6>
-        </div>
-        <div class="col-2 text-left d-none d-md-block">
-            <h6 class="label label-default">Torneo</h6>
-        </div>
-        <div class="col-2 text-left d-none d-md-block">
-          <h6 class="label label-default">Fase</h6>
-        </div>
-      </div>
-    </div>
+    {% else %}
+         <h3>No existen registros de partidos</h3>
+    {% endif %}
 
     {% for match in match_list %}
     <ul class="list-group admin_list_group">
       <li class="list-group-item col-12">
         <div class="row">
-          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+          <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
             <h6 class="d-md-none">Fecha</h6>
             <td>
               {{ match.fecha }}
@@ -72,7 +106,7 @@
             </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
-          <div class="col col-sm col-md col-lg-5 col-xl-5 text-center">
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-center">
             <button type="button" class="btn btn-danger btn-flat float-right btn-sm admin_buttons mb-1" data-toggle="modal" data-target="#match-{{ match.id }}">
               Eliminar
             </button>
@@ -97,7 +131,11 @@
                 </div>
               </div>
             </div>
+            {% if specific %}
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_match' match.id %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
+            {% else %}
             <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_match' match.id %}">
+            {% endif %}
               Modificar
             </a>
             <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:match_detail' match.id %}">
@@ -109,5 +147,35 @@
     </ul>
     {% endfor %}
   </div>
+
+  {% if match_list %}
+  <div class="row justify-content-center">
+      <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">&laquo; Primer</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Anterior</a>
+            </li>
+            {% endif %}
+            <li class="page-item">
+                <span class="page-link">
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.tournament %}&tournament={{request.GET.tournament}}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Siguiente</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Último &raquo;</a>
+            </li>
+            {% endif %}
+          </ul>
+      </nav>
+  </div>
+  {% endif %}
 
 {% endblock %}
