@@ -4,10 +4,12 @@ from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from django.contrib import messages
 from django.forms.utils import ErrorList
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from smtplib import SMTPDataError
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from main.models import PreTeamRegister, PreTeam, PrePerson, StageTournament, Tournament, Person, Team, HistoryParticipation, Game, Classified
 from main.forms import TeamRegisterCreateForm, TeamsRegisterFormSet, PreteamCreateForm, PrePersonCreateForm, PersonsFormSet
@@ -391,16 +393,37 @@ def preinscriptionDetail(request, pk):
     return render(request, 'admin/inscription/preinscription_detail.html', context)
 
 
-#Lista de inscripciones (Lista de usuarios)
-@login_required
-def inscriptionList(request):
-    register = HistoryParticipation.objects.order_by('id_persona__cedula').distinct('id_persona__cedula')
+class InscriptionList(LoginRequiredMixin, ListView):
+    template_name = 'admin/inscription/inscription_list.html'
+    paginate_by = 10
 
-    context = {
-        'register': register
-    }
+    def get_queryset(self):
+        query = None
 
-    return render(request, 'admin/inscription/inscription_list.html', context)
+        if self.request.GET.get('cedula'):
+            query = Q(id_persona__cedula = self.request.GET['cedula'])
+
+        if self.request.GET.get('name'):
+            if query:
+                query.add(Q(id_persona__nombre__contains = self.request.GET['name']), Q.AND)
+            else:
+                query = Q(id_persona__nombre__contains = self.request.GET['name'])
+
+        if self.request.GET.get('lastname'):
+            if query:
+                query.add(Q(id_persona__apellido__contains = self.request.GET['lastname']), Q.AND)
+            else:
+                query = Q(id_persona__apellido__contains = self.request.GET['lastname'])
+
+        if query:
+            return HistoryParticipation.objects.filter(query).order_by('id_persona__cedula').distinct('id_persona__cedula')
+        else:
+            return HistoryParticipation.objects.order_by('id_persona__cedula').distinct('id_persona__cedula')
+
+    def get_context_data(self):
+        ctx = super(InscriptionList, self).get_context_data()
+
+        return ctx
 
 
 #Detalle de inscripcion (detalle del usuario)

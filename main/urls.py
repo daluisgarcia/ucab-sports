@@ -75,7 +75,7 @@ urlpatterns = [
     path('inscripciones/anular/equipo/<int:pk_team>/torneo/<int:pk_tour>', InscriptionViews.failInscription, name='fail_inscription'),
 
     #Histórico de equipos por torneo
-    path('participantes/', InscriptionViews.inscriptionList, name='person_list'),
+    path('participantes/', InscriptionViews.InscriptionList.as_view(), name='person_list'),
     path('participante/<int:pk>/', InscriptionViews.inscriptionDetail, name='person_detail'),
 
     #Match

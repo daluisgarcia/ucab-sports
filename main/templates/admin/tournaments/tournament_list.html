@@ -8,12 +8,29 @@
   <h2 class="text-center">{{ title }}</h2>
  
   <div class="card-body">
-    <div>
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_tournament' %}">
+    <div class="row pl-3">
+      <a class="btn btn-success btn-flat admin_buttons" href="{% url 'main:create_tournament' %}">
         Agregar
       </a>
+      <form class="form-inline">
+        <input type="text" name="name" class="form-control mr-1" placeholder="Nombre del torneo">
+        {% if games %}
+        <select class="form-control mr-1" name="game">
+            <option value="">Seleccione un juego</option>
+            {% for game in games %}
+                {% if request.GET.game == game.id %}
+                    <option value="{{ game.id }}" selected>{{ game.nombre }}</option>
+                {% else %}
+                    <option value="{{ game.id }}">{{ game.nombre }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        {% endif %}
+        <button class="btn btn-primary">Buscar</button>
+      </form>
     </div>
-    <br> 
+    <br>
+    {% if object_list %}
     <div class="row ml-2">
       <div class="col-1 text-left d-none d-md-block">
           <h6 class="label label-default list_titles">Nombre</h6>
@@ -31,6 +48,9 @@
         <h6 class="label label-default list_titles">Fin</h6>
       </div>
     </div>
+    {% else %}
+        <h4>No hay registros de torneos</h4>
+    {% endif %}
   
   {% for c in object_list %}
   <ul class="list-group admin_list_group">
@@ -114,5 +134,34 @@
     </li>
   </ul>
   {% endfor %}
-</div>
+  {% if object_list %}
+  <div class="row justify-content-center">
+      <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.name %}&name={{ request.GET.name }}{% endif %}{% if request.GET.game %}&game={{ request.GET.game }}{% endif %}">&laquo; Primer</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.name %}&name={{ request.GET.name }}{% endif %}{% if request.GET.game %}&game={{ request.GET.game }}{% endif %}">Anterior</a>
+            </li>
+            {% endif %}
+            <li class="page-item">
+                <span class="page-link">
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.name %}&name={{ request.GET.name }}{% endif %}{% if request.GET.game %}&game={{ request.GET.game }}{% endif %}">Siguiente</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.name %}&name={{ request.GET.name }}{% endif %}{% if request.GET.game %}&game={{ request.GET.game }}{% endif %}">Último &raquo;</a>
+            </li>
+            {% endif %}
+          </ul>
+      </nav>
+  </div>
+  {% endif %}
+  </div>
 {% endblock %}

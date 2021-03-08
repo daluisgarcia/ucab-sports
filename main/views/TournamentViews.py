@@ -153,8 +153,6 @@ def teamsTournament(request, pk_torneo, pk_fase):
     return render(request, 'admin/tournaments/tournament_teams.html', context)
 
 
-
-
 #Asociar las fases al torneo (mediante un método)
 @login_required
 def createStageTournament(request, pk):
@@ -232,16 +230,35 @@ Shows the tournament list to the owner
 class TournamentList(LoginRequiredMixin, ListView):
     model = Tournament
     template_name = 'admin/tournaments/tournament_list.html'
+    paginate_by = 5
 
-    def get(self, request):
-        if request.user.is_authenticated:
-            self.object_list = self.model.objects.filter(owner=request.user).order_by('id')
-            context = self.get_context_data()
-            return render(request, self.template_name, context)
+    def get_queryset(self):
+        # Validates some parameters from request to filter if necessary
+        if self.request.GET.get('name') and self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                nombre__contains = self.request.GET['name'],
+                id_juego = self.request.GET['game']
+            ).order_by('id')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        elif not self.request.GET.get('name') and self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                id_juego=self.request.GET['game']
+            ).order_by('id')
+
+        elif self.request.GET.get('name') and not self.request.GET.get('game'):
+            return self.model.objects.filter(
+                owner=self.request.user,
+                nombre__contains=self.request.GET['name']
+            ).order_by('id')
+
+        return self.model.objects.filter(owner=self.request.user).order_by('id')
+
+    def get_context_data(self):
+        context = super(TournamentList, self).get_context_data()
         context['title'] = 'Torneos'
+        context['games'] = Game.objects.all()
         return context
 
 

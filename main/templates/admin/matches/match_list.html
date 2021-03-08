@@ -11,9 +11,9 @@
   <div class="card-body">
     <div class="row pl-3">
       {% if specific %}
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
+      <a class="btn btn-success btn-flat admin_buttons" href="{% url 'main:teams_match' specific.pkt specific.pks %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
       {% else %}
-      <a class="btn btn-success btn-sm btn-flat admin_buttons" href="{% url 'main:create_match' %}">
+      <a class="btn btn-success btn-flat admin_buttons" href="{% url 'main:create_match' %}">
       {% endif %}
         Agregar nuevo partido
       </a>
@@ -131,7 +131,11 @@
                 </div>
               </div>
             </div>
+            {% if specific %}
+            <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_match' match.id %}?next={% url 'main:match_list_specific' specific.pkt specific.pks %}">
+            {% else %}
             <a class="btn btn-warning btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:update_match' match.id %}">
+            {% endif %}
               Modificar
             </a>
             <a class="btn btn-info btn-flat float-right btn-sm admin_buttons mb-1" href="{% url 'main:match_detail' match.id %}">
@@ -150,23 +154,23 @@
           <ul class="pagination">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1">&laquo; Primer</a>
+                <a class="page-link" href="?page=1{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">&laquo; Primer</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Anterior</a>
             </li>
             {% endif %}
             <li class="page-item">
                 <span class="page-link">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
                 </span>
             </li>
             {% if page_obj.has_next %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.tournament %}&tournament={{request.GET.tournament}}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Siguiente</a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.tournament %}&tournament={{ request.GET.tournament }}{% endif %}{% if request.GET.stage %}&stage={{ request.GET.stage }}{% endif %}">Último &raquo;</a>
             </li>
             {% endif %}
           </ul>
