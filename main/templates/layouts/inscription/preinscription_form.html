@@ -64,6 +64,9 @@
                       <li>En este torneo uno de los participantes debe ser un <strong>delegado y jugador</strong>.</li>
                     </div>
                     {% endif %}
+                    <div class="offset-md-1 offset-lg-1 col-10">
+                      <li>El limite de participantes para este torneo es: <strong>{{ person_number }}</strong>.</li>
+                    </div>
                   </div>
                   <br>
                   <div class="row">
@@ -84,6 +87,7 @@
                   <div class="row">
                     <div class="col-12">
                       <h4 class="text-center">Ingrese los campos</h4>
+                      <button id="addBtn" type="button" class="btn btn-primary float-right">Agregar nuevo participante</button>
                     </div>
                   </div>
               
@@ -110,29 +114,23 @@
                       <h6 class="label label-default list_titles">Rol</h6>
                     </div>
                   </div>
+                  <ul id="person_list" class="list-group admin_list_group mr-2">
                   {% for person_form, team_form in inscription_fields %}
-                  <ul class="list-group admin_list_group mr-2">
                     <li class="list-group-item">
                       <div class="row">
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                           <h6 class="d-md-none">Cedula</h6>
-                          <td>
                             {{ person_form.cedula }}
-                          </td>
                         </div>
                         <div class="w-100 d-block d-sm-none"></div>
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                           <h6 class="d-md-none">Nombre</h6>
-                          <td>
                             {{ person_form.nombre }}
-                          </td>
                         </div>
                         <div class="w-100 d-block d-sm-none"></div>
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                           <h6 class="d-md-none">Apellido</h6>
-                          <td>
                             {{ person_form.apellido }}
-                          </td>
                         </div>
                         <div class="w-100 d-block d-sm-none"></div>
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
@@ -142,21 +140,17 @@
                         <div class="w-100 d-block d-sm-none"></div>
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                           <h6 class="d-md-none">Username</h6>
-                          <td>
                             {{ person_form.nickname }}
-                          </td>
                         </div>
                         <div class="w-100 d-block d-sm-none"></div>
                         <div class="col col-sm col-md col-lg-2 col-xl-2 text-left mb-3">
                             <h6 class="d-md-none">Rol</h6>
-                            <td>
                               {{ team_form.rol }}
-                            </td>
                           </div>
                       </div>
                     </li>
-                  </ul>
                   {% endfor %}
+                  </ul>
               
                   <div class="row">
                     <div class="col-12">
@@ -164,6 +158,8 @@
                       {{ team_form.comentario }}
                     </div>
                   </div>
+
+                  <input id="num_max_part" value="{{ person_number }}" type="hidden"/>
 
                   <br>
 
@@ -182,4 +178,8 @@
       </section>
   </section>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script type="text/javascript" src={% static 'js/person_colector.js' %}></script>
 {% endblock %}

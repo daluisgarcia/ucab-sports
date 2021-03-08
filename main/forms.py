@@ -140,7 +140,7 @@ class GameCreateForm(ModelForm):
         }
       ),
       'esport': CheckboxInput(),
-    }
+    } 
 
 
 '''
@@ -184,9 +184,10 @@ class PrePersonCreateForm(ModelForm):
     model = PrePerson
     fields = ['cedula','nombre','apellido','correo','nickname']
     widgets = {
-      'cedula': NumberInput(
+      'cedula': TextInput(
         attrs = {
-          'placeholder': 'Cédula'
+          'placeholder': 'Cédula',
+          'type':'number'
         }
       ),
       'nombre': TextInput(
@@ -332,7 +333,7 @@ class MatchCreateForm(ModelForm):
     model = Match
     fields = ['fecha', 'direccion']
     widgets = {
-      'fecha': DateInput(format=('%Y-%m-%d'), attrs={'type':'date'}),
+      'fecha': DateInput(format=('%Y/%m/%d'), attrs={'type':'date'}),
       'direccion': TextInput(
         attrs = {
           'placeholder': 'Lugar del partido (opcional)'

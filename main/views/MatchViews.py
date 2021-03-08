@@ -13,6 +13,7 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
 from django.forms import model_to_dict
+from django.db.models import Q
 
 from main.models import Tournament, Match, StageTournament, Stage, Participation, Team, Classified
 from main.forms import MatchCreateForm, ParticipationCreateForm, ParticipationFormSet
@@ -76,6 +77,10 @@ def createTeams(request, pk_torneo, pk_fase):
     #clasified in this stage
     clasificados = Classified.objects.filter(id_fase_torneo=fase_torneo).order_by("grupo")
 
+    if clasificados.first() == None:
+        messages.error(request, 'Debes pasar equipos a esa fase para poder hacer eso.')
+        return redirect('main:tournament_detail', pk_torneo)
+
     if(clasificados.first().grupo):
         groups = True
     else:
@@ -130,6 +135,8 @@ def createTeams(request, pk_torneo, pk_fase):
                             'participacion_formset': participacion_formset,
                             'grupos': groups
                         }
+                        if 'next' in request.POST.keys():
+                            context['next'] = request.POST['next']
 
                         return render(request, 'admin/matches/teams_match.html', context)
             
@@ -156,15 +163,23 @@ def createTeams(request, pk_torneo, pk_fase):
                         'participacion_formset': participacion_formset,
                         'grupos': groups
                     }
+                    if 'next' in request.POST.keys():
+                        context['next'] = request.POST['next']
 
                     return render(request, 'admin/matches/teams_match.html', context)
 
                 teams.append(equipo)
                 i = i + 1    
 
+            #Obtener hora ingresada
+            hora = request.POST.get('match-time', None)
+            if not hora:
+                hora = '00:00'
+            fecha_completa = match_form['fecha'].value() + ' ' + hora
+
             #team object
             match = Match(
-                fecha=match_form['fecha'].value(), 
+                fecha=fecha_completa, 
                 direccion=match_form['direccion'].value(), id_fase_torneo=fase_torneo
             )
             #save match
@@ -188,7 +203,9 @@ def createTeams(request, pk_torneo, pk_fase):
                 participacion.save()
 
             messages.success(request, 'El partido se ha creado satisfactoriamente')
-            return redirect(reverse_lazy('main:match_list'))
+            if 'next' in request.POST.keys():
+                return redirect(request.POST['next'])
+            return redirect('main:match_list')
 
     else:
         match_form = MatchCreateForm(initial=None)
@@ -205,6 +222,9 @@ def createTeams(request, pk_torneo, pk_fase):
         'participacion_formset': participacion_formset,
         'grupos': groups
     }
+
+    if 'next' in request.GET.keys():
+        context['next'] = request.GET['next']
 
     return render(request, 'admin/matches/teams_match.html', context)
 
@@ -234,7 +254,27 @@ def updateMatch(request, pk):
 
         if match_form.is_valid() and participacion_formset.is_valid():
 
+            #Obtener hora ingresada
+            hora = request.POST.get('match-time', None)
+            if not hora:
+                hora = '00:00'
+            fecha_completa = match_form['fecha'].value() + ' ' + hora
+
             to_update = []
+
+            context = {
+                'equipos': clasificados,
+                'match_form': match_form,
+                'participacion_formset': participacion_formset,
+                'grupos': groups,
+                'update': True,
+                'get_request': False,
+                'hora': hora
+            }
+
+            if 'next' in request.POST.keys() and request.POST['next']:
+                context['next']  = request.POST['next']
+
             #Validar que, si la fase es por grupos, los equipos seleccionados sean del mismo grupo
             if groups:
                 #variables necesarias para manejar la lógica de las validaciones
@@ -275,15 +315,6 @@ def updateMatch(request, pk):
                             part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
-                        context = {
-                            'equipos': clasificados,
-                            'match_form': match_form,
-                            'participacion_formset': participacion_formset,
-                            'grupos': groups,
-                            'update': True,
-                            'get_request': False
-                        }
-
                         return render(request, 'admin/matches/teams_match.html', context)
             else:
                 # No existen grupos
@@ -316,28 +347,33 @@ def updateMatch(request, pk):
                             part.equipo = participacion[i].id_equipo.id
                             i = i + 1
 
-                        context = {
-                            'equipos': clasificados,
-                            'match_form': match_form,
-                            'participacion_formset': participacion_formset,
-                            'grupos': groups,
-                            'update': True,
-                            'get_request': False
-                        }
-
                         return render(request, 'admin/matches/teams_match.html', context)
-                        
-            match_form.save()
+
+            #Se arma el partido que se va a guardar match_form
+            Match.objects.filter(id=pk).update(fecha=fecha_completa, direccion=match_form['direccion'].value())
+            
             # Se actualizan los registros de participacion
             for part in to_update:
                 part.save()
             
             messages.success(request, 'Se han actualizado los partidos correctamente.')
 
+            if 'next' in request.POST.keys() and request.POST['next']:
+                return redirect(request.POST['next'])
+
             return redirect('main:match_list')
          
     else:
         match_form = MatchCreateForm(instance=match)
+        
+        fecha = match_form['fecha'].value()
+        fecha = str(fecha)
+
+        partido = Match(fecha=fecha[0:10], direccion=match_form['direccion'].value())
+
+        match_form = MatchCreateForm(instance=partido)
+
+        hora = fecha[11:16]
 
         part_array = {}
         part_array['form-INITIAL_FORMS'] = str(0)
@@ -364,43 +400,98 @@ def updateMatch(request, pk):
         'participacion_formset': participacion_formset,
         'grupos': groups,
         'update': True,
-        'get_request': True
+        'get_request': True,
+        'hora': hora
     }
+
+    if 'next' in request.GET.keys() and request.GET['next']:
+        context['next'] = request.GET['next']
 
     return render(request, 'admin/matches/teams_match.html', context)
 
 
-
 #Lista de partidos
-@login_required
-def matchList(request):
-    matches = Match.objects.filter(id_fase_torneo__id_torneo__owner=request.user).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
+class MatchList(LoginRequiredMixin, ListView):
+    template_name = 'admin/matches/match_list.html'
+    model = Match
+    paginate_by = 5
 
-    context = {
-        'match_list': matches
-    }
-    return render(request, 'admin/matches/match_list.html', context)
+    def get_queryset(self):
+        query = None  # Query builder
+
+        # Validates some parameters from request to filter if necessary
+        if self.request.GET.get('tournament') and self.request.GET.get('stage'):
+            stage_tournament = StageTournament.objects.filter(
+                id_fase=self.request.GET['stage'],
+                id_torneo=self.request.GET['tournament']
+            )
+            if stage_tournament:
+                query = Q(id_fase_torneo=stage_tournament[0])
+            else:
+                query = Q(id_fase_torneo=0)
+        elif not self.request.GET.get('tournament') and self.request.GET.get('stage'):
+            stage_tournament = StageTournament.objects.filter(id_fase=self.request.GET['stage'])
+            for stage in stage_tournament:
+                if query:
+                    query.add(Q(id_fase_torneo=stage), Q.OR)
+                else:
+                    query = Q(id_fase_torneo=stage)
+        elif self.request.GET.get('tournament') and not self.request.GET.get('stage'):
+            stage_tournament = StageTournament.objects.filter(id_torneo=self.request.GET['tournament'])
+            for stage in stage_tournament:
+                if query:
+                    query.add(Q(id_fase_torneo=stage), Q.OR)
+                else:
+                    query = Q(id_fase_torneo=stage)
+
+        # Query builder execution if necessary
+        if query:
+            query.add(Q(id_fase_torneo__id_torneo__owner=self.request.user), Q.AND)
+            matches = Match.objects.filter(
+                query
+            ).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
+        else:
+            matches = Match.objects.filter(
+                id_fase_torneo__id_torneo__owner=self.request.user
+            ).order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
+
+        return matches
+
+    def get_context_data(self):
+        ctx = super(MatchList, self).get_context_data()
+
+        ctx['tournaments'] = Tournament.objects.filter(owner=self.request.user)
+        ctx['stages'] = Stage.objects.all()
+
+        return ctx
 
 
 ''' List of match that belongs to a tournament's stage '''
-class MatchListSpecific(LoginRequiredMixin, View):
-    template = 'admin/matches/match_list.html'
+class MatchListSpecific(LoginRequiredMixin, ListView):
+    template_name = 'admin/matches/match_list.html'
+    model = Match
+    paginate_by = 5
+
+    def get_queryset(self):
+        stage_tournament = StageTournament.objects.filter(id_fase=self.kwargs['pks'], id_torneo=self.kwargs['pkt'])
+        matches = Match.objects.filter(id_fase_torneo=stage_tournament[0].id)\
+            .order_by('id_fase_torneo__id_torneo', 'id_fase_torneo__id_fase', '-fecha')
+        return matches
+
+    def get_context_data(self):
+        ctx = super(MatchListSpecific, self).get_context_data()
+        ctx['specific'] = {'pkt': self.kwargs['pkt'], 'pks': self.kwargs['pks']}
+        return ctx
 
     def get(self, request, pkt, pks):
-        stage_tournament = StageTournament.objects.filter(id_fase = pks, id_torneo = pkt)
-        matches = Match.objects.filter(id_fase_torneo = stage_tournament[0].id)
-        #Searching if there are groups
-        clasified = Classified.objects.filter(id_fase_torneo = stage_tournament[0].id).first()
+        stage_tournament = StageTournament.objects.filter(id_fase=pks, id_torneo=pkt)
+        clasified = Classified.objects.filter(id_fase_torneo=stage_tournament[0].id).first()
 
         if((stage_tournament[0].num_grupos) and (not clasified.grupo)):
             messages.error(request, 'Antes de gestionar partidos tiene que asociar los grupos de esta fase')
             return redirect('main:tournament_detail',  pk=pkt)
 
-        context = {
-            'specific': {'pkt': pkt,'pks': pks},
-            'match_list': matches
-        }
-        return render(request, self.template, context)
+        return super(MatchListSpecific, self).get(request)
 
 
 #Match list for the common users
@@ -433,7 +524,7 @@ def publicMatchList(request, pk_torneo):
 
 
 class publicMatchListPDF(View):
-    template_url = 'reports/tournament_matches.html'
+    template_name = 'reports/tournament_matches.html'
 
     def get(self, request, pk_torneo):
         stages = StageTournament.objects.filter(id_torneo=pk_torneo)
@@ -450,7 +541,7 @@ class publicMatchListPDF(View):
         except StageTournament.DoesNotExist:
             stage_clasified_table = None
 
-        template = get_template(self.template_url)
+        template = get_template(self.template_name)
 
         tournament = Tournament.objects.get(id=pk_torneo)
 
