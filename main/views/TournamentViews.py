@@ -87,6 +87,19 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
     return tabla_clasificatoria
 
 
+#Función que devuelve en un array los primeros equipos de cada grupo
+def formar_grupos(tabla_clasif):
+    grupos = []
+    grupo = ''
+
+    for clasif in tabla_clasif:
+        if((grupo == '') or (grupo != clasif['equipo'].grupo)):
+            grupos.append(clasif['equipo'])
+        grupo = clasif['equipo'].grupo
+
+    return grupos
+
+
 ''' Redirect to the tournament list or render the form
 
 Create a tournament and assign the owner
@@ -239,21 +252,21 @@ class TournamentList(LoginRequiredMixin, ListView):
                 owner=self.request.user,
                 nombre__contains = self.request.GET['name'],
                 id_juego = self.request.GET['game']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
         elif not self.request.GET.get('name') and self.request.GET.get('game'):
             return self.model.objects.filter(
                 owner=self.request.user,
                 id_juego=self.request.GET['game']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
         elif self.request.GET.get('name') and not self.request.GET.get('game'):
             return self.model.objects.filter(
                 owner=self.request.user,
                 nombre__contains=self.request.GET['name']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
-        return self.model.objects.filter(owner=self.request.user).order_by('id')
+        return self.model.objects.filter(owner=self.request.user).order_by('fecha_inicio')
 
     def get_context_data(self):
         context = super(TournamentList, self).get_context_data()
@@ -595,11 +608,24 @@ def publicClasified(request, pk_fase_torneo):
 
     tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
 
+    #Ordenar tabla clasificatoria
+    #criterio = range(25)
+    #print(list(criterio))
+    #tabla_clasif.sort(key = lambda x: criterio.index(x['puntos_totales']))
+
+    #Si existen grupos, guardar posiciones del primer equipo de cada grupo
+    if(tabla_clasif[0]['equipo'].grupo):
+        grupos = formar_grupos(tabla_clasif)
+        print(grupos)
+    else:
+        grupos = None
+
     context = {
         'torneo': stage_tour.id_torneo.nombre,
         'fase': stage_tour.id_fase.nombre,
         'tabla_clasificatoria': tabla_clasif,
-        'id_torneo': stage_tour.id_torneo.id
+        'id_torneo': stage_tour.id_torneo.id,
+        'grupos': grupos
     }
 
     return render(request, 'layouts/tournaments/public_clasified.html', context)
