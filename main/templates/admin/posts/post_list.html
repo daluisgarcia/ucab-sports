@@ -48,9 +48,9 @@
             <div class="col col-sm col-md col-lg-3 col-xl-3 text-left mb-3"> 
               <td class="label">
                 {% if c.cuerpo|length > 100 %}
-                  {{ c.cuerpo|slice:":100" }} ...
+                  {{ c.cuerpo | safe | slice:":100" }} ...
                 {% else %}
-                  {{ c.cuerpo }}
+                  {{ c.cuerpo | safe }}
                 {% endif %}
               </td>
             </div>

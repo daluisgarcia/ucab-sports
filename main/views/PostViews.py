@@ -28,7 +28,7 @@ class CreatePost(LoginRequiredMixin, CreateView):
                 file_post = form.cleaned_data.get('imagen')
             except form.cleaned_data.get('imagen').DoesNotExist:
                 file_post = None
-            print(file_post.size)
+           
             if(file_post):
                 if(file_post.size > 10000000):
                     messages.error(request, 'El tamaño de la imagen subida no puede exceder de 10 MB')
@@ -69,8 +69,12 @@ class PostsList(LoginRequiredMixin, ListView):
 
 # Lista de posts para el publico en general
 class PublicPostList(ListView): 
-    model = Post
     template_name = 'admin/posts/public_post_list.html'
+
+    def get(self, request):
+        self.object_list = Post.objects.all().order_by('-id')
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

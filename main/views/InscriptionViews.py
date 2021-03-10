@@ -69,8 +69,10 @@ def createRegisterTeam(request, pk_torneo):
 
             #validar que los roles ingresados cumplan los estándares para este torneo
             for role_form in team_register_formset:
-                role = role_form.cleaned_data['rol']
-                print('Role Form: ', role)
+                role = role_form.cleaned_data.get('rol')
+                if not role:
+                    messages.error(request, 'Debe seleccionar el rol de cada participante')
+                    return render(request, 'layouts/inscription/preinscription_form.html', context)
 
                 if((tournament.tipo_delegado == 'd' and role == 'jd') or (tournament.tipo_delegado == 'jd' and role == 'd')):
                     messages.error(request, 'El tipo de participantes no coincide con las reglas para este torneo')
@@ -197,7 +199,6 @@ def createRegisterTeam(request, pk_torneo):
 def approveInscription(request, pk_team, pk_tour):
     #Buscamos los registros de PreTeamRegister
     preteamregister = PreTeamRegister.objects.filter(id_equipo=pk_team, id_torneo=pk_tour)
-    #print(preteamregister)
 
     #Arrays donde se ingresarán los datos
     new_persons = []
@@ -206,7 +207,6 @@ def approveInscription(request, pk_team, pk_tour):
     #Creamos los registros de los participantes
     
     for person in preteamregister:
-        print(person.id)
         
         #Comparamos con los anteriores registros a ver si este participante ha participado antes en algo
         try:
@@ -215,8 +215,6 @@ def approveInscription(request, pk_team, pk_tour):
             anterior_registro = None
 
         if anterior_registro is not None:
-            print('Sí he participado antes, soy: ', anterior_registro)
-            print(anterior_registro.correo)
 
             #Opciones:
             #Se actualizan los correos y se mandan a ambos correos (en caso de haber uno nuevo y uno viejo) la aprobación de inscripción
@@ -232,7 +230,6 @@ def approveInscription(request, pk_team, pk_tour):
         ci.append(person.id_persona.cedula)
 
     Person.objects.bulk_create(new_persons)
-    print(ci)
 
     #Creación del equipo 
     for reg in preteamregister:    
@@ -253,8 +250,6 @@ def approveInscription(request, pk_team, pk_tour):
         #Si existe, lo buscamos
             nuevo_registro_equipo = Team.objects.get(id=ant_registro[0].id_equipo.id)
         break
-    
-    print(nuevo_registro_equipo)
 
     #Se guarda al equipo en la tabla de clasificados, con la fase del torneo con jerarquía 0 (jerarquía 0 porque es la fase de inscripcion)
     try:
@@ -276,7 +271,6 @@ def approveInscription(request, pk_team, pk_tour):
         pk_persona = Person.objects.get(cedula=ci[i])
 
         register_team.append(HistoryParticipation(id_persona=pk_persona, id_equipo=nuevo_registro_equipo, id_torneo=reg.id_torneo, fecha_registro=reg.fecha_registro, rol=reg.rol))
-        print(register_team)
         i=i+1
 
     HistoryParticipation.objects.bulk_create(register_team)
@@ -293,7 +287,6 @@ def approveInscription(request, pk_team, pk_tour):
         tournament = reg.id_torneo
         #Si tiene solamente una solicitud de inscripcion pendiente, se borra
         if (PreTeamRegister.objects.filter(id_persona=person_delete).count() == 1):
-            print('paso')
             person_delete.delete()
         i=i+1
     team_delete = PreTeam.objects.get(id=pk_team)
@@ -368,7 +361,6 @@ def preinscriptionList(request):
     for i in torneos:
         solicitudes_aprobadas = HistoryParticipation.objects.filter(id_torneo=i).distinct('id_equipo').count()
         inscritos.append({'nombre_torneo': i.nombre, 'cantidad_inscritos': solicitudes_aprobadas})
-    #print(inscritos)
 
     #Cantidad de solicitudes pendientes
     cant_pendientes = PreTeamRegister.objects.filter(id_torneo__owner=request.user).count()
@@ -432,12 +424,9 @@ def inscriptionDetail(request, pk):
     person = Person.objects.get(id=pk)
     teams = HistoryParticipation.objects.filter(id_persona=person).order_by('-fecha_registro')
 
-    print(teams)
-
     for team in teams:
 
         places = Classified.objects.filter(id_equipo=team.id_equipo, id_fase_torneo__id_torneo=team.id_torneo)
-        print(places)
 
         max_position = 0
         last_stage = None
@@ -447,10 +436,6 @@ def inscriptionDetail(request, pk):
                 if(place.id_fase_torneo.jerarquia > max_position):
                     max_position = place.id_fase_torneo.jerarquia
                     last_stage = place.id_fase_torneo.id_fase
-
-        print('Resultado final:')
-        print(max_position)
-        print(last_stage)
 
         team.last_stage = last_stage
     

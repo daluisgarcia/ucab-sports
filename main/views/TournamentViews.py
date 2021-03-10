@@ -67,6 +67,9 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         #Equipo
         datos_tabla['equipo'] = team
 
+        #Grupo
+        datos_tabla['grupo'] = team.grupo
+
         #Partidos jugados
         datos_tabla['partidos_jugados'] = partidos_jugados
 
@@ -85,6 +88,19 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         tabla_clasificatoria.append(datos_tabla.copy())
 
     return tabla_clasificatoria
+
+
+#Función que devuelve en un array los primeros equipos de cada grupo
+def formar_grupos(tabla_clasif):
+    grupos = []
+    grupo = ''
+
+    for clasif in tabla_clasif:
+        if((grupo == '') or (grupo != clasif['equipo'].grupo)):
+            grupos.append(clasif['equipo'])
+        grupo = clasif['equipo'].grupo
+
+    return grupos
 
 
 ''' Redirect to the tournament list or render the form
@@ -239,21 +255,21 @@ class TournamentList(LoginRequiredMixin, ListView):
                 owner=self.request.user,
                 nombre__contains = self.request.GET['name'],
                 id_juego = self.request.GET['game']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
         elif not self.request.GET.get('name') and self.request.GET.get('game'):
             return self.model.objects.filter(
                 owner=self.request.user,
                 id_juego=self.request.GET['game']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
         elif self.request.GET.get('name') and not self.request.GET.get('game'):
             return self.model.objects.filter(
                 owner=self.request.user,
                 nombre__contains=self.request.GET['name']
-            ).order_by('id')
+            ).order_by('fecha_inicio')
 
-        return self.model.objects.filter(owner=self.request.user).order_by('id')
+        return self.model.objects.filter(owner=self.request.user).order_by('fecha_inicio')
 
     def get_context_data(self):
         context = super(TournamentList, self).get_context_data()
@@ -270,7 +286,7 @@ class PublicTournamentList(ListView):
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
     def get(self, request, tipo):
-        self.object_list = self.model.objects.order_by('-inscripcion_abierta')
+        self.object_list = self.model.objects.order_by('-inscripcion_abierta', 'fecha_inicio')
         context = self.get_context_data()
         context['tipo'] = tipo
         return render(request, self.template_name, context)
@@ -586,6 +602,7 @@ def publicClasified(request, pk_fase_torneo):
 
     datos_tabla = {
         'equipo': None,
+        'grupo': None,
         'puntos_totales': None,
         'partidos_jugados': None,
         'partidos_ganados': None,
@@ -595,11 +612,21 @@ def publicClasified(request, pk_fase_torneo):
 
     tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
 
+    #Si existen grupos, guardar posiciones del primer equipo de cada grupo
+    if(tabla_clasif[0]['equipo'].grupo):
+        #Ordenar tabla clasificatoria
+        tablita = sorted(tabla_clasif, key = lambda i: (i['grupo'], -i['puntos_totales']))
+        grupos = formar_grupos(tablita)
+    else:
+        tablita = sorted(tabla_clasif, key = lambda i: (-i['puntos_totales']))
+        grupos = None
+
     context = {
         'torneo': stage_tour.id_torneo.nombre,
         'fase': stage_tour.id_fase.nombre,
-        'tabla_clasificatoria': tabla_clasif,
-        'id_torneo': stage_tour.id_torneo.id
+        'tabla_clasificatoria': tablita,
+        'id_torneo': stage_tour.id_torneo.id,
+        'grupos': grupos
     }
 
     return render(request, 'layouts/tournaments/public_clasified.html', context)

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 from .db import POSTGRESQL
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
 
     #App
     'main.apps.MainConfig'
@@ -158,3 +160,13 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@sandbox14a805d4013d4c7ebc5959cfc63df7af.mailgun.org'
 EMAIL_HOST_PASSWORD = '7d20e15684982089515d8efc452db364-95f6ca46-d9eedbd6'
+
+#CKEDITOR
+CKEDITOR_UPLOAD_PATH = "uploads/"
+# CKEDITOR_BASEPATH = "staticfiles/ckeditor/ckeditor"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+    },
+}
