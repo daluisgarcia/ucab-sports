@@ -618,7 +618,7 @@ def publicClasified(request, pk_fase_torneo):
         tablita = sorted(tabla_clasif, key = lambda i: (i['grupo'], -i['puntos_totales']))
         grupos = formar_grupos(tablita)
     else:
-        tablita = tabla_clasif
+        tablita = sorted(tabla_clasif, key = lambda i: (-i['puntos_totales']))
         grupos = None
 
     context = {
