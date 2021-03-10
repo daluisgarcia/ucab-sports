@@ -153,7 +153,7 @@ EMAIL_HOST_PASSWORD = '7d20e15684982089515d8efc452db364-95f6ca46-d9eedbd6'
 
 #CKEDITOR
 CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_BASEPATH = "/static/ckeditor/"
+# CKEDITOR_BASEPATH = "staticfiles/ckeditor/ckeditor"
 
 CKEDITOR_CONFIGS = {
     'default': {

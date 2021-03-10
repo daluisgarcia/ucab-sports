@@ -91,11 +91,6 @@ urlpatterns = [
 
     #about us
     path('about/', AboutUsView.AboutUsView.as_view(), name='about_us'),
-
-    
-    #CKEDITOR
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-    #url(r'^ckeditor/', include('ckeditor_uploader.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

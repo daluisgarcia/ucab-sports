@@ -533,7 +533,7 @@ class publicMatchListPDF(View):
             'id_partido')
 
         # Fases que tengan al menos un partido
-        stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
+        stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase', 'fecha').order_by('-fecha')
 
         # Fase para la tabla clasificatoria
         try:

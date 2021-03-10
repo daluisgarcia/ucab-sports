@@ -24,7 +24,8 @@
                     > 
                       ×
                     </button>
-                    <h4><i class="text-center icon fa fa-ban"></i> Ha ocurrido un error</h4> 
+                    <h4><i class="text-center icon fa fa-ban"></i> Ha ocurrido un error</h4>
+                    <ul>
                     {% for dict in team_register_formset.errors %}
                       {% for error in dict.values %}
                         <li>{{ error }}</li>
@@ -48,6 +49,7 @@
                         {{ error }}
                       {% endfor %}
                     {% endif %}
+                    </ul>
                   </div>
                   {% endif %}
                 </div>
