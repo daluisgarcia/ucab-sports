@@ -67,6 +67,9 @@ def tabla_clasificatoria(stage_tournament, datos_tabla):
         #Equipo
         datos_tabla['equipo'] = team
 
+        #Grupo
+        datos_tabla['grupo'] = team.grupo
+
         #Partidos jugados
         datos_tabla['partidos_jugados'] = partidos_jugados
 
@@ -283,7 +286,7 @@ class PublicTournamentList(ListView):
     template_name = 'layouts/tournaments/public_tournaments_list.html'
 
     def get(self, request, tipo):
-        self.object_list = self.model.objects.order_by('-inscripcion_abierta')
+        self.object_list = self.model.objects.order_by('-inscripcion_abierta', 'fecha_inicio')
         context = self.get_context_data()
         context['tipo'] = tipo
         return render(request, self.template_name, context)
@@ -599,6 +602,7 @@ def publicClasified(request, pk_fase_torneo):
 
     datos_tabla = {
         'equipo': None,
+        'grupo': None,
         'puntos_totales': None,
         'partidos_jugados': None,
         'partidos_ganados': None,
@@ -608,22 +612,19 @@ def publicClasified(request, pk_fase_torneo):
 
     tabla_clasif = tabla_clasificatoria(stage_tour, datos_tabla)
 
-    #Ordenar tabla clasificatoria
-    #criterio = range(25)
-    #print(list(criterio))
-    #tabla_clasif.sort(key = lambda x: criterio.index(x['puntos_totales']))
-
     #Si existen grupos, guardar posiciones del primer equipo de cada grupo
     if(tabla_clasif[0]['equipo'].grupo):
-        grupos = formar_grupos(tabla_clasif)
-        print(grupos)
+        #Ordenar tabla clasificatoria
+        tablita = sorted(tabla_clasif, key = lambda i: (i['grupo'], -i['puntos_totales']))
+        grupos = formar_grupos(tablita)
     else:
+        tablita = tabla_clasif
         grupos = None
 
     context = {
         'torneo': stage_tour.id_torneo.nombre,
         'fase': stage_tour.id_fase.nombre,
-        'tabla_clasificatoria': tabla_clasif,
+        'tabla_clasificatoria': tablita,
         'id_torneo': stage_tour.id_torneo.id,
         'grupos': grupos
     }

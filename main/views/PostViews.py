@@ -28,7 +28,7 @@ class CreatePost(LoginRequiredMixin, CreateView):
                 file_post = form.cleaned_data.get('imagen')
             except form.cleaned_data.get('imagen').DoesNotExist:
                 file_post = None
-            print(file_post.size)
+           
             if(file_post):
                 if(file_post.size > 10000000):
                     messages.error(request, 'El tamaño de la imagen subida no puede exceder de 10 MB')

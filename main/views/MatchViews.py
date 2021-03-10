@@ -499,7 +499,7 @@ def publicMatchList(request, pk_torneo):
 
     tournament = Tournament.objects.get(id=pk_torneo)
     stages = StageTournament.objects.filter(id_torneo=pk_torneo)
-    matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase', '-fecha')
+    matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase', 'fecha')
     participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by('id_partido')
 
     #Fases que tengan al menos un partido
