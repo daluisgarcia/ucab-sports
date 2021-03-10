@@ -23,28 +23,39 @@
       <li>PP: Partidos Perdidos</li>
       <li>PE: Partidos Empatados</li>
     </ul>
-    <div class="row ml-2">
-      <div class="col col-sm col-md col-lg-4 col-xl-4 text-left d-none d-md-block">
-          <h6 class="label label-default list_titles">Equipo</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PJ</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PG</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PE</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PP</h6>
-      </div>
-      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
-        <h6 class="label label-default list_titles">PTOS</h6>
-      </div>
-    </div>
-  
+
+  {% if grupos %}  
     {% for equipo in tabla_clasificatoria %}
+      {% for grupo in grupos %}
+        {% if equipo.equipo.id_equipo == grupo.id_equipo %}
+        <div class="row">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-left mb-3 mt-1">
+            <h4>Grupo {{ grupo.grupo }}</h4>
+          </div>
+        </div>
+        <div class="row ml-2">
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-left d-none d-md-block">
+              <h6 class="label label-default list_titles">Equipo</h6>
+          </div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+            <h6 class="label label-default list_titles">PJ</h6>
+          </div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+            <h6 class="label label-default list_titles">PG</h6>
+          </div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+            <h6 class="label label-default list_titles">PE</h6>
+          </div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+            <h6 class="label label-default list_titles">PP</h6>
+          </div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+            <h6 class="label label-default list_titles">PTOS</h6>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
     <ul class="list-group admin_list_group">
       <li class="list-group-item">
         <div class="row">
@@ -52,7 +63,7 @@
           <div class="col col-sm col-md col-lg-4 col-xl-4 text-left mb-3 mt-1">
             <h6 class="d-md-none">Equipo</h6>
             <td>
-              {{ equipo.equipo.id_equipo }} {% if equipo.equipo.grupo %} (grupo {{ equipo.equipo.grupo }}) {% endif %}
+              {{ equipo.equipo.id_equipo }}
             </td>
           </div>
           <div class="w-100 d-block d-sm-none"></div>
@@ -94,6 +105,80 @@
       </li>
     </ul>
     {% endfor %}
+    
+  {% else %}
+  
+    <div class="row ml-2">
+      <div class="col col-sm col-md col-lg-4 col-xl-4 text-left d-none d-md-block">
+          <h6 class="label label-default list_titles">Equipo</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PJ</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PG</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PE</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PP</h6>
+      </div>
+      <div class="col col-sm col-md col-lg-1 col-xl-1 text-left d-none d-md-block">
+        <h6 class="label label-default list_titles">PTOS</h6>
+      </div>
+    </div>
+    {% for equipo in tabla_clasificatoria %}
+    <ul class="list-group admin_list_group">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-4 col-xl-4 text-left mb-3 mt-1">
+            <h6 class="d-md-none">Equipo</h6>
+            <td>
+              {{ equipo.equipo.id_equipo }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PJ</h6>
+            <td>
+              {{ equipo.partidos_jugados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PG</h6>
+            <td>
+              {{ equipo.partidos_ganados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PE</h6>
+            <td>
+              {{ equipo.partidos_empatados }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PP</h6>
+            <td>
+              {{ equipo.partidos_perdidos }}
+            </td>
+          </div>
+          <div class="w-100 d-block d-sm-none"></div>
+          <div class="col col-sm col-md col-lg-1 col-xl-1 text-left mb-3">
+            <h6 class="d-md-none">PTOS</h6>
+            <td>
+              {{ equipo.puntos_totales }}
+            </td>
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+  {% endif %}
   <br>
   <br>
   </div>

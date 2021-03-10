@@ -2,6 +2,8 @@ from django.db import models
 from datetime import datetime
 from django.conf import settings
 
+from ckeditor.fields import RichTextField
+
 '''
   PERSON MODEL
 '''
@@ -96,7 +98,7 @@ class Tournament(models.Model):
 '''
 class Post(models.Model):
   titulo = models.CharField(max_length=50, verbose_name='Título')
-  cuerpo = models.CharField(max_length=400, verbose_name='Contenido')
+  cuerpo = RichTextField(max_length=400, verbose_name='Contenido')
   imagen = models.ImageField(upload_to='post_images', null=True, blank=True)
   owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default="")
 

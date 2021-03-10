@@ -21,12 +21,6 @@ class PostCreateForm(ModelForm):
         attrs = {
           'placeholder': 'Título'
         }
-      ),
-      'cuerpo': Textarea(
-        attrs = {
-          'placeholder': 'Cuerpo',
-          'rows': 5
-        }
       )
     }
 
