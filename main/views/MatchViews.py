@@ -528,12 +528,12 @@ class publicMatchListPDF(View):
 
     def get(self, request, pk_torneo):
         stages = StageTournament.objects.filter(id_torneo=pk_torneo)
-        matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase','-fecha')
+        matches = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).order_by('id_fase_torneo__id_fase','fecha')
         participation = Participation.objects.filter(id_partido__id_fase_torneo__id_torneo=pk_torneo).order_by(
             'id_partido')
 
         # Fases que tengan al menos un partido
-        stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase', 'fecha').order_by('-fecha')
+        stage_with_match = Match.objects.filter(id_fase_torneo__id_torneo=pk_torneo).distinct('id_fase_torneo__id_fase')
 
         # Fase para la tabla clasificatoria
         try:
