@@ -1,7 +1,7 @@
 asgiref==3.3.0
 Django==3.2.25
 freeze==3.0
-Pillow==8.0.1
+Pillow==10.3.0
 psycopg2==2.8.6
 pytz==2020.4
 six==1.15.0
